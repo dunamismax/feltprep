@@ -122,18 +122,20 @@ web/                       the SvelteKit app (exists; the same place RiverMind k
   src/app.css              Tailwind entry and the provisional theme tokens, light and dark (exists)
   src/env.ts               environment variables, validated at build and start (exists)
   src/routes/              pages and endpoints: the home page and /healthz exist
-  src/lib/engine/          cards, hand evaluator, hand state machine: pure, browser-safe TypeScript
+  src/lib/engine/          cards, hand evaluator, hand state machine, histories, seat views, fuzzer and fixtures:
+                           pure, browser-safe TypeScript imported from RiverMind (exists)
   src/lib/solver/          equities, game trees, CFR, best response, grading
   src/lib/spots/           spot definitions and the reader for solution artifacts
   src/lib/server/          server-only code: database client and health check exist; practice sessions and opponents later
-  scripts/                 Node scripts run by package.json: db-migrate.ts exists
+  scripts/                 Node scripts run by package.json: db-migrate.ts, engine-fuzz.ts, engine-bench.ts,
+                           engine-parity.ts and its Node-only helper engine/parity.ts exist
   drizzle/                 SQL migrations (never edit an applied one); only the empty journal exists
   e2e/                     Playwright tests, desktop and phone (exists)
 content/lessons/           lessons as Markdown, kept in Git, prerendered
 solutions/                 small solution artifacts kept in Git, each with a manifest
 deploy/                    Caddy site, systemd unit, provisioning and deploy scripts, runbook
-docs/                      rules, grading, solver design, build history; provenance.md exists
-licenses/                  upstream notices for imported code (exists, empty but for its README)
+docs/                      rules, grading, solver design, build history; rules.md and provenance.md exist
+licenses/                  upstream notices for imported code (exists; its README lists them)
 LICENSE                    the GNU AGPL, version 3: FeltPrep's code is AGPL-3.0-or-later (exists)
 artifacts/                 ignored by Git: large solves, equity tables, opponent bundles
 ```
@@ -177,7 +179,10 @@ Rules for this section:
 | Browser tests, desktop and phone | `pnpm run e2e` | Playwright builds the app and serves it with `node build` on 127.0.0.1:4391, then runs `e2e/*.e2e.ts` in Chromium, Firefox and WebKit at 1440 × 900 and at 375 × 812 with touch. Port 4391 must be free. |
 | Generate a migration | `pnpm run db:generate` | `drizzle-kit generate` from `src/lib/server/db/schema.ts` into `drizzle/`. Needs `DATABASE_URL`. Review the SQL before committing it. |
 | Apply migrations | `pnpm run db:migrate` | `scripts/db-migrate.ts` applies `drizzle/` to `DATABASE_URL` (a PostgreSQL 18 database). |
-| Engine rules, fuzz and benchmark | *not yet defined (P1.4)* | |
+| Engine rules and fixtures | `pnpm run test` | The engine's specs in `src/lib/engine/` run in the full gate: the 33 hand-worked fixtures in `rules.json`, rule tests, histories, seat views, a short fuzz, every offered action applied (`properties.spec.ts`), a guard that no engine file imports a Node module (`imports.spec.ts`), and `engine.browser.spec.ts` in Chromium. `rules.json` is an imported fixture: never reformat it (`.prettierignore`). |
+| Long engine fuzz | `pnpm run engine:fuzz` | 100,000 random hands at each seat count from 2 to 9 (`-- --hands N --seats 2,6 --seed S`), every invariant checked after every action, illegal actions near the legal set rejected; prints counts of showdowns, side pots, all-ins and odd chips. About 5 minutes on one core (274 seconds on 2026-11-24): run it with `nice -n 19` after any engine change and record the result. |
+| Engine benchmark | `pnpm run engine:bench` | Random self-play speed on one core at 2, 6 and 9 seats (`-- --hands 20000 --repeats 5`). Needs a quiet machine. |
+| Engine parity with RiverMind | `pnpm run engine:parity -- --reference <dir>` | Replays hands from RiverMind's Python reference and compares every state byte for byte, plus evaluator digests (`--all-five` for every five-card hand). `<dir>` is a scratch export of RiverMind at the pinned commit (`git -C <rivermind> archive 233b9c6 \| tar -x -C <dir>`), never a live checkout, since `uv` writes a virtual environment there. Needs `uv`. Run once at import (done, `docs/provenance.md`) and again only if RiverMind's engine is re-imported. |
 | Solver benchmarks | *not yet defined (P2.3)* | |
 
 ## 8. Poker correctness
@@ -188,7 +193,7 @@ The engine decides what is legal, who wins and how many chips move. A mistake th
 - **Expected values are worked out by hand.** A fixture’s final stacks, pots and winners are derived from the rules, never copied from the engine’s own output. RiverMind’s fixtures were built this way (`test/engine/fixtures.py`), and a throwaway recomputation caught a wrong pot total in its rules document before any code ran.
 - **Check the cases that go wrong.** Minimum and maximum raise amounts; an incomplete all-in raise that does not reopen the betting; side pots with several all-ins; a split pot with an odd chip, which needs three or more players, because two players’ matched contributions always make an even pot; an uncalled bet returned; heads-up blinds and order of action (the button posts the small blind, acts first before the flop and last after it); a hand that ends before showdown.
 - **Invariants hold after every action:** chips are conserved, no stack is negative, every action the engine offers applies cleanly, every action it does not offer is rejected, and every hand ends.
-- **After any engine change,** run the fixture tests, the property tests and the long fuzz, and record the fuzz result in the evidence line.
+- **After any engine change,** run the fixture tests, the property tests and the long fuzz (`pnpm run engine:fuzz`, section 7), and record the fuzz result in the evidence line.
 - **Exercise both seats.** RiverMind’s evaluation always put the button in seat 0, so a seat-mapping bug that made the bot check or call every decision from seat 1 was found only when the bot was served at a live table (`docs/bots.md`, “Serving”). Test every position a player can be in.
 - **Randomness comes from the caller.** The engine takes a deck order or a generator and holds no global state, so any hand can be replayed exactly. Tests, drills under test and benchmarks use seeds. A browser test never waits for a lucky deal: it plays a seeded hand.
 - **The interface offers what the engine offers.** Action buttons and bet limits come from the engine’s legal actions for the current state, never from a second copy of the rules in a component.

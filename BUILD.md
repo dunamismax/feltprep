@@ -10,13 +10,13 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 
 | | |
 | --- | --- |
-| **Current phase** | [Phase 1 · Foundation](#phase-1--foundation): P1.1 to P1.3 done. |
-| **Next step** | **P1.4 · Import the rules specification and the engine.** It needs no decision from the owner. |
+| **Current phase** | [Phase 1 · Foundation](#phase-1--foundation): P1.1 to P1.4 done; P1.5 closes the phase. |
+| **Next step** | **P1.5 · Heads-up short-stack fixtures**, with Gate A’s rules trace. P2.1 (grading contract) is also ready. |
 | **In progress** | Nothing. |
 | **Background run** | None. |
 | **Waiting on the owner** | Nothing blocks the next step. Q-12 (terms for lesson text and artwork) is needed by P3.1 and P3.2. |
 | **Live** | Nothing is deployed. `feltprep.com` and `feltprep.app` point at the host through Cloudflare DNS. |
-| **`main`** | The SvelteKit app in `web/`, its full gate (AGENTS.md section 7) and CI on GitHub, green on 2026-11-24. `origin` pushes to GitHub and Codeberg. |
+| **`main`** | The app in `web/` with RiverMind’s engine imported and verified in `web/src/lib/engine/`, its gate and CI, on 2026-11-24. `origin` pushes to GitHub and Codeberg. |
 | **Last updated** | 2026-11-24 |
 
 ## How to work this file
@@ -244,10 +244,10 @@ No player can take an illegal action, and every legal one is offered with the ri
 
 - [ ] **Rules trace.** Every rule kept in `docs/rules.md` has at least one fixture, with expected stacks worked out by hand.
 - [ ] **Fixtures.** All imported fixtures pass, plus FeltPrep’s own heads-up short-stack fixtures.
-- [ ] **Properties.** After every action: chips conserved, no negative stack, every offered action applies, every other action is rejected, every hand ends, pots equal contributions.
-- [ ] **Long fuzz.** At least 100,000 random hands at each seat count from 2 to 9, with no failure. The count of showdowns, side pots and all-ins is recorded, so the run is known to have reached them.
-- [ ] **Parity at import.** One run of RiverMind’s differential check at the pinned commit shows the imported TypeScript files byte-identical in behaviour to its Python reference. Recorded once in `docs/provenance.md`; after that FeltPrep’s own tests carry the engine.
-- [ ] **Replay.** Every fixture and a sample of fuzzed hands round-trip through the history format to an identical state.
+- [x] **Properties.** After every action: chips conserved, no negative stack, every offered action applies, every other action is rejected, every hand ends, pots equal contributions.
+- [x] **Long fuzz.** At least 100,000 random hands at each seat count from 2 to 9, with no failure. The count of showdowns, side pots and all-ins is recorded, so the run is known to have reached them.
+- [x] **Parity at import.** One run of RiverMind’s differential check at the pinned commit shows the imported TypeScript files byte-identical in behaviour to its Python reference. Recorded once in `docs/provenance.md`; after that FeltPrep’s own tests carry the engine.
+- [x] **Replay.** Every fixture and a sample of fuzzed hands round-trip through the history format to an identical state.
 - [ ] **Interface.** A browser test plays seeded hands and asserts that the action panel offers exactly the engine’s legal actions, with the engine’s minimum and maximum raise, including an all-in for less than a full raise and a spot where raising is not allowed.
 - [ ] **Server.** Any endpoint that accepts an action rejects one the engine does not offer, and a test proves it.
 
@@ -347,19 +347,21 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
   - [x] The README names the license. (`package.json` does not exist yet, so naming it there moved to P1.1.)
   - Evidence: the commit that ticks this step. `LICENSE` is gnu.org’s `agpl-3.0.txt`, 34,523 bytes, SHA-256 `0d96a4ff…079abcb0`, byte-identical to the copy in the owner’s `lorehallow` repository; the documents’ links were rechecked by script. There is no suite to run yet.
 
-- [ ] **P1.4 · Import the rules specification and the engine** · Depends on: P1.1, P1.3
-  - [ ] `docs/rules.md` is imported from RiverMind at a pinned commit, keeping every rule the engine implements and marking table-only rules (joining, button movement with empty seats, timeouts) as not used by FeltPrep.
-  - [ ] The engine is imported at the same commit: cards, evaluator, state, pots, seating, history, view, the fuzzer, the test helpers, `rules.json` and their specs. The evaluator keeps its Deuces header and `licenses/Deuces.txt` is added.
-  - [ ] The engine is browser-safe: the secure random source is injected, no engine file imports a Node module, and a browser-mode test deals and plays a hand.
-  - [ ] Every imported file is listed in `docs/provenance.md` with its source path, commit and license, and what was changed.
-  - [ ] Commands exist for the long fuzz and the benchmark, and are in AGENTS.md section 7.
-  - [ ] Gate A’s engine items pass: all imported specs; all 33 fixtures; 100,000 fuzzed hands at each seat count from 2 to 9, with its counts recorded; history round trips; and one parity run against RiverMind’s Python reference at the pinned commit, recorded in `docs/provenance.md`.
-  - [ ] The benchmark’s result on this Mac is recorded in the evidence line.
+- [x] **P1.4 · Import the rules specification and the engine** · Depends on: P1.1, P1.3
+  - [x] `docs/rules.md` is imported from RiverMind at a pinned commit, keeping every rule the engine implements and marking table-only rules (joining, button movement with empty seats, timeouts) as not used by FeltPrep.
+  - [x] The engine is imported at the same commit: cards, evaluator, state, pots, seating, history, view, the fuzzer, the test helpers, `rules.json` and their specs. The evaluator keeps its Deuces header and `licenses/Deuces.txt` is added.
+  - [x] The engine is browser-safe: the secure random source is injected, no engine file imports a Node module, and a browser-mode test deals and plays a hand.
+  - [x] Every imported file is listed in `docs/provenance.md` with its source path, commit and license, and what was changed.
+  - [x] Commands exist for the long fuzz and the benchmark, and are in AGENTS.md section 7.
+  - [x] Gate A’s engine items pass: all imported specs; all 33 fixtures; 100,000 fuzzed hands at each seat count from 2 to 9, with its counts recorded; history round trips; and one parity run against RiverMind’s Python reference at the pinned commit, recorded in `docs/provenance.md`.
+  - [x] The benchmark’s result on this Mac is recorded in the evidence line.
+  - Evidence: the commit that ticks this step, importing RiverMind `233b9c6` into `web/src/lib/engine/`. Full gate from a clean copy (228 Vitest tests, among them the 33 fixtures and 3 engine tests in Chromium; 18 Playwright tests); `pnpm run engine:parity -- --all-five` byte-identical with RiverMind’s Python on 5,000 hands and every evaluator digest; `pnpm run engine:fuzz` passed 800,000 hands in 274 s, from 63,681 showdowns at 2 seats to 91,261 hands with side pots and 5,487 odd-chip splits at 9 (`docs/benchmarks.md` does not exist yet, so the counts are in the handoff entry); `pnpm run engine:bench -- --hands 5000 --repeats 3` on this Mac (Apple Silicon, Node 26.13.1, load average 37 from other work) gave a median of 64,558, 34,145 and 39,749 hands a second at 2, 6 and 9 seats.
 
 - [ ] **P1.5 · Heads-up short-stack fixtures** · Depends on: P1.4
   - [ ] At least eight new hand-worked fixtures cover heads-up play at 2 to 15 big blinds: a jam and a fold, a jam and a call with each seat winning, a tied showdown that splits the pot, a call for less than the jam with the excess returned, and both button positions. One more covers a stack shorter than the big blind, below that range.
   - [ ] No heads-up fixture expects an odd chip. With two players, returning the uncalled excess (rule 9.1) leaves equal contributions, so the pot is even and a tie splits it exactly. Odd chips (rule 11.2) stay covered by the imported fixtures with three or more seats, and a test asserts that those fixtures are still present and passing.
   - [ ] Each fixture’s expected stacks are derived in a comment from the numbered rules, not from engine output.
+  - [ ] **Gate A’s rules trace.** Every rule kept in `docs/rules.md` has a fixture with hand-worked stacks, and a test maps each rule number to its fixtures, so a rule without one fails. At import (P1.4) these kept rules had no fixture naming them: 1.1 to 1.4, 2.1, 3.1, 4.3, 5.1 to 5.3, 6.1 to 6.3, 6.5, 7.1, 7.3, 7.5 to 7.7, 8.3, 10.1, 10.2 and 12.4. Several have rule tests in `rules.spec.ts` but no fixture; rule 10 has fixtures named “10”.
 
 ## Phase 2 · Reference math
 
@@ -568,6 +570,14 @@ Every session ends by prepending one entry to the log below, in this shape and i
 ```
 
 ## Handoff log
+
+### 2026-11-24 · P1.4 · Rules and engine imported from RiverMind
+
+- **Completed:** `docs/rules.md` and the engine from RiverMind `233b9c6`, now in `web/src/lib/engine/`; Web Crypto `cryptoRandom`; `engine:fuzz`, `engine:bench`, `engine:parity`; a property test applying every offered action; provenance with per-file hashes, GPL and Deuces notices.
+- **Verified:** gate from a clean copy; parity byte-identical with Python, all five-card hands included; fuzz of 800,000 hands passed: per seat count 2 to 9, side-pot hands 0, 21,637, 42,119, 58,583, 71,390, 80,606, 86,871, 91,261 and odd-chip splits 0, 841, 1,239, 2,042, 2,693, 3,702, 4,573, 5,487.
+- **Open decisions:** none touched.
+- **Next ready task:** P1.5: write the heads-up short-stack fixtures by hand from the rules.
+- **Plan changes:** P1.5 gains Gate A’s rules trace, with the rules that had no fixture at import.
 
 ### 2026-11-24 · P1.2 · Continuous integration
 

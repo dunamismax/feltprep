@@ -26,7 +26,10 @@
 		"test:watch": "vitest",
 		"e2e": "playwright test",
 		"db:generate": "drizzle-kit generate",
-		"db:migrate": "node --env-file-if-exists=.env scripts/db-migrate.ts"
+		"db:migrate": "node --env-file-if-exists=.env scripts/db-migrate.ts",
+		"engine:fuzz": "node scripts/engine-fuzz.ts",
+		"engine:bench": "node scripts/engine-bench.ts",
+		"engine:parity": "node scripts/engine-parity.ts"
 	},
 	"devDependencies": {
 		"@eslint/js": "10.0.1",

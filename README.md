@@ -4,7 +4,7 @@
 
 | | |
 | --- | --- |
-| **Status** | Early development. The app scaffold builds, tests and serves a placeholder page; nothing is playable yet. |
+| **Status** | Early development. The app builds, tests and serves a placeholder page, and the rules engine is imported and verified; nothing is playable yet. |
 | **Plan and progress** | [BUILD.md](BUILD.md), starting at **Now** |
 | **How work is done** | [AGENTS.md](AGENTS.md) |
 | **Home** | `feltprep.com` and `feltprep.app` are registered and point at the server that will host the app. Neither serves FeltPrep yet. |
@@ -56,7 +56,7 @@ One reference answer serves the study view, the drill and the review of a spot, 
 
 SvelteKit 3 with Svelte 5 and strict TypeScript, styled with Tailwind CSS 4, on Node through `adapter-node`, with PostgreSQL 18 and Drizzle ORM, behind Caddy on the owner’s own server. This is the stack of the owner’s two reference projects, [RiverMind Poker](https://github.com/dunamismax/rivermind-poker) and [C From The Ground Up](https://github.com/dunamismax/c-from-the-ground-up).
 
-FeltPrep plans to reuse RiverMind’s tested no-limit rules engine and hand evaluator, and some of its practice opponents. Each import is checked for its license and origin first; [BUILD.md](BUILD.md#rivermind-reuse-assessment) has the assessment. FeltPrep’s interface, branding and artwork are its own.
+FeltPrep reuses RiverMind’s tested no-limit rules engine and hand evaluator, imported at a pinned commit and checked against RiverMind’s own reference, and plans to reuse some of its practice opponents. Each import is checked for its license and origin first; [BUILD.md](BUILD.md#rivermind-reuse-assessment) has the assessment. FeltPrep’s interface, branding and artwork are its own.
 
 ## Working on the project
 

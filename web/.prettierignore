@@ -8,3 +8,6 @@ bun.lockb
 # Miscellaneous
 /static/
 /drizzle/
+
+# Imported fixtures stay byte-identical to their source (docs/provenance.md)
+/src/lib/engine/rules.json
