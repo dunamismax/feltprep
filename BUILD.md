@@ -10,13 +10,13 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 
 | | |
 | --- | --- |
-| **Current phase** | [Phase 1 · Foundation](#phase-1--foundation): P1.1 to P1.4 done; P1.5 closes the phase. |
-| **Next step** | **P1.5 · Heads-up short-stack fixtures**, with Gate A’s rules trace. P2.1 (grading contract) is also ready. |
+| **Current phase** | [Phase 2 · Reference math](#phase-2--reference-math), not started. Phase 1 is complete. |
+| **Next step** | **P2.1 · Spot, solution and grading contract.** It needs no decision from the owner; P2.2 (exact equities) is also ready. |
 | **In progress** | Nothing. |
 | **Background run** | None. |
 | **Waiting on the owner** | Nothing blocks the next step. Q-12 (terms for lesson text and artwork) is needed by P3.1 and P3.2. |
 | **Live** | Nothing is deployed. `feltprep.com` and `feltprep.app` point at the host through Cloudflare DNS. |
-| **`main`** | The app in `web/` with RiverMind’s engine imported and verified in `web/src/lib/engine/`, its gate and CI, on 2026-11-24. `origin` pushes to GitHub and Codeberg. |
+| **`main`** | Phase 1: the app in `web/`, the engine verified against Gate A’s engine items, its gate and CI, on 2026-11-24. `origin` pushes to GitHub and Codeberg. |
 | **Last updated** | 2026-11-24 |
 
 ## How to work this file
@@ -242,8 +242,8 @@ A gate is a fixed set of checks with thresholds. A step that names a gate passes
 
 No player can take an illegal action, and every legal one is offered with the right amounts.
 
-- [ ] **Rules trace.** Every rule kept in `docs/rules.md` has at least one fixture, with expected stacks worked out by hand.
-- [ ] **Fixtures.** All imported fixtures pass, plus FeltPrep’s own heads-up short-stack fixtures.
+- [x] **Rules trace.** Every rule kept in `docs/rules.md` has at least one fixture, with expected stacks worked out by hand.
+- [x] **Fixtures.** All imported fixtures pass, plus FeltPrep’s own heads-up short-stack fixtures.
 - [x] **Properties.** After every action: chips conserved, no negative stack, every offered action applies, every other action is rejected, every hand ends, pots equal contributions.
 - [x] **Long fuzz.** At least 100,000 random hands at each seat count from 2 to 9, with no failure. The count of showdowns, side pots and all-ins is recorded, so the run is known to have reached them.
 - [x] **Parity at import.** One run of RiverMind’s differential check at the pinned commit shows the imported TypeScript files byte-identical in behaviour to its Python reference. Recorded once in `docs/provenance.md`; after that FeltPrep’s own tests carry the engine.
@@ -298,7 +298,7 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
 
 ## Phase overview
 
-- [ ] **Phase 1 · Foundation.** A running app on the settled stack and a verified rules engine. *Outcome: a clean clone builds, tests and serves a page, and plays legal hands in a test.*
+- [x] **Phase 1 · Foundation.** A running app on the settled stack and a verified rules engine. *Outcome: a clean clone builds, tests and serves a page, and plays legal hands in a test.*
 - [ ] **Phase 2 · Reference math.** Exact equities, a verified solver core and the jam-or-fold solution. *Outcome: FeltPrep can grade one family of decisions, with the evidence recorded.*
 - [ ] **Phase 3 · The first loop (milestone M1).** One idea taken through lesson, study, drill, practice and review on a phone. *Outcome: a usable trainer for short-stack heads-up play.*
 - [ ] **Phase 4 · Production.** The app live on its domain with a repeatable deploy. *Outcome: M1 on `feltprep.com`, tried by a few players.* Host preparation (P4.1, P4.2) needs only P1.1 and the owner, so it may run beside Phases 2 and 3; the first public deploy (P4.3) waits for M1 to pass (P3.7).
@@ -320,9 +320,9 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
 
 **Exit criteria**
 
-- [ ] A clean clone passes the full gate with one documented command sequence.
-- [ ] Gate A’s engine items (rules trace, fixtures, properties, long fuzz, parity at import, replay) pass and are recorded.
-- [ ] `docs/provenance.md` lists every imported file with its source commit and license.
+- [x] A clean clone passes the full gate with one documented command sequence.
+- [x] Gate A’s engine items (rules trace, fixtures, properties, long fuzz, parity at import, replay) pass and are recorded.
+- [x] `docs/provenance.md` lists every imported file with its source commit and license.
 
 - [x] **P1.1 · Scaffold the app** · Depends on: none
   - [x] `web/` is created with the current `sv create` (SvelteKit 3, TypeScript) and the add-ons Tailwind CSS 4, Drizzle for PostgreSQL, ESLint, Prettier, Vitest, Playwright and `adapter-node`. Current documentation was consulted first, and the result has the SvelteKit 3 layout: configuration in `vite.config.ts`, no `svelte.config.js`.
@@ -357,11 +357,12 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
   - [x] The benchmark’s result on this Mac is recorded in the evidence line.
   - Evidence: the commit that ticks this step, importing RiverMind `233b9c6` into `web/src/lib/engine/`. Full gate from a clean copy (228 Vitest tests, among them the 33 fixtures and 3 engine tests in Chromium; 18 Playwright tests); `pnpm run engine:parity -- --all-five` byte-identical with RiverMind’s Python on 5,000 hands and every evaluator digest; `pnpm run engine:fuzz` passed 800,000 hands in 274 s, from 63,681 showdowns at 2 seats to 91,261 hands with side pots and 5,487 odd-chip splits at 9 (`docs/benchmarks.md` does not exist yet, so the counts are in the handoff entry); `pnpm run engine:bench -- --hands 5000 --repeats 3` on this Mac (Apple Silicon, Node 26.13.1, load average 37 from other work) gave a median of 64,558, 34,145 and 39,749 hands a second at 2, 6 and 9 seats.
 
-- [ ] **P1.5 · Heads-up short-stack fixtures** · Depends on: P1.4
-  - [ ] At least eight new hand-worked fixtures cover heads-up play at 2 to 15 big blinds: a jam and a fold, a jam and a call with each seat winning, a tied showdown that splits the pot, a call for less than the jam with the excess returned, and both button positions. One more covers a stack shorter than the big blind, below that range.
-  - [ ] No heads-up fixture expects an odd chip. With two players, returning the uncalled excess (rule 9.1) leaves equal contributions, so the pot is even and a tie splits it exactly. Odd chips (rule 11.2) stay covered by the imported fixtures with three or more seats, and a test asserts that those fixtures are still present and passing.
-  - [ ] Each fixture’s expected stacks are derived in a comment from the numbered rules, not from engine output.
-  - [ ] **Gate A’s rules trace.** Every rule kept in `docs/rules.md` has a fixture with hand-worked stacks, and a test maps each rule number to its fixtures, so a rule without one fails. At import (P1.4) these kept rules had no fixture naming them: 1.1 to 1.4, 2.1, 3.1, 4.3, 5.1 to 5.3, 6.1 to 6.3, 6.5, 7.1, 7.3, 7.5 to 7.7, 8.3, 10.1, 10.2 and 12.4. Several have rule tests in `rules.spec.ts` but no fixture; rule 10 has fixtures named “10”.
+- [x] **P1.5 · Heads-up short-stack fixtures** · Depends on: P1.4
+  - [x] At least eight new hand-worked fixtures cover heads-up play at 2 to 15 big blinds: a jam and a fold, a jam and a call with each seat winning, a tied showdown that splits the pot, a call for less than the jam with the excess returned, and both button positions. One more covers a stack shorter than the big blind, below that range.
+  - [x] No heads-up fixture expects an odd chip. With two players, returning the uncalled excess (rule 9.1) leaves equal contributions, so the pot is even and a tie splits it exactly. Odd chips (rule 11.2) stay covered by the imported fixtures with three or more seats, and a test asserts that those fixtures are still present and passing.
+  - [x] Each fixture’s expected stacks are derived in a comment from the numbered rules, not from engine output.
+  - [x] **Gate A’s rules trace.** Every rule kept in `docs/rules.md` has a fixture with hand-worked stacks, and a test maps each rule number to its fixtures, so a rule without one fails. At import (P1.4) these kept rules had no fixture naming them: 1.1 to 1.4, 2.1, 3.1, 4.3, 5.1 to 5.3, 6.1 to 6.3, 6.5, 7.1, 7.3, 7.5 to 7.7, 8.3, 10.1, 10.2 and 12.4. Several have rule tests in `rules.spec.ts` but no fixture; rule 10 has fixtures named “10”.
+  - Evidence: the commit that ticks this step. `web/src/lib/engine/fixtures.ts` holds 15 fixtures, each derived in a comment before it was run: 9 heads-up hands at 2 to 15 big blinds (both buttons, each seat winning, a tie, a call for less with the excess returned, jam and fold, a minimum raise that is all-in, a five-high straight) and one below a big blind, then 5 for rules no imported fixture named (one of them a tenth heads-up hand at 10 big blinds); their scripts also assert the exact legal actions at 26 decisions. All matched on the first run, and a deliberately wrong expectation failed. `rules-trace.spec.ts` maps all 42 kept rules to fixtures and fails if one has none (checked by removing one). Full gate from a clean copy: 294 Vitest tests, 18 Playwright tests. The engine did not change, so the long fuzz was not rerun.
 
 ## Phase 2 · Reference math
 
@@ -570,6 +571,14 @@ Every session ends by prepending one entry to the log below, in this shape and i
 ```
 
 ## Handoff log
+
+### 2026-11-24 · P1.5 · Heads-up fixtures and the rules trace; Phase 1 complete
+
+- **Completed:** 15 hand-worked fixtures in `web/src/lib/engine/fixtures.ts`, with a runner that also asserts legal actions; the odd-chip checks; `rules-trace.spec.ts`. Phase 1’s exit criteria are ticked.
+- **Verified:** every fixture matched its derivation on the first run; a wrong expectation and a removed rule each failed as they should; full gate from a clean clone and in CI.
+- **Open decisions:** none touched.
+- **Next ready task:** P2.1: write `docs/grading.md` defining a spot, a solution artifact, its manifest and the registry.
+- **Plan changes:** none.
 
 ### 2026-11-24 · P1.4 · Rules and engine imported from RiverMind
 

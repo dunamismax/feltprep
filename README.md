@@ -4,7 +4,7 @@
 
 | | |
 | --- | --- |
-| **Status** | Early development. The app builds, tests and serves a placeholder page, and the rules engine is imported and verified; nothing is playable yet. |
+| **Status** | Early development. The foundation is done: the app builds, tests and serves a placeholder page, and the rules engine is imported and verified. Nothing is playable yet. |
 | **Plan and progress** | [BUILD.md](BUILD.md), starting at **Now** |
 | **How work is done** | [AGENTS.md](AGENTS.md) |
 | **Home** | `feltprep.com` and `feltprep.app` are registered and point at the server that will host the app. Neither serves FeltPrep yet. |
