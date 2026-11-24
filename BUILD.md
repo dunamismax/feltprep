@@ -61,7 +61,7 @@ Rows marked **Proposal** are this plan’s recommendation, not yet confirmed by 
 | Solver capability 1 | Exact equities: hand against hand, hand against range, range against range | Proposal |
 | Solver capability 2 | The heads-up jam-or-fold equilibrium at each depth from 2 to 15 big blinds, precomputed | Proposal |
 | Solver capability 3 | Heads-up post-flop subgame solving for a stated pair of ranges and bet sizes: river spots on demand, turn and flop spots as a precomputed library | Proposal (Q-6 for how it is computed) |
-| Spot library | One pre-flop line (button opens, big blind calls) on at least 12 flops chosen to cover distinct textures, each solved to the river | Proposal; the count is set at P5.1 from measured solve cost |
+| Spot library | One pre-flop line (button opens, big blind calls) on at least 12 flops chosen to cover distinct textures, each solved to the river | Proposal; the count and the choice of flops are set at P5.5 from measured solve cost (P5.1) and the M1 pilot’s findings (P4.5) |
 | Curriculum | At least 8 lessons, each tied to at least one spot with a study view and a drill | Proposal |
 | Practice opponents | A rule-based opponent and a reference-strategy opponent for the jam-or-fold game; RiverMind’s trained heads-up champion at 100 big blinds if Q-9 is answered yes | Proposal; champion **Open** (Q-9) |
 | Devices | Phone first (375 × 812 and 360 × 640), then tablet and desktop, in Chromium, Firefox and WebKit | Proposal |
@@ -114,7 +114,7 @@ Use each default until the owner decides otherwise. **Needed by** names the firs
 | Q-4 | **Accounts.** Guest-only, or sign-in to keep progress across devices? | No sign-in. Drill progress in browser storage; a signed guest cookie for server-stored practice hands. | P3.4, P3.5 |
 | Q-5 | **Business model.** Free, paid or mixed? | Free, with no payments, ads or third-party trackers in the first release. | P7 |
 | Q-6 | **Solver compute.** Is the solver core TypeScript on Node, as the settled stack suggests, or does it need a faster core or Python offline? | TypeScript on Node. P5.1 measures a reference river, turn and flop solve; if a solve cannot reach its Gate B threshold inside the budget, the session records the gap and proposes an alternative for the owner. | P5.1 |
-| Q-7 | **Grading thresholds.** How close to equilibrium must a reference be, and how large a loss counts as a mistake? | Exploitability at most 0.5% of the starting pot for a precomputed post-flop spot, 1% for an on-demand river solve, and 0.001 big blinds per hand for jam-or-fold. An action is **acceptable** if the reference plays it at least 5% of the time with that hand or it loses at most 1% of the pot; an **inaccuracy** up to 5%; a **mistake** above that. A loss smaller than the reference’s own exploitability is never shown as a mistake. | P2.5 |
+| Q-7 | **Grading thresholds.** How close to equilibrium must a reference be, and how large a loss counts as a mistake? | Exploitability at most 0.5% of the starting pot for a precomputed post-flop spot, 1% for an on-demand river solve, and 0.001 big blinds per hand for jam-or-fold. An action is **acceptable** if the reference plays it at least 5% of the time with that hand or it loses at most 1% of the pot; an **inaccuracy** up to 5%; a **mistake** above that. A loss smaller than the reference’s own exploitability is never shown as a mistake, and a loss within that hand’s recorded margin of a band’s boundary (B-12) gets the kinder band. | P2.5 |
 | Q-8 | **Range assumptions for post-flop spots.** A post-flop solve needs both players’ starting ranges, and the first release does not solve pre-flop at 100 big blinds. Where do they come from? | Ranges written for FeltPrep and shown to the player as assumptions. The alternative is the pre-flop frequencies of RiverMind’s heads-up champion (lossless before the flop), recorded with the model’s hash. Either way a grade is conditional on the ranges shown. | P5.5 |
 | Q-9 | **RiverMind’s trained champions as practice opponents.** Serve them from FeltPrep? | The heads-up champion `hu-m1-s0-1024m` at P6.1, after measuring memory on the host (its bundle is about 450 MB in memory). The six-seat champion only if that measurement leaves room. Never for grading. | P6.1 |
 | Q-10 | **Server setup.** May agents provision the host (database, roles, units, Caddy fragment) without asking each time, as RiverMind’s D-10 allows there? | No. Every server change needs the owner’s word until they say otherwise. | P4.1 |
@@ -221,6 +221,14 @@ A reference may grade a player’s decision only when **all** of these are recor
 6. **Sanity invariants hold:** every strategy sums to one; both players’ values add up to the pot; no hand that cannot lose is folded.
 7. **Reproducibility.** The manifest records the settings, the seed, the commit and every file’s SHA-256, and a second run from those inputs gives the same bytes.
 8. **Both positions tested.** The grading path is exercised from each seat with fixed decisions whose verdicts were derived outside the code.
+9. **Per-hand action values checked.** The values a grade uses pass B-11, each hand carries the margin B-12 measured for it, and a hand outside the stated ranges at that decision is not graded.
+
+**Why item 9 is separate from item 3.** Exploitability is one number for the whole strategy, weighted by how often each hand reaches each decision. It can be low while the action values of a rarely held hand are wrong, and a grade is a statement about one hand. So the strategy and the grades are qualified separately:
+
+- **Values are computed, not estimated.** The value of each action for each hand is calculated exactly from the finished strategies by the evaluator. A solver’s running averages are never used for a grade.
+- **Values are checked hand by hand** against something derived separately (B-11), including the hands the range holds least often.
+- **Close calls are treated as close.** A second, longer solve shows how much each hand’s loss moves (B-12). That movement is the hand’s margin, and a loss within the margin of a band’s boundary gets the kinder band.
+- **Out-of-range hands are not graded.** If the player reaches a decision with a hand the spot’s ranges do not contain there, or contain less often than the contract’s minimum, the reference has nothing reliable to say about it. The verdict is “not graded: outside this spot’s ranges”.
 
 A reference that misses any item may still be shown as study material labelled “unverified”, but it grades nothing.
 
@@ -259,9 +267,12 @@ A grade is shown only when it is backed by these benchmarks. **Expected values c
 | B-8 | library spots meet the bar | every turn and flop spot in the library | exploitability under the Q-7 threshold, and a second run reproduces every file’s hash | B-2’s evaluator |
 | B-9 | grades do not drift | a fixed file of decisions with verdicts derived by hand for B-3 and B-5 spots, from both seats | every verdict and loss matches | derivations in the fixture |
 | B-10 | on-demand solving is usable | 95th-percentile time of a reference river solve on the host | under the budget P5.1 sets from measurement (proposal: 5 seconds) | measurement |
+| B-11 | each hand’s action values are right, not only the strategy on average | every hand at every graded decision of the B-3 and B-5 spots; for post-flop spots, a sample of hands at each graded decision that includes the hands the range holds least often | agreement with a separately derived value: to 1e-9 for jam-or-fold, where it follows from the equity table and the opponent’s range, and within 0.1% of the pot elsewhere | a closed form; a second, separately written calculation; the independent tool on the B-7 spots |
+| B-12 | a verdict near a threshold is not an accident of one solve | each solution solved again with twice the iterations, and a different seed where the solver uses one | no hand’s verdict moves between acceptable and mistake; every hand whose band changes at all is listed; and the change in each hand’s loss is stored as its margin | the second solve |
 
 Rules for this gate:
 
+- **Exploitability qualifies the strategy; B-11 and B-12 qualify the grades.** Neither stands in for the other.
 - **No row, no claim.** A statement about accuracy anywhere in the product points at a row here. The first release makes only the claims these rows support.
 - **The claim is about the stated game.** “Equilibrium for jam-or-fold at 10 big blinds” is supported by B-5. “The best play at 10 big blinds” is not, because a real player may also limp or raise small, and the lesson says so.
 - **Results are recorded** in `docs/benchmarks.md` with the commit, the machine and the command, and each solution’s manifest carries its own exploitability.
@@ -269,7 +280,7 @@ Rules for this gate:
 
 ### Gate C · Mobile practice flow
 
-A player can complete the loop on a phone.
+A player can complete the loop on a phone. M1 (P3.7) passes every item except the two that name a later step: on-demand solving, which does not exist until P5.4, and the real-phone pass (P7.2).
 
 - [ ] **Journey.** One browser test goes lesson → study → drill → practice hand → review → back to the lesson, on seeded deals, against the production build.
 - [ ] **Sizes and engines.** It passes at 375 × 812 and 360 × 640 with touch, in Chromium, Firefox and WebKit, and at a desktop size.
@@ -277,7 +288,8 @@ A player can complete the loop on a phone.
 - [ ] **Controls in reach.** While a decision is pending, every action control is fully inside the viewport without scrolling, with the board and the player’s cards visible at the same time.
 - [ ] **Targets.** Every action control is at least 44 × 44 CSS pixels (proposal), with at least 8 pixels between neighbouring actions.
 - [ ] **Nothing moves under a finger.** Action controls have the same positions before and after the turn arrives, and after feedback appears.
-- [ ] **Fast feedback.** A grade from a precomputed spot appears within 200 ms of the tap in Chromium with the processor throttled four times (proposal). A slower on-demand solve shows progress and can be cancelled.
+- [ ] **Fast feedback.** A grade from a precomputed spot appears within 200 ms of the tap in Chromium with the processor throttled four times (proposal).
+- [ ] **Slow work shows itself** (from P5.4; not part of M1). An on-demand solve shows progress, can be cancelled, and leaves the rest of the page usable while it runs.
 - [ ] **Resume.** Reloading mid-drill and mid-hand returns to the same decision.
 - [ ] **Accessibility.** No axe-core WCAG 2.2 AA violation on any page of the journey, in both themes, and the journey can be completed with a keyboard.
 - [ ] **A real phone.** Before the first release, one pass of the journey on a physical phone is recorded, with the device and browser named. Simulators do not satisfy this item.
@@ -289,12 +301,14 @@ A player can complete the loop on a phone.
 - [ ] **Phase 1 · Foundation.** A running app on the settled stack and a verified rules engine. *Outcome: a clean clone builds, tests and serves a page, and plays legal hands in a test.*
 - [ ] **Phase 2 · Reference math.** Exact equities, a verified solver core and the jam-or-fold solution. *Outcome: FeltPrep can grade one family of decisions, with the evidence recorded.*
 - [ ] **Phase 3 · The first loop (milestone M1).** One idea taken through lesson, study, drill, practice and review on a phone. *Outcome: a usable trainer for short-stack heads-up play.*
-- [ ] **Phase 4 · Production.** The app live on its domain with a repeatable deploy. *Outcome: M1 on `feltprep.com`.* Depends only on P1.1 and the owner, so it may run beside Phases 2 and 3.
+- [ ] **Phase 4 · Production.** The app live on its domain with a repeatable deploy. *Outcome: M1 on `feltprep.com`, tried by a few players.* Host preparation (P4.1, P4.2) needs only P1.1 and the owner, so it may run beside Phases 2 and 3; the first public deploy (P4.3) waits for M1 to pass (P3.7).
 - [ ] **Phase 5 · Post-flop solver.** Heads-up subgame solving, a cross-checked spot library and on-demand river solves. *Outcome: study and drills for post-flop spots at 100 big blinds.*
 - [ ] **Phase 6 · Full practice and curriculum.** Practice at 100 big blinds, graded review inside library spots, the lesson set and progress. *Outcome: the whole first-release loop.*
 - [ ] **Phase 7 · Hardening and the first release.** Accessibility, performance, security, backups and the release checklist. *Outcome: the first release.*
 
 **The first end-to-end milestone is M1, “one spot, end to end”,** the exit of Phase 3: on a phone, a player reads the lesson on jamming or folding heads-up at 10 big blinds, studies the solved chart, drills it with graded feedback, plays full short-stack hands against a practice opponent, and reviews a hand whose pre-flop decision is graded against the same chart.
+
+**M1 is also the pilot.** Once it is live, a few players try it (P4.5). Whether they can use in a full hand what the lesson and drill taught, and whether review points them at the right drill, says more about FeltPrep’s value than the size of the first spot library, so the pilot’s findings shape Phases 5 and 6.
 
 **The first implementation task is [P1.1 · Scaffold the app](#phase-1--foundation).** A fresh agent can start it with no further input.
 
@@ -341,7 +355,8 @@ A player can complete the loop on a phone.
   - [ ] The benchmark’s result on this Mac is recorded in the evidence line.
 
 - [ ] **P1.5 · Heads-up short-stack fixtures** · Depends on: P1.4
-  - [ ] At least eight new hand-worked fixtures cover heads-up play at 2 to 15 big blinds: a jam and a fold, a jam and a call with each seat winning, a split pot with an odd chip, a call for less than the jam with the excess returned, and both button positions. One more covers a stack shorter than the big blind, below that range.
+  - [ ] At least eight new hand-worked fixtures cover heads-up play at 2 to 15 big blinds: a jam and a fold, a jam and a call with each seat winning, a tied showdown that splits the pot, a call for less than the jam with the excess returned, and both button positions. One more covers a stack shorter than the big blind, below that range.
+  - [ ] No heads-up fixture expects an odd chip. With two players, returning the uncalled excess (rule 9.1) leaves equal contributions, so the pot is even and a tie splits it exactly. Odd chips (rule 11.2) stay covered by the imported fixtures with three or more seats, and a test asserts that those fixtures are still present and passing.
   - [ ] Each fixture’s expected stacks are derived in a comment from the numbered rules, not from engine output.
 
 ## Phase 2 · Reference math
@@ -350,12 +365,13 @@ A player can complete the loop on a phone.
 
 **Exit criteria**
 
-- [ ] Benchmarks B-1 to B-5 and B-9 pass, and `docs/benchmarks.md` records them.
-- [ ] The jam-or-fold solution for 2 to 15 big blinds is in the solution registry with a manifest that meets all eight items of the grading gate.
+- [ ] Benchmarks B-1 to B-5, B-9, B-11 and B-12 pass, and `docs/benchmarks.md` records them.
+- [ ] The jam-or-fold solution for 2 to 15 big blinds is in the solution registry with a manifest that meets all nine items of the grading gate.
 
 - [ ] **P2.1 · Spot, solution and grading contract** · Depends on: P1.1 (it imports nothing)
   - [ ] `docs/grading.md` defines a spot (every field of grading-gate item 1), a solution artifact (per-hand action frequencies and values, versioned with a `"format"` field), its manifest, and the solution registry with its hash check.
-  - [ ] It defines a verdict: the action taken, the reference’s frequencies and values for that hand, the loss, the band (Q-7) and the “not graded” case with its reason.
+  - [ ] It defines a verdict: the action taken, the reference’s frequencies and values for that hand, the loss, the hand’s margin, the band (Q-7) and the “not graded” case with its reason.
+  - [ ] It says where a grade’s numbers come from: action values computed exactly from the finished strategies, each hand’s margin (B-12) and how often the range holds the hand at that decision, all stored in the artifact, with the minimum below which a hand is not graded.
   - [ ] TypeScript types and a reader that refuses an artifact whose hashes or format do not match, with tests for each refusal.
 
 - [ ] **P2.2 · Exact equities** · Depends on: P1.4
@@ -372,10 +388,12 @@ A player can complete the loop on a phone.
   - [ ] The game is stated in `docs/grading.md`: heads-up, blinds of half and one big blind, no ante; the button jams or folds; the big blind calls or folds; effective stacks from 2 to 15 big blinds in whole steps.
   - [ ] The solution for every depth is committed under `solutions/` with a manifest and a registry entry, and a second build reproduces its hashes.
   - [ ] B-5 passes, with the published chart it was compared against cited and every difference listed.
+  - [ ] B-11 and B-12 pass at every depth: each hand class’s value for jamming, folding and calling matches the value derived from the equity table and the opponent’s range, and each class’s margin is stored.
   - [ ] The lesson’s caveat is recorded here for P3.2: this is the equilibrium of the jam-or-fold game, and where that simplification weakens as stacks grow.
 
 - [ ] **P2.5 · Grading** · Depends on: P2.4
-  - [ ] A pure function turns a spot, a hand and an action into a verdict under the Q-7 bands, and returns “not graded” with a reason when no registered reference covers the decision.
+  - [ ] A pure function turns a spot, a hand and an action into a verdict under the Q-7 bands, and returns “not graded” with a reason when no registered reference covers the decision or the hand is outside the spot’s ranges.
+  - [ ] A loss within the hand’s margin of a band’s boundary gets the kinder band, and tests cover a hand just inside and just outside each boundary.
   - [ ] A function decides whether a decision in a full hand falls inside the jam-or-fold game (stacks, position and prior action), tested from both seats, including hands that leave the game by limping or raising small.
   - [ ] B-9 passes.
 
@@ -385,7 +403,7 @@ A player can complete the loop on a phone.
 
 **Exit criteria**
 
-- [ ] Gate C passes on the M1 journey.
+- [ ] Gate C’s M1 items pass on the M1 journey: every item except on-demand solving (P5.4) and the real-phone pass (P7.2).
 - [ ] Gate A’s interface and server items pass.
 - [ ] Every grade shown in the journey comes from the P2.4 solution, and a decision outside it is shown as “not graded”.
 
@@ -423,14 +441,14 @@ A player can complete the loop on a phone.
 
 - [ ] **P3.7 · M1 journey** · Depends on: P3.2 to P3.6
   - [ ] The Gate C journey test exists and passes in all six browser projects and at 360 × 640.
-  - [ ] Every item of Gate C except the real-phone pass is ticked, with results in the evidence line.
+  - [ ] Every Gate C item that applies at M1 passes, with results in the evidence line: all but on-demand solving (P5.4) and the real-phone pass (P7.2).
   - [ ] The README’s status says what a visitor can now do.
 
 ## Phase 4 · Production
 
 **Goal.** M1 live on its domain, deployed the way the host’s other sites are.
 
-**Entry.** P1.1 is done. Every step here changes the server or public DNS, so each is an owner gate until Q-10 says otherwise.
+**Entry.** P1.1 is done, for host preparation (P4.1 and P4.2). The first public deploy (P4.3) also waits for M1 (P3.7), so the domain’s first release is the milestone that passed its gates. Every step that changes the server or public DNS is an owner gate until Q-10 says otherwise.
 
 **Exit criteria**
 
@@ -443,8 +461,16 @@ A player can complete the loop on a phone.
   - [ ] Recorded here: the app’s directory, service name, database and role names, and a loopback port confirmed free on the server itself (RiverMind uses 4320 and 4323, C From The Ground Up 4317, and others are taken).
   - [ ] The Cloudflare records for both domains are confirmed DNS-only, so Caddy’s automatic HTTPS applies, as C From The Ground Up’s D10 found for its domain; or the difference is recorded with what it changes.
 - [ ] **P4.2 · Deploy files and runbook** · Depends on: P4.1, Q-2 — a Caddy fragment for the canonical name and the redirects, a sandboxed systemd unit, database provisioning with separate owner, migration and web roles, a fix-forward deploy with a candidate check, a strict Content Security Policy, and `deploy/README.md`.
-- [ ] **P4.3 · First deploy** · Depends on: P4.2 · **Owner gate:** the deploy — the release serves on the domain; the live smoke test and the redirect checks pass.
+- [ ] **P4.3 · First deploy** · Depends on: P4.2, P3.7 · **Owner gate:** the deploy — the M1 release serves on the domain; the live smoke test and the redirect checks pass. A rehearsal deploy before M1 is the owner’s call and does not tick this step.
 - [ ] **P4.4 · Backups and upkeep** · Depends on: P4.3 — a nightly database dump with rotation, and the deploy recorded in **Now**.
+- [ ] **P4.5 · M1 pilot** · Depends on: P4.3 · **Needs the owner:** a few players (proposal: three to five) and their agreement to be observed
+  - [ ] Each player goes through the M1 journey on their own phone, without help.
+  - [ ] Recorded for each, in `docs/pilot-m1.md`, with no names: whether they finished the loop unaided and where they stalled; the share of their graded practice decisions that were acceptable, before and after the lesson and drill; whether review led them to a drill, and to the right one; and what they said they wanted next.
+  - [ ] Two questions are answered from that record. Can a player apply in a full practice hand what the lesson and drill taught? Does review tell them what to drill next?
+  - [ ] Each finding that calls for a change becomes a step or a criterion in this file. P5.5 (the size and choice of the spot library) and P6.4 (the lesson order) cite the findings.
+  - [ ] Nothing beyond what the app already stores is collected, and no third-party tool is added to observe players.
+
+  The pilot does not block the solver work of P5.1 to P5.4, which starts when Phase 2 is complete. It is not a Phase 4 exit criterion, because it waits on people; until it runs, it is listed under **Waiting on the owner** in **Now**.
 
 ## Phase 5 · Post-flop solver
 
@@ -454,15 +480,15 @@ A player can complete the loop on a phone.
 
 **Exit criteria**
 
-- [ ] B-6, B-7, B-8 and B-10 pass and are recorded.
+- [ ] B-6, B-7, B-8 and B-10 pass and are recorded, and B-11 and B-12 pass for every post-flop spot that grades.
 - [ ] The spot library is in the registry, and every spot meets the grading gate.
-- [ ] Study and drill work for a post-flop spot on a phone (Gate C on an extended journey).
+- [ ] Study and drill work for a post-flop spot on a phone: Gate C on an extended journey, now including its on-demand item.
 
 - [ ] **P5.1 · Solver design and measurements** · Depends on: P2.3 — `docs/solver.md`: trees built by playing bet sizes through the engine, per-hand strategies with exact card removal, the CFR variant, and measured time and memory for a reference river, turn and flop solve on this Mac and on the host. Settles Q-6, the library’s size and B-10’s budget.
-- [ ] **P5.2 · River solver** · Depends on: P5.1 — B-3 on the full solver and B-6.
+- [ ] **P5.2 · River solver** · Depends on: P5.1 — B-3 on the full solver, B-6, and B-11 and B-12 on the reference river spots.
 - [ ] **P5.3 · Independent cross-check** · Depends on: P5.2, Q-11 — the tool’s license read and recorded, a harness that converts a spot both ways, and B-7.
-- [ ] **P5.4 · On-demand river solving** · Depends on: P5.2 — a server endpoint with limits, cancellation and a cache keyed by the spot’s hash; B-10.
-- [ ] **P5.5 · Turn and flop solving and the spot library** · Depends on: P5.2, Q-8 — offline solves for the library’s flops with manifests and registry entries; range assumptions recorded with their source; B-8.
+- [ ] **P5.4 · On-demand river solving** · Depends on: P5.2 — a server endpoint with limits, cancellation and a cache keyed by the spot’s hash; B-10; and Gate C’s on-demand item, in a browser test at phone size.
+- [ ] **P5.5 · Turn and flop solving and the spot library** · Depends on: P5.2, Q-8 — offline solves for the library’s flops with manifests and registry entries; range assumptions recorded with their source; B-8, B-11 and B-12. The library’s size and choice of flops cite P5.1’s measurements and the M1 pilot’s findings (P4.5), or say that the pilot has not run.
 - [ ] **P5.6 · Study and drill for post-flop spots** · Depends on: P5.5 — the study view for a spot with a board and a range grid per action, drills that start on a library spot, and the journey extended.
 
 ## Phase 6 · Full practice and curriculum
@@ -502,7 +528,7 @@ A player can complete the loop on a phone.
 - [ ] Every lesson links to a study view and a drill, and every graded mistake in review links back to a lesson and a drill.
 - [ ] Gate A passes on the release commit.
 - [ ] Gate B: every benchmark row passes on the release commit, and `docs/benchmarks.md` records it.
-- [ ] Every reference that grades a decision is in the solution registry and meets all eight items of the grading gate.
+- [ ] Every reference that grades a decision is in the solution registry and meets all nine items of the grading gate.
 - [ ] Every decision without a qualified reference is shown as “not graded”, and a test proves no practice opponent’s output reaches a grade.
 - [ ] Gate C passes, including the recorded real-phone pass.
 - [ ] Every accuracy claim in the app and the README names a Gate B row.
@@ -540,6 +566,14 @@ Every session ends by prepending one entry to the log below, in this shape and i
 ```
 
 ## Handoff log
+
+### 2026-11-24 · Planning · Changes from a review of the plan
+
+- **Completed:** four plan corrections from a review the owner passed on; no code and no step ticked.
+- **Verified:** the odd-chip point against RiverMind’s rules 9.1 and 11.2 and its fixtures, which cover odd chips only with three or more seats. Links rechecked by script. No suite exists to run.
+- **Open decisions:** none raised. Q-7’s default gained a per-hand margin.
+- **Next ready task:** P1.1, unchanged.
+- **Plan changes:** (1) Gate C’s on-demand item moved to P5.4, since M1 has no on-demand solving; P4.3 now waits for P3.7. (2) P1.5 tests an ordinary heads-up tie: two players cannot produce an odd chip. (3) Grading-gate item 9 with B-11 and B-12: exploitability qualifies a strategy, not each hand’s values. (4) P4.5, a pilot of M1 with a few players, feeding P5.5 and P6.4.
 
 ### 2026-11-24 · P1.3 · License and provenance record
 
