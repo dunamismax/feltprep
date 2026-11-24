@@ -82,7 +82,7 @@ Four rules settle most design questions:
 
 - deploying, or changing anything on the server, DNS or Cloudflare;
 - creating accounts, OAuth apps or anything that costs money, and adding or changing a git remote;
-- choosing the project’s license (Q-1), and importing code, data, models, fonts or artwork before that choice is made;
+- changing the project’s license (D-9), importing anything whose terms `docs/provenance.md` does not clear, and committing lesson text or artwork before Q-12 is answered;
 - changing a settled decision, deleting an unfinished step, lowering an acceptance criterion or a threshold in a verification gate, or reordering phases. Raise these as an open decision instead;
 - telling players something about accuracy or strength that no benchmark in BUILD.md supports.
 
@@ -112,7 +112,7 @@ The stack is settled (D-2 in BUILD.md): SvelteKit 3 · Svelte 5 · strict TypeSc
 
 The host runs several sites under one web platform contract, `docs/web-platform.md` in the owner’s `ubuntu-vm-backup` repository, which both reference projects follow and which wins over this file where they differ. As both references record it on 2026-11-24: pnpm 12.18.0 and Node 26.13.1 at exact versions, every dependency pinned exactly at the host’s baseline, `pg` with `drizzle-orm/node-postgres` as the only database driver, the host PostgreSQL 18 cluster, and fix-forward deploys with a candidate check and no rollback. Read the contract itself before the first deploy work (P4.1); it is not checked out on the development Mac.
 
-**Proposed layout.** Nothing below exists yet. It is the proposal in [BUILD.md](BUILD.md#architecture-proposals); the session that creates a directory updates this section to match what it built.
+**Proposed layout.** Only the entries marked “exists” are there yet. The rest is the proposal in [BUILD.md](BUILD.md#architecture-proposals); the session that creates a directory updates this section to match what it built.
 
 ```text
 web/                       the SvelteKit app (the same place RiverMind keeps its app, so imported paths line up)
@@ -126,8 +126,9 @@ web/                       the SvelteKit app (the same place RiverMind keeps its
 content/lessons/           lessons as Markdown, kept in Git, prerendered
 solutions/                 small solution artifacts kept in Git, each with a manifest
 deploy/                    Caddy site, systemd unit, provisioning and deploy scripts, runbook
-docs/                      rules, grading, solver design, provenance, build history
-licenses/                  upstream notices for imported code
+docs/                      rules, grading, solver design, build history; provenance.md exists
+licenses/                  upstream notices for imported code (exists, empty but for its README)
+LICENSE                    the GNU AGPL, version 3: FeltPrep's code is AGPL-3.0-or-later (exists)
 artifacts/                 ignored by Git: large solves, equity tables, opponent bundles
 ```
 
@@ -195,7 +196,7 @@ Before importing anything:
 1. **Find the source.** The exact repository, path and commit, or the publication and page.
 2. **Find the license,** in the source’s own license file and file headers, not in memory or a summary. If you cannot find one, treat the thing as not importable.
 3. **Trace it one step further.** Check whether the source itself copied the thing from somewhere else with its own terms. In RiverMind, `rivermind/engine/evaluator.py` is adapted from Deuces and carries an MIT notice; everything under `poker_ai/` came from the upstream Poker AI project and carries that project’s additional indemnification terms (`licenses/Poker-AI-additional-terms.txt`); and the playing-card sprites have no recorded source or license at all (Q-8 in RiverMind’s BUILD.md), so they must not be copied.
-4. **Check that the terms fit FeltPrep’s license** (Q-1 in BUILD.md). Until Q-1 is settled, import nothing.
+4. **Check that the terms fit FeltPrep’s license.** The code is AGPL-3.0-or-later (D-9 in BUILD.md), and [`docs/provenance.md`](docs/provenance.md) lists which source licenses may be imported. GPL-3.0 code, RiverMind’s included, may be combined with it and stays under the GPL. For terms the table does not name, ask the owner.
 5. **Record it** in `docs/provenance.md` in the same commit: what was imported, from where (repository, path, commit), under which license, who holds the copyright, what was changed, and how the copy was verified. Keep any required notice in `licenses/` and in the file’s header.
 6. **Verify the copy.** Imported code keeps its tests and passes them here. Imported data or models are checked against a published hash; for a RiverMind model that is its entry in RiverMind’s `docs/models.json`.
 
@@ -204,6 +205,7 @@ Further rules:
 - **Imported is not trusted.** A passing license check says nothing about correctness. Imported engine code meets [section 8](#8-poker-correctness) in this repository, and imported strategies meet [section 9](#9-feedback-and-solver-claims) before they grade anything.
 - **A dependency is an import.** Before `pnpm add`, check the package’s license and that the version is the host baseline’s.
 - **An external solver used for cross-checks is a tool, not a dependency.** Check its license before running it, record the version used, and import none of its code.
+- **The license covers the code.** The terms for lesson text and for the FeltPrep name and artwork are an open decision (Q-12). Do not commit a lesson or brand artwork until the owner answers it.
 - **Lesson content is original.** Do not copy charts, ranges, hand examples or wording from books, training sites or solver products. Where a published number is used as a benchmark, cite it in the test.
 - **Load only trusted artifacts.** Never unpickle or execute a file from outside the project.
 

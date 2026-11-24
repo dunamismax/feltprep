@@ -64,4 +64,6 @@ There is no code yet, so there are no commands to run. [BUILD.md](BUILD.md) name
 
 ## License
 
-Not yet chosen. It is an open decision in [BUILD.md](BUILD.md#open-decisions) and must be settled before any code is imported from another project.
+FeltPrep’s code is free software under the [GNU Affero General Public License](LICENSE), version 3 or later. Anyone may use, study, change and share it, and anyone who runs a changed version as a service must offer its source to the people who use it.
+
+The license covers the code. The terms for lesson text and for the FeltPrep name and artwork are not yet decided, and none of either exists yet. [docs/provenance.md](docs/provenance.md) records everything that came from another project, with its license.

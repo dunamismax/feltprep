@@ -14,9 +14,9 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 | **Next step** | **P1.1 · Scaffold the app.** It needs no decision from the owner. |
 | **In progress** | Nothing. |
 | **Background run** | None. |
-| **Waiting on the owner** | Q-1, the license, which gates P1.3 and every import after it. It does not block P1.1. |
+| **Waiting on the owner** | Nothing blocks the next step. Q-12 (terms for lesson text and artwork) is needed by P3.1 and P3.2. |
 | **Live** | Nothing is deployed. `feltprep.com` and `feltprep.app` point at the host through Cloudflare DNS. |
-| **`main`** | The first commit holds README.md, AGENTS.md and BUILD.md, pushed on 2026-11-24. `origin` pushes to GitHub and Codeberg. |
+| **`main`** | The three documents, `LICENSE` and the provenance record, pushed on 2026-11-24. `origin` pushes to GitHub and Codeberg. |
 | **Last updated** | 2026-11-24 |
 
 ## How to work this file
@@ -100,6 +100,7 @@ These come from the owner’s brief of 2026-11-24 and the owner’s standing rul
 | D-6 | **Individual preparation.** RiverMind is for recreational play with friends or bots. FeltPrep is for one player’s preparation and improvement. |
 | D-7 | **This file is the authority** on the plan and its progress. An implementation item is ticked only when the work and its verification exist in FeltPrep. |
 | D-8 | **Git.** `main` only, no branches or pull requests, and no AI attribution anywhere. |
+| D-9 | **License** (owner, 2026-11-24, answering Q-1). FeltPrep’s code is licensed under the GNU Affero General Public License, version 3 or later (`AGPL-3.0-or-later`), so that anyone who runs a modified FeltPrep as a service must offer its source. GPL-3.0 code, RiverMind’s included, may be combined with it under section 13 of both licenses and stays under the GPL. The terms for lesson text and for the name and artwork are Q-12. |
 
 ## Open decisions
 
@@ -107,7 +108,7 @@ Use each default until the owner decides otherwise. **Needed by** names the firs
 
 | ID | Question | Default until decided | Needed by |
 | --- | --- | --- | --- |
-| Q-1 | **License.** RiverMind is GPL-3.0-or-later; C From The Ground Up is MIT. Which license does FeltPrep carry? | GPL-3.0-or-later, the one license under which any RiverMind file can be imported without a file-by-file rights question. Choosing a permissive license instead limits imports to files the owner holds all rights to, plus the MIT-derived evaluator. **No import happens before the owner confirms.** | P1.3 |
+| Q-1 | **License.** RiverMind is GPL-3.0-or-later; C From The Ground Up is MIT. Which license does FeltPrep carry? | **Decided** (D-9): AGPL-3.0-or-later. | — |
 | Q-2 | **Canonical domain.** Which of `feltprep.com` and `feltprep.app` serves the app? | `feltprep.com` serves; `feltprep.app` and both `www` names redirect to it. `.app` is an HTTPS-only top-level domain, so the redirect needs its own certificate. | P4.2 |
 | Q-3 | **Formats in the first release.** Is heads-up the only graded format, and does 6-max full-hand practice ship ungraded? | Heads-up graded. 6-max practice ships only if Q-9 allows a six-seat opponent, and is labelled ungraded. No 9-max. | P3.5, P6.5 |
 | Q-4 | **Accounts.** Guest-only, or sign-in to keep progress across devices? | No sign-in. Drill progress in browser storage; a signed guest cookie for server-stored practice hands. | P3.4, P3.5 |
@@ -118,6 +119,7 @@ Use each default until the owner decides otherwise. **Needed by** names the firs
 | Q-9 | **RiverMind’s trained champions as practice opponents.** Serve them from FeltPrep? | The heads-up champion `hu-m1-s0-1024m` at P6.1, after measuring memory on the host (its bundle is about 450 MB in memory). The six-seat champion only if that measurement leaves room. Never for grading. | P6.1 |
 | Q-10 | **Server setup.** May agents provision the host (database, roles, units, Caddy fragment) without asking each time, as RiverMind’s D-10 allows there? | No. Every server change needs the owner’s word until they say otherwise. | P4.1 |
 | Q-11 | **Independent solver for cross-checks.** Which tool, under which license? | Chosen at P5.3 after reading the tool’s own license file. It runs as an external program on reference spots; none of its code enters the repository. | P5.3 |
+| Q-12 | **Terms for lesson text, and for the FeltPrep name and artwork.** D-9 covers the code. Are lessons and brand assets under the same license, a content license, or reserved? | Undecided, and nothing of either kind exists yet. A lesson may be drafted, but none is committed to this public repository until the owner answers, because publishing under a free license cannot be taken back. | P3.1 (artwork), P3.2 (lessons) |
 
 ## Architecture proposals
 
@@ -152,8 +154,8 @@ Not run from this session, because they write caches inside RiverMind: its pytes
 
 | Source | Terms found | Consequence for FeltPrep |
 | --- | --- | --- |
-| RiverMind as a whole | GPL-3.0-or-later (`LICENSE`, `pyproject.toml`, `web/package.json`) | Importing its files is straightforward under GPL-3.0-or-later (Q-1). |
-| `rivermind/` and `web/` | First committed in RiverMind by the owner (`0e8e63e`, 2026-11-19, onward); `rivermind/` imports nothing from `poker_ai/` | The candidates below come from here. Whether the owner may also relicense them is the owner’s call, which is why Q-1 is an owner gate. |
+| RiverMind as a whole | GPL-3.0-or-later (`LICENSE`, `pyproject.toml`, `web/package.json`) | Its files may be imported into FeltPrep’s AGPL-3.0-or-later code (D-9) under section 13 of both licenses. An imported file stays under the GPL, and its header says so. |
+| `rivermind/` and `web/` | First committed in RiverMind by the owner (`0e8e63e`, 2026-11-19, onward); `rivermind/` imports nothing from `poker_ai/` | The candidates below come from here. |
 | `rivermind/engine/evaluator.py`, `web/src/lib/engine/evaluator.ts` | Adapted from Deuces by Will Drevo, MIT (`licenses/Deuces.txt`), stated in both file headers | Import with the header and a copy of the notice in `licenses/`. |
 | `poker_ai/` | Came from the upstream Poker AI project: GPL with an added indemnification section (`licenses/Poker-AI-additional-terms.txt`) | **Do not import.** It is the retired short-deck prototype and nothing below depends on it. |
 | Playing-card sprites (`web/art/cards/`) | Source and license not recorded (RiverMind’s Q-8) | **Do not import.** FeltPrep draws its own cards (D-4). |
@@ -310,7 +312,7 @@ A player can complete the loop on a phone.
 
 - [ ] **P1.1 · Scaffold the app** · Depends on: none
   - [ ] `web/` is created with the current `sv create` (SvelteKit 3, TypeScript) and the add-ons Tailwind CSS 4, Drizzle for PostgreSQL, ESLint, Prettier, Vitest, Playwright and `adapter-node`. Current documentation was consulted first, and the result has the SvelteKit 3 layout: configuration in `vite.config.ts`, no `svelte.config.js`.
-  - [ ] The toolchain is pinned as both reference projects pin it: Node in `web/.node-version` and `engines`, pnpm in `packageManager`, `saveExact` and `engineStrict` in `pnpm-workspace.yaml`, every dependency at an exact version, `pg` as the only database driver, and a committed `pnpm-lock.yaml`. Use the versions `rivermind-poker/web/package.json` pins on the day (Node 26.13.1 and pnpm 12.18.0 on 2026-11-24).
+  - [ ] The toolchain is pinned as both reference projects pin it: Node in `web/.node-version` and `engines`, pnpm in `packageManager`, `saveExact` and `engineStrict` in `pnpm-workspace.yaml`, every dependency at an exact version, `pg` as the only database driver, and a committed `pnpm-lock.yaml`. `package.json` names the license, `AGPL-3.0-or-later` (D-9). Use the versions `rivermind-poker/web/package.json` pins on the day (Node 26.13.1 and pnpm 12.18.0 on 2026-11-24).
   - [ ] Scripts exist for `dev`, `build`, `start`, `check`, `lint`, `format`, `test`, `e2e`, `db:generate` and `db:migrate`.
   - [ ] `GET /healthz` answers 200 with a status and the build’s revision, and the app builds and starts with no database configured.
   - [ ] The home page names FeltPrep and says it is in development, in neutral original styling with no asset from another project.
@@ -323,10 +325,11 @@ A player can complete the loop on a phone.
   - [ ] A workflow runs the full gate on every push, with the pinned Node and pnpm and the three Playwright browsers.
   - [ ] Its first run on `main` is green, and the run is named in the evidence line.
 
-- [ ] **P1.3 · Provenance record and license** · Depends on: Q-1 · **Owner gate:** the license
-  - [ ] The owner’s answer to Q-1 is recorded under Settled decisions, and `LICENSE` holds the chosen license’s unmodified text.
-  - [ ] `docs/provenance.md` exists with the record format from AGENTS.md section 10, and `licenses/` exists for upstream notices.
-  - [ ] `package.json` and the README name the license.
+- [x] **P1.3 · Provenance record and license** · Depends on: Q-1 · **Owner gate:** the license
+  - [x] The owner’s answer to Q-1 is recorded under Settled decisions, and `LICENSE` holds the chosen license’s unmodified text.
+  - [x] `docs/provenance.md` exists with the record format from AGENTS.md section 10, and `licenses/` exists for upstream notices.
+  - [x] The README names the license. (`package.json` does not exist yet, so naming it there moved to P1.1.)
+  - Evidence: the commit that ticks this step. `LICENSE` is gnu.org’s `agpl-3.0.txt`, 34,523 bytes, SHA-256 `0d96a4ff…079abcb0`, byte-identical to the copy in the owner’s `lorehallow` repository; the documents’ links were rechecked by script. There is no suite to run yet.
 
 - [ ] **P1.4 · Import the rules specification and the engine** · Depends on: P1.1, P1.3
   - [ ] `docs/rules.md` is imported from RiverMind at a pinned commit, keeping every rule the engine implements and marking table-only rules (joining, button movement with empty seats, timeouts) as not used by FeltPrep.
@@ -350,7 +353,7 @@ A player can complete the loop on a phone.
 - [ ] Benchmarks B-1 to B-5 and B-9 pass, and `docs/benchmarks.md` records them.
 - [ ] The jam-or-fold solution for 2 to 15 big blinds is in the solution registry with a manifest that meets all eight items of the grading gate.
 
-- [ ] **P2.1 · Spot, solution and grading contract** · Depends on: P1.1 (it imports nothing, so it does not wait for Q-1)
+- [ ] **P2.1 · Spot, solution and grading contract** · Depends on: P1.1 (it imports nothing)
   - [ ] `docs/grading.md` defines a spot (every field of grading-gate item 1), a solution artifact (per-hand action frequencies and values, versioned with a `"format"` field), its manifest, and the solution registry with its hash check.
   - [ ] It defines a verdict: the action taken, the reference’s frequencies and values for that hand, the loss, the band (Q-7) and the “not graded” case with its reason.
   - [ ] TypeScript types and a reader that refuses an artifact whose hashes or format do not match, with tests for each refusal.
@@ -386,13 +389,13 @@ A player can complete the loop on a phone.
 - [ ] Gate A’s interface and server items pass.
 - [ ] Every grade shown in the journey comes from the P2.4 solution, and a decision outside it is shown as “not graded”.
 
-- [ ] **P3.1 · Design foundation** · Depends on: P1.1
+- [ ] **P3.1 · Design foundation** · Depends on: P1.1, Q-12 (for brand artwork; tokens and code-drawn cards are code)
   - [ ] An original identity: colour, type and spacing tokens in the Tailwind theme, light and dark, with text at WCAG AA contrast in both.
   - [ ] Original playing cards drawn in code (SVG or CSS), legible at phone size and distinguishable without relying on red and black alone.
   - [ ] A `/style` page shows the tokens, the cards and each component as it is added.
   - [ ] Nothing is taken from RiverMind’s art, palette, fonts or layouts (D-4); fonts are recorded in `docs/provenance.md`.
 
-- [ ] **P3.2 · Lesson pipeline and the first lesson** · Depends on: P3.1, P2.4
+- [ ] **P3.2 · Lesson pipeline and the first lesson** · Depends on: P3.1, P2.4, Q-12 (before the lesson is committed)
   - [ ] Lessons are Markdown files in `content/lessons/`, prerendered, each with a title, a summary and the IDs of the spots it teaches. A build fails on a lesson that names an unknown spot.
   - [ ] The first lesson, “Jam or fold: heads-up at 10 big blinds”, is original writing. It explains why jamming wins, states the game’s assumptions and limits (P2.4’s caveat), and links to its study view and drill.
   - [ ] It reads well at 375 pixels wide, checked in a browser.
@@ -538,9 +541,17 @@ Every session ends by prepending one entry to the log below, in this shape and i
 
 ## Handoff log
 
+### 2026-11-24 · P1.3 · License and provenance record
+
+- **Completed:** the owner chose AGPL-3.0-or-later (D-9, closing Q-1). Added `LICENSE`, `docs/provenance.md` with the record format and a table of which source licenses may be imported, and `licenses/`. The README and AGENTS.md name the license.
+- **Verified:** `LICENSE` is byte-identical to gnu.org’s `agpl-3.0.txt` and to the copy in the owner’s `lorehallow` repository (SHA-256 in the provenance record). Links rechecked by script. No suite exists to run.
+- **Open decisions:** Q-12 raised: terms for lesson text, the name and artwork. No lesson or artwork is committed before the owner answers.
+- **Next ready task:** P1.1, starting with the current SvelteKit 3 documentation and `sv create` in `web/`.
+- **Plan changes:** “`package.json` names the license” moved from P1.3 to P1.1, because no `package.json` exists until the scaffold.
+
 ### 2026-11-24 · Planning · Foundational documents
 
 - **Completed:** README.md, AGENTS.md and BUILD.md written and committed as the first commit on `main`. `origin` was given GitHub and Codeberg push URLs, as the owner’s other repositories have. No code exists.
 - **Verified:** read both reference repositories’ AGENTS.md, README.md and BUILD.md; RiverMind’s engine, bots, tests, licenses and evaluations at `233b9c6`. Ran its TypeScript engine benchmark and a 16,000-hand fuzz read-only from a scratch directory (results in the reuse assessment). Checked that the links between the three documents resolve and that every cited RiverMind path exists. Not run: RiverMind’s pytest, Vitest and parity suites.
-- **Open decisions:** Q-1 to Q-11 raised with defaults. Q-1 (license) gates the first import.
+- **Open decisions:** Q-1 to Q-11 raised with defaults.
 - **Next ready task:** P1.1, starting with the current SvelteKit 3 documentation and `sv create` in `web/`.
