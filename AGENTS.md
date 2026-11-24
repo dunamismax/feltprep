@@ -112,17 +112,23 @@ The stack is settled (D-2 in BUILD.md): SvelteKit 3 · Svelte 5 · strict TypeSc
 
 The host runs several sites under one web platform contract, `docs/web-platform.md` in the owner’s `ubuntu-vm-backup` repository, which both reference projects follow and which wins over this file where they differ. As both references record it on 2026-11-24: pnpm 12.18.0 and Node 26.13.1 at exact versions, every dependency pinned exactly at the host’s baseline, `pg` with `drizzle-orm/node-postgres` as the only database driver, the host PostgreSQL 18 cluster, and fix-forward deploys with a candidate check and no rollback. Read the contract itself before the first deploy work (P4.1); it is not checked out on the development Mac.
 
-**Proposed layout.** Only the entries marked “exists” are there yet. The rest is the proposal in [BUILD.md](BUILD.md#architecture-proposals); the session that creates a directory updates this section to match what it built.
+**Layout.** Entries marked “exists” are there now. The rest is the proposal in [BUILD.md](BUILD.md#architecture-proposals); the session that creates a directory updates this section to match what it built.
 
 ```text
-web/                       the SvelteKit app (the same place RiverMind keeps its app, so imported paths line up)
-  src/routes/              pages and endpoints
+web/                       the SvelteKit app (exists; the same place RiverMind keeps its app, so imported paths line up)
+  vite.config.ts           SvelteKit, Tailwind and Vitest configuration; the build's revision for /healthz (exists)
+  playwright.config.ts     six browser projects against the production build on port 4391 (exists)
+  drizzle.config.ts        drizzle-kit settings (exists)
+  src/app.css              Tailwind entry and the provisional theme tokens, light and dark (exists)
+  src/env.ts               environment variables, validated at build and start (exists)
+  src/routes/              pages and endpoints: the home page and /healthz exist
   src/lib/engine/          cards, hand evaluator, hand state machine: pure, browser-safe TypeScript
   src/lib/solver/          equities, game trees, CFR, best response, grading
   src/lib/spots/           spot definitions and the reader for solution artifacts
-  src/lib/server/          server-only code: database, practice sessions, practice opponents
-  drizzle/                 SQL migrations (never edit an applied one)
-  e2e/                     Playwright tests, desktop and phone
+  src/lib/server/          server-only code: database client and health check exist; practice sessions and opponents later
+  scripts/                 Node scripts run by package.json: db-migrate.ts exists
+  drizzle/                 SQL migrations (never edit an applied one); only the empty journal exists
+  e2e/                     Playwright tests, desktop and phone (exists)
 content/lessons/           lessons as Markdown, kept in Git, prerendered
 solutions/                 small solution artifacts kept in Git, each with a manifest
 deploy/                    Caddy site, systemd unit, provisioning and deploy scripts, runbook
@@ -143,7 +149,15 @@ Conventions both reference projects learned the hard way, to apply from the firs
 
 ## 7. Commands
 
-**No commands exist yet.** P1.1 creates the first ones.
+Every command runs from `web/` with the pinned Node 26.13.1 and pnpm 12.18.0. A fresh machine needs the Playwright browsers once: `pnpm exec playwright install chromium firefox webkit`.
+
+**The full gate**, which must pass before every commit:
+
+```bash
+pnpm install --frozen-lockfile && pnpm run check && pnpm run lint && pnpm run test && pnpm run build && pnpm run e2e
+```
+
+It needs no database and no `.env`. It does not cover: the database commands (no table exists yet), the deployed site, real phones, or anything in `docs/`.
 
 Rules for this section:
 
@@ -154,16 +168,23 @@ Rules for this section:
 
 | Purpose | Command | Notes |
 | --- | --- | --- |
-| Full gate before a commit | *not yet defined (P1.1)* | |
+| Development server | `pnpm run dev` | Vite on port 5173, hot reload. Never used by tests. |
+| Production build | `pnpm run build` | `adapter-node` output in `web/build/`. Needs no database. |
+| Serve the build | `pnpm run start` | `node build`, loading `web/.env` if it exists. Set `ORIGIN` (and `HOST`, `PORT`) or adapter-node assumes https. |
+| Type check | `pnpm run check` | `svelte-check` with warnings as failures. |
+| Lint | `pnpm run lint` | Prettier check, then ESLint with type-aware rules. `pnpm run format` rewrites. |
+| Unit and component tests | `pnpm run test` | Vitest: `server` project in Node (`*.spec.ts`), `client` project in headless Chromium (`*.svelte.spec.ts`). |
+| Browser tests, desktop and phone | `pnpm run e2e` | Playwright builds the app and serves it with `node build` on 127.0.0.1:4391, then runs `e2e/*.e2e.ts` in Chromium, Firefox and WebKit at 1440 × 900 and at 375 × 812 with touch. Port 4391 must be free. |
+| Generate a migration | `pnpm run db:generate` | `drizzle-kit generate` from `src/lib/server/db/schema.ts` into `drizzle/`. Needs `DATABASE_URL`. Review the SQL before committing it. |
+| Apply migrations | `pnpm run db:migrate` | `scripts/db-migrate.ts` applies `drizzle/` to `DATABASE_URL` (a PostgreSQL 18 database). |
 | Engine rules, fuzz and benchmark | *not yet defined (P1.4)* | |
 | Solver benchmarks | *not yet defined (P2.3)* | |
-| Browser tests, desktop and phone | *not yet defined (P1.1)* | |
 
 ## 8. Poker correctness
 
 The engine decides what is legal, who wins and how many chips move. A mistake there makes every lesson, drill and grade built on it wrong, so engine changes carry extra checks.
 
-- **The rules document is the specification.** Every engine rule traces to a numbered rule in `docs/rules.md` (created at P1.3). Change the rule text and the engine in the same commit.
+- **The rules document is the specification.** Every engine rule traces to a numbered rule in `docs/rules.md` (created at P1.4). Change the rule text and the engine in the same commit.
 - **Expected values are worked out by hand.** A fixture’s final stacks, pots and winners are derived from the rules, never copied from the engine’s own output. RiverMind’s fixtures were built this way (`test/engine/fixtures.py`), and a throwaway recomputation caught a wrong pot total in its rules document before any code ran.
 - **Check the cases that go wrong.** Minimum and maximum raise amounts; an incomplete all-in raise that does not reopen the betting; side pots with several all-ins; a split pot with an odd chip, which needs three or more players, because two players’ matched contributions always make an even pot; an uncalled bet returned; heads-up blinds and order of action (the button posts the small blind, acts first before the flop and last after it); a hand that ends before showdown.
 - **Invariants hold after every action:** chips are conserved, no stack is negative, every action the engine offers applies cleanly, every action it does not offer is rejected, and every hand ends.

@@ -10,13 +10,13 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 
 | | |
 | --- | --- |
-| **Current phase** | [Phase 1 · Foundation](#phase-1--foundation), not started. |
-| **Next step** | **P1.1 · Scaffold the app.** It needs no decision from the owner. |
+| **Current phase** | [Phase 1 · Foundation](#phase-1--foundation): P1.1 and P1.3 done. |
+| **Next step** | **P1.2 · Continuous integration.** It needs no decision from the owner; P1.4 (engine import) is also ready. |
 | **In progress** | Nothing. |
 | **Background run** | None. |
 | **Waiting on the owner** | Nothing blocks the next step. Q-12 (terms for lesson text and artwork) is needed by P3.1 and P3.2. |
 | **Live** | Nothing is deployed. `feltprep.com` and `feltprep.app` point at the host through Cloudflare DNS. |
-| **`main`** | The three documents, `LICENSE` and the provenance record, pushed on 2026-11-24. `origin` pushes to GitHub and Codeberg. |
+| **`main`** | The SvelteKit app in `web/` with its full gate (AGENTS.md section 7), pushed on 2026-11-24. `origin` pushes to GitHub and Codeberg. |
 | **Last updated** | 2026-11-24 |
 
 ## How to work this file
@@ -324,16 +324,17 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
 - [ ] Gate A’s engine items (rules trace, fixtures, properties, long fuzz, parity at import, replay) pass and are recorded.
 - [ ] `docs/provenance.md` lists every imported file with its source commit and license.
 
-- [ ] **P1.1 · Scaffold the app** · Depends on: none
-  - [ ] `web/` is created with the current `sv create` (SvelteKit 3, TypeScript) and the add-ons Tailwind CSS 4, Drizzle for PostgreSQL, ESLint, Prettier, Vitest, Playwright and `adapter-node`. Current documentation was consulted first, and the result has the SvelteKit 3 layout: configuration in `vite.config.ts`, no `svelte.config.js`.
-  - [ ] The toolchain is pinned as both reference projects pin it: Node in `web/.node-version` and `engines`, pnpm in `packageManager`, `saveExact` and `engineStrict` in `pnpm-workspace.yaml`, every dependency at an exact version, `pg` as the only database driver, and a committed `pnpm-lock.yaml`. `package.json` names the license, `AGPL-3.0-or-later` (D-9). Use the versions `rivermind-poker/web/package.json` pins on the day (Node 26.13.1 and pnpm 12.18.0 on 2026-11-24).
-  - [ ] Scripts exist for `dev`, `build`, `start`, `check`, `lint`, `format`, `test`, `e2e`, `db:generate` and `db:migrate`.
-  - [ ] `GET /healthz` answers 200 with a status and the build’s revision, and the app builds and starts with no database configured.
-  - [ ] The home page names FeltPrep and says it is in development, in neutral original styling with no asset from another project.
-  - [ ] Playwright runs against the production build in six projects: Chromium, Firefox and WebKit, each at 1440 × 900 and at 375 × 812 with touch. One smoke test loads the home page in each and asserts that nothing scrolls sideways.
-  - [ ] `.gitignore` covers dependencies, build output, `.env` files, test reports and `artifacts/`.
-  - [ ] AGENTS.md sections 6 and 7 and the README’s “Working on the project” describe the real layout and commands.
-  - [ ] From a clean clone, install with a frozen lockfile, then `check`, `lint`, `test`, `build` and `e2e` all pass.
+- [x] **P1.1 · Scaffold the app** · Depends on: none
+  - [x] `web/` is created with the current `sv create` (SvelteKit 3, TypeScript) and the add-ons Tailwind CSS 4, Drizzle for PostgreSQL, ESLint, Prettier, Vitest, Playwright and `adapter-node`. Current documentation was consulted first, and the result has the SvelteKit 3 layout: configuration in `vite.config.ts`, no `svelte.config.js`.
+  - [x] The toolchain is pinned as both reference projects pin it: Node in `web/.node-version` and `engines`, pnpm in `packageManager`, `saveExact` and `engineStrict` in `pnpm-workspace.yaml`, every dependency at an exact version, `pg` as the only database driver, and a committed `pnpm-lock.yaml`. `package.json` names the license, `AGPL-3.0-or-later` (D-9). Use the versions `rivermind-poker/web/package.json` pins on the day (Node 26.13.1 and pnpm 12.18.0 on 2026-11-24).
+  - [x] Scripts exist for `dev`, `build`, `start`, `check`, `lint`, `format`, `test`, `e2e`, `db:generate` and `db:migrate`.
+  - [x] `GET /healthz` answers 200 with a status and the build’s revision, and the app builds and starts with no database configured.
+  - [x] The home page names FeltPrep and says it is in development, in neutral original styling with no asset from another project.
+  - [x] Playwright runs against the production build in six projects: Chromium, Firefox and WebKit, each at 1440 × 900 and at 375 × 812 with touch. One smoke test loads the home page in each and asserts that nothing scrolls sideways.
+  - [x] `.gitignore` covers dependencies, build output, `.env` files, test reports and `artifacts/`.
+  - [x] AGENTS.md sections 6 and 7 and the README’s “Working on the project” describe the real layout and commands.
+  - [x] From a clean clone, install with a frozen lockfile, then `check`, `lint`, `test`, `build` and `e2e` all pass.
+  - Evidence: the commit that ticks this step. The full gate passed from a clean copy of the tree (5 Vitest tests, 18 Playwright tests in 6 projects), and by hand: the home page at 375 × 812 in both themes via `pnpm run start`, `/healthz` at 200 without a database, 200 with a scratch PostgreSQL 18 database and 503 with an unreachable one, and both `db:` commands on that scratch database; the sv scaffold (MIT) and the dependency license check are in `docs/provenance.md`.
 
 - [ ] **P1.2 · Continuous integration** · Depends on: P1.1, and `main` pushed to `origin`
   - [ ] A workflow runs the full gate on every push, with the pinned Node and pnpm and the three Playwright browsers.
@@ -566,6 +567,14 @@ Every session ends by prepending one entry to the log below, in this shape and i
 ```
 
 ## Handoff log
+
+### 2026-11-24 · P1.1 · Scaffold the app
+
+- **Completed:** `web/` from `sv create` 1.7.0, pinned to the host baseline, `pg` driver, optional database, `/healthz` with the build’s commit, a neutral home page with light and dark tokens, six Playwright projects against `node build`, root `.gitignore`. Docs, provenance and the sv notice updated.
+- **Verified:** full gate from a clean copy (check, lint, 5 unit and component tests, build, 18 e2e tests); home page at 375 × 812 in both themes; `/healthz` with no, a working and an unreachable database; database commands on a scratch database. Not verified: CI (P1.2), the host.
+- **Open decisions:** none touched. Q-12 still blocks brand artwork, so there is no favicon.
+- **Next ready task:** P1.2: add a GitHub Actions workflow running the gate in `web/`.
+- **Plan changes:** none. AGENTS.md section 8 said `docs/rules.md` comes at P1.3; corrected to P1.4.
 
 ### 2026-11-24 · Planning · Changes from a review of the plan
 

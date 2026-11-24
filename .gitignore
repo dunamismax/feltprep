@@ -1,0 +1,10 @@
+# Large solves, equity tables and opponent bundles live outside Git (A-5).
+/artifacts/
+
+# Dependencies, build output, environment files and test reports for the app
+# are ignored by web/.gitignore. These catch strays at the top level.
+node_modules/
+.env
+.env.*
+!.env.example
+.DS_Store

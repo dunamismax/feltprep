@@ -39,6 +39,15 @@ One entry per import, newest first, under [Imports](#imports):
 
 ## Imports
 
+### The app scaffold from sv · 2026-11-24
+
+- **Files here:** the starting point of `web/`: `package.json`, `tsconfig.json`, `vite.config.ts`, `playwright.config.ts`, `drizzle.config.ts`, `eslint.config.js`, `prettier.config.js`, `.prettierignore`, `.gitignore`, `pnpm-workspace.yaml`, `.vscode/`, `static/robots.txt`, `src/app.html`, `src/app.d.ts`, `src/env.ts`, `src/lib/index.ts`, `src/lib/server/db/` and `src/routes/+layout.svelte`.
+- **Source:** the output of `sv create` from the `sv` package, version 1.7.0 (`https://github.com/sveltejs/cli`), with the minimal TypeScript template and the add-ons prettier, eslint, vitest, playwright, tailwindcss, sveltekit-adapter (node) and drizzle (postgresql).
+- **License:** MIT, read in the package’s own `LICENSE` (SHA-256 `5d370bd735429fe179b36a40b5e9da846ad283c3d64bfb9eb99cba4eff9f6b2c`). The notice is kept in [`licenses/sv-cli.txt`](../licenses/sv-cli.txt), and the JavaScript and TypeScript configuration files that started from it say so in a header line. JSON, YAML and ignore files cannot carry a comment and are covered by the notice file.
+- **Copyright:** the contributors to `sveltejs/cli`.
+- **Changes:** most of it. Every dependency pinned to the host baseline; `postgres` replaced by `pg` with `drizzle-orm/node-postgres`; the demo schema, example tests, favicon and README removed; the database made optional; six Playwright projects against the production build; the scripts, home page, theme and `/healthz` written for FeltPrep.
+- **Verified:** the full gate in [AGENTS.md](../AGENTS.md#7-commands) passes from a clean copy (see P1.1’s evidence in BUILD.md). The installed packages’ licenses were listed with `pnpm licenses list`: all MIT, ISC, BSD, Apache-2.0 or BlueOak-1.0.0, except `lightningcss` (MPL-2.0), a build-time dependency of Tailwind CSS whose code is not served.
+
 ### The license text · 2026-11-24
 
 - **Files here:** `LICENSE`.
@@ -48,4 +57,4 @@ One entry per import, newest first, under [Imports](#imports):
 - **Changes:** none.
 - **Verified:** 34,523 bytes, SHA-256 `0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0`, byte-identical to the copy in the owner’s `lorehallow` repository.
 
-No code, data, model, font or artwork has been imported yet.
+No engine code, data, model, font or artwork has been imported yet. Packages installed from the registry are listed with exact versions in `web/package.json` and `web/pnpm-lock.yaml`.

@@ -4,7 +4,7 @@
 
 | | |
 | --- | --- |
-| **Status** | Planning. Nothing is built or playable yet. |
+| **Status** | Early development. The app scaffold builds, tests and serves a placeholder page; nothing is playable yet. |
 | **Plan and progress** | [BUILD.md](BUILD.md), starting at **Now** |
 | **How work is done** | [AGENTS.md](AGENTS.md) |
 | **Home** | `feltprep.com` and `feltprep.app` are registered and point at the server that will host the app. Neither serves FeltPrep yet. |
@@ -60,7 +60,16 @@ FeltPrep plans to reuse RiverMind’s tested no-limit rules engine and hand eval
 
 ## Working on the project
 
-There is no code yet, so there are no commands to run. [BUILD.md](BUILD.md) names the first task, and [AGENTS.md](AGENTS.md) explains how a session starts, verifies its work and hands off. Commands are documented in AGENTS.md as each one comes to exist.
+The app lives in `web/`. It needs Node 26.13.1 and pnpm 12.18.0, and no database to build, test or serve.
+
+```bash
+cd web
+pnpm install --frozen-lockfile
+pnpm exec playwright install chromium firefox webkit
+pnpm run dev
+```
+
+The full gate that every commit passes, and every other command, are in [AGENTS.md](AGENTS.md#7-commands). [BUILD.md](BUILD.md) names the next task, and AGENTS.md explains how a session starts, verifies its work and hands off.
 
 ## License
 

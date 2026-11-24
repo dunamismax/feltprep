@@ -1,0 +1,39 @@
+@import 'tailwindcss';
+
+/*
+ * FeltPrep's provisional theme tokens: neutral and original (D-4). P3.1
+ * replaces them with the full identity. Components use these tokens, never raw
+ * colours. Dark values apply when the system asks for a dark scheme.
+ */
+@theme {
+	--color-surface: #f7f6f2;
+	--color-raised: #ffffff;
+	--color-ink: #1b1f1d;
+	--color-muted: #55605a;
+	--color-line: #d9dcd6;
+	--color-accent: #1f6b4a;
+
+	--font-sans:
+		system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--color-surface: #111513;
+		--color-raised: #1a201d;
+		--color-ink: #e9ece9;
+		--color-muted: #a3ada7;
+		--color-line: #2e3632;
+		--color-accent: #6fcf9f;
+	}
+}
+
+@layer base {
+	:root {
+		color-scheme: light dark;
+	}
+
+	body {
+		@apply bg-surface font-sans text-ink antialiased;
+	}
+}
