@@ -157,7 +157,7 @@ Every command runs from `web/` with the pinned Node 26.13.1 and pnpm 12.18.0. A 
 pnpm install --frozen-lockfile && pnpm run check && pnpm run lint && pnpm run test && pnpm run build && pnpm run e2e
 ```
 
-It needs no database and no `.env`. It does not cover: the database commands (no table exists yet), the deployed site, real phones, or anything in `docs/`.
+GitHub Actions runs the same gate on every push (`.github/workflows/test.yml`); check that the run for your commit is green. It needs no database and no `.env`. It does not cover: the database commands (no table exists yet), the deployed site, real phones, or anything in `docs/`.
 
 Rules for this section:
 

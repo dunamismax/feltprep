@@ -10,13 +10,13 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 
 | | |
 | --- | --- |
-| **Current phase** | [Phase 1 · Foundation](#phase-1--foundation): P1.1 and P1.3 done. |
-| **Next step** | **P1.2 · Continuous integration.** It needs no decision from the owner; P1.4 (engine import) is also ready. |
+| **Current phase** | [Phase 1 · Foundation](#phase-1--foundation): P1.1 to P1.3 done. |
+| **Next step** | **P1.4 · Import the rules specification and the engine.** It needs no decision from the owner. |
 | **In progress** | Nothing. |
 | **Background run** | None. |
 | **Waiting on the owner** | Nothing blocks the next step. Q-12 (terms for lesson text and artwork) is needed by P3.1 and P3.2. |
 | **Live** | Nothing is deployed. `feltprep.com` and `feltprep.app` point at the host through Cloudflare DNS. |
-| **`main`** | The SvelteKit app in `web/` with its full gate (AGENTS.md section 7), pushed on 2026-11-24. `origin` pushes to GitHub and Codeberg. |
+| **`main`** | The SvelteKit app in `web/`, its full gate (AGENTS.md section 7) and CI on GitHub, green on 2026-11-24. `origin` pushes to GitHub and Codeberg. |
 | **Last updated** | 2026-11-24 |
 
 ## How to work this file
@@ -336,9 +336,10 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
   - [x] From a clean clone, install with a frozen lockfile, then `check`, `lint`, `test`, `build` and `e2e` all pass.
   - Evidence: the commit that ticks this step. The full gate passed from a clean copy of the tree (5 Vitest tests, 18 Playwright tests in 6 projects), and by hand: the home page at 375 × 812 in both themes via `pnpm run start`, `/healthz` at 200 without a database, 200 with a scratch PostgreSQL 18 database and 503 with an unreachable one, and both `db:` commands on that scratch database; the sv scaffold (MIT) and the dependency license check are in `docs/provenance.md`.
 
-- [ ] **P1.2 · Continuous integration** · Depends on: P1.1, and `main` pushed to `origin`
-  - [ ] A workflow runs the full gate on every push, with the pinned Node and pnpm and the three Playwright browsers.
-  - [ ] Its first run on `main` is green, and the run is named in the evidence line.
+- [x] **P1.2 · Continuous integration** · Depends on: P1.1, and `main` pushed to `origin`
+  - [x] A workflow runs the full gate on every push, with the pinned Node and pnpm and the three Playwright browsers.
+  - [x] Its first run on `main` is green, and the run is named in the evidence line.
+  - Evidence: `.github/workflows/test.yml`, committed in `52edfd7`; its first run, [Test #45454058647](https://github.com/dunamismax/feltprep/actions/runs/45454058647) on `52edfd7`, passed every step of the gate in 1 minute 34 seconds on `ubuntu-latest`. GitHub only: Codeberg runs no CI.
 
 - [x] **P1.3 · Provenance record and license** · Depends on: Q-1 · **Owner gate:** the license
   - [x] The owner’s answer to Q-1 is recorded under Settled decisions, and `LICENSE` holds the chosen license’s unmodified text.
@@ -567,6 +568,13 @@ Every session ends by prepending one entry to the log below, in this shape and i
 ```
 
 ## Handoff log
+
+### 2026-11-24 · P1.2 · Continuous integration
+
+- **Completed:** `.github/workflows/test.yml` runs the full gate on every push and pull request (`52edfd7`).
+- **Verified:** the first run on `main`, Test #45454058647, passed every step in 1 minute 34 seconds.
+- **Open decisions:** none touched.
+- **Next ready task:** P1.4: export RiverMind at its pinned commit into a scratch directory and copy the engine files into `web/src/lib/engine/`.
 
 ### 2026-11-24 · P1.1 · Scaffold the app
 
