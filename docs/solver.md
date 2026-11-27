@@ -52,7 +52,7 @@ All three reference spots are for measuring only; none is a library spot. They s
 - **Ranges,** with classes ranked by their all-in equity against a random hand from the exact pre-flop table: the button holds the strongest 45% of combinations, the big blind the band from 6% to 70%. That is 523 and 740 combinations on the flop, 518 and 721 on the turn, 503 and 693 on the river.
 - **Sizes,** on every street: bets of a third and three quarters of the pot, raises of the pot, all-in, at most three bets and raises a street.
 
-**Machine:** the development Mac (Apple M5, 10 cores, 32 GB; Node 26.13.1), one core per solve, with a load average of 5 to 9 from other work. **Not yet measured on the host** (P5.1b): SSH to it now asks for a Tailscale sign-in check that only the owner can complete.
+**Machine:** the development Mac (Apple M5, 10 cores, 32 GB; Node 26.13.1), one core per solve, with a load average of 5 to 9 from other work. The river was also measured on the host (P5.1b, below).
 
 ### The river
 
@@ -65,6 +65,8 @@ Measured on 2026-11-27 at the commit that records P5.1’s second part, with the
 | 0.5 (D-20, library spot) | 400 | 0.4 s |
 | 0.25 | 700 | 0.7 s |
 | 0.026 | 3,000 | 3.2 s |
+
+**On the host** (P5.1b, 2026-11-27): the AMD Ryzen 7 5800H virtual machine with 8 cores and 15 GB, Node 26.13.1, load average 0.2, from a scratch export of `beec55c` with `nice -n 19`, twice: 1% in 0.4 s, 0.5% in 0.7 s, 0.25% in 1.2 s and 3,000 iterations in 5.0 and 5.1 s, peak 111 MB. That is about 1.6 times this Mac’s time, with the same exploitability at every check to the printed precision on both machines.
 
 24 decisions, 23 showdowns and 22 folds; peak memory 179 MB for the whole process, nearly all of it Node itself. The exploitability at every check is the same as the first measurement’s, made with a matrix of who wins at every showdown, which then took 6.1 s to 1% and 9.7 s to 0.5% (24 ms an iteration against about 1.1 ms now).
 
@@ -113,6 +115,6 @@ An iteration takes about 12 s, 45 ns a cell, against 26 ns on the turn; taking t
 
 ## Decisions from the measurements
 
-- **B-10’s budget stays at the proposed 5 seconds** for the 95th percentile of an on-demand river solve to 1% of the pot on the host. The reference river takes 0.3 s on one core of this Mac, so the budget leaves room for a slower host and for ranges about twice as large on each side. P5.4 measures it on the host.
+- **B-10’s budget stays at the proposed 5 seconds** for the 95th percentile of an on-demand river solve to 1% of the pot on the host. The reference river takes 0.3 s on one core of this Mac and 0.4 s on the host, so the budget leaves room for ranges several times as large and for the endpoint’s own costs. P5.4 measures the 95th percentile on the host over a set of spots.
 - **The Rust/WebAssembly core of D-19 is not needed now.** On-demand river solves are 15 times inside the budget in TypeScript, and turn and flop solves are offline (D-27). The flop is bound by memory, which a faster language does not reduce; what does is storing regrets and sums as 32-bit floats, dropping the stored current strategy, and suit isomorphism on boards that allow it, all of which TypeScript can do. Revisit if P5.5’s library, built with those, cannot be solved overnight on this Mac.
 - **The library: 12 flops, each solved as one tree from the flop to the river,** with one bet size a street plus all-in and at most two bets a street, the shape measured above. Each flop takes about two hours to 0.5% on one core and 10 to 12 GB, so two solve at once on this Mac at 64 bits, and about four once regrets and sums are stored as 32-bit floats: the whole library in one night (D-27). Twelve is the floor the first-release scope proposes; more flops wait until the library’s build time is measured at P5.5. The turn and river of each line are subtrees of its flop solve, so they need no solves of their own. Which 12 flops, chosen to cover distinct textures, and which bet size on each street, are set at P5.5 and cite these numbers.

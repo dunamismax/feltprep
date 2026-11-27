@@ -11,10 +11,10 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 | | |
 | --- | --- |
 | **Current phase** | [Phase 5 · Post-flop solver](#phase-5--post-flop-solver). Phase 3 (M1) is complete: Gate C passes, accessibility and the owner’s iPhone pass included. |
-| **Next step** | **P5.2 · River solver**: B-3 through the post-flop builder, then at least 20 reference river spots for B-6, with B-11 and B-12 on them. P5.1b waits on the owner. |
+| **Next step** | **P5.2 · River solver**: B-3 through the post-flop builder, then at least 20 reference river spots for B-6, with B-11 and B-12 on them. |
 | **In progress** | None. |
 | **Background run** | None. |
-| **Waiting on the owner** | SSH to the host asks for a Tailscale sign-in check (`ssh ubuntu-vm` prints the link); once passed, P5.1b measures the river there. P7.6 (the release) needs their word. |
+| **Waiting on the owner** | Nothing. P7.6 (the release) needs their word. |
 | **Live** | <https://feltprep.com> serves `main` as a preview, redeployed by every push whose CI passes (D-10); `/healthz` names the live commit. `feltprep.app` redirects to it in Cloudflare (D-11). |
 | **`main`** | Phases 1 to 3 (M1), and the post-flop solver core: spots through the engine, chance cards, linear-time showdowns, measured to the flop (P5.1). `origin` pushes to GitHub and Codeberg. |
 | **Last updated** | 2026-11-27 |
@@ -562,7 +562,8 @@ Results at P3.7 (`web/e2e/journey.e2e.ts`, with `mistake.e2e.ts`, `review.e2e.ts
   - Evidence (first part): the commit that adds `docs/solver.md`. `buildRiver` (`web/src/lib/solver/postflop.ts`) sets up the spot on the engine and offers only the engine’s actions at the stated sizes; `postflop.spec.ts` replays every path of a reference tree on the engine, checks clamping and merging, the prior against a separate count with card removal and weights, and fold and showdown payoffs against the engine’s chips. Showdowns share one win matrix scaled per terminal (`Terminal.scale` in `game.ts`); `jof:build -- --check` still gives identical bytes. The reference river (693 × 503 combinations, 24 decisions) reached 1% of the pot in 6.1 s and 0.5% in 9.7 s on one core of this Mac, peak 182 MB (`node scripts/postflop-measure.ts`). Full gate: 572 Vitest tests, 228 Playwright tests.
   - Evidence (second part): `7c92f0c`. Folds and showdowns now cost one pass over each range with a per-card correction for card removal, checked against the plain sum over pairs (`removal.spec.ts`) and against the whole river game written with a matrix of who wins (`postflop.spec.ts`); chance nodes deal the turn and river, checked against a turn counted by hand (34 rivers to 10), separate enumerations of every runout on a turn and a flop, and an all-in on the turn. The reference river now reaches 1% in 0.3 s and 0.5% in 0.4 s at the same iteration counts as before; the reference turn 1% in 196 s and 0.5% in 308 s, peak 1.06 GB; the reference flop needs 111 GB of solver state, and a flop with one bet size and all-in (6.2 GB) costs 12 s an iteration. `jof:build -- --check` gives identical bytes. Full gate: 589 Vitest tests, 228 Playwright tests.
   - Evidence (third part): the commit that ticks P5.1. The reference flop as stated was counted, not solved: 2.9 million decisions, 111 GB of solver state. The flop solved instead has one bet size and all-in, at most two a street (170,528 decisions, 6.2 GB): 1% of the pot after 400 iterations, 72 minutes on one core, 10 to 12 GB; 0.5% extrapolated from its own curve to about 710 iterations, 2.1 hours. Decisions in `docs/solver.md`: B-10’s budget stays at 5 s; no Rust core now (the flop is bound by memory, not by the language); a library of 12 flops of that shape, solved from the flop to the river. Full gate as in the second part; only documents changed.
-- [ ] **P5.1b · The river on the host** · Depends on: P5.1, the owner’s Tailscale sign-in check for SSH — `node scripts/postflop-measure.ts` run on the host from a scratch export of `main`, with `nice -n 19`, and its times to 1% and 0.5% and peak memory recorded in `docs/solver.md` beside this Mac’s. Split from P5.1 on 2026-11-27 because SSH now asks for a check only the owner can pass; P5.4 measures B-10 on the host as well.
+- [x] **P5.1b · The river on the host** · Depends on: P5.1, the owner’s Tailscale sign-in check for SSH — `node scripts/postflop-measure.ts` run on the host from a scratch export of `main`, with `nice -n 19`, and its times to 1% and 0.5% and peak memory recorded in `docs/solver.md` beside this Mac’s. Split from P5.1 on 2026-11-27 because SSH now asks for a check only the owner can pass; P5.4 measures B-10 on the host as well.
+  - Evidence: the commit that ticks P5.1b. On the host (Ryzen 7 5800H VM, 8 cores, 15 GB, load 0.2), from a scratch export of `beec55c` under `/tmp`, removed afterwards: 1% of the pot in 0.4 s, 0.5% in 0.7 s, peak 111 MB, the same in two runs; about 1.6 times this Mac’s time, with identical exploitability at every check. Recorded in `docs/solver.md`.
 - [ ] **P5.2 · River solver** · Depends on: P5.1 — B-3 on the full solver, B-6, and B-11 and B-12 on the reference river spots.
 - [ ] **P5.3 · Independent cross-check** · Depends on: P5.2, D-21 — the tool’s license read and recorded, a harness that converts a spot both ways, and B-7.
 - [ ] **P5.4 · On-demand river solving** · Depends on: P5.2 — a server endpoint with limits, cancellation and a cache keyed by the spot’s hash; B-10; and Gate C’s on-demand item, in a browser test at phone size.
@@ -649,10 +650,10 @@ Every session ends by prepending one entry to the log below, in this shape and i
 ### 2026-11-27 · P5.1 · Chance cards, linear showdowns, river to flop measured
 
 - **Completed:** linear-time folds and showdowns (`removal.ts`), chance cards for turn and flop, a one-player CFR+ pass (`7c92f0c`); flop measured, decisions recorded, P5.1 ticked and P5.1b split off (the commit that ticks P5.1).
-- **Verified:** full gate (589 Vitest, 228 Playwright); `jof:build -- --check` identical; river 1% in 0.3 s (was 6.1 s), turn 196 s, small flop 72 min; `7c92f0c` live on `/healthz`. Not verified: anything on the host (Tailscale check).
+- **Verified:** full gate (589 Vitest, 228 Playwright); `jof:build -- --check` identical; river 1% in 0.3 s (was 6.1 s), turn 196 s, small flop 72 min; `7c92f0c` live on `/healthz`. P5.1b then done on the host after the owner passed the Tailscale check: river 1% in 0.4 s.
 - **Open decisions:** none. D-19: no Rust core now; the owner asked about rewriting the server in Rust, answered in chat (no gain; the flop is memory-bound).
 - **Next ready task:** P5.2: build B-3’s polarized river game through `buildRiver` and compare with the closed form.
-- **Plan changes:** P5.1b split from P5.1 (the host measurement waits on the owner).
+- **Plan changes:** P5.1b split from P5.1 for the host measurement, then done the same day.
 
 ### 2026-11-27 · Decisions, P3.7, P7.2 · M1 complete
 
