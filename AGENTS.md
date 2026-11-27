@@ -126,7 +126,7 @@ web/                       the SvelteKit app (exists; the same place RiverMind k
   src/lib/engine/          cards, hand evaluator, hand state machine, histories, seat views, fuzzer and fixtures:
                            pure, browser-safe TypeScript imported from RiverMind (exists)
   src/lib/solver/          equities, game trees, CFR, best response, grading
-  src/lib/spots/           spot definitions and the reader for solution artifacts
+  src/lib/spots/           the contract's types (docs/grading.md) and the reader that checks a solution's hashes (exists)
   src/lib/server/          server-only code: database client and health check exist; practice sessions and opponents later
   scripts/                 Node scripts run by package.json: db-migrate.ts, engine-fuzz.ts, engine-bench.ts,
                            engine-parity.ts and its Node-only helper engine/parity.ts exist

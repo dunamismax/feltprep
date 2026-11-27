@@ -10,8 +10,8 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 
 | | |
 | --- | --- |
-| **Current phase** | [Phase 2 · Reference math](#phase-2--reference-math), not started. Phase 1 is complete. |
-| **Next step** | **P2.1 · Spot, solution and grading contract.** It needs no decision from the owner; P2.2 (exact equities) is also ready. |
+| **Current phase** | [Phase 2 · Reference math](#phase-2--reference-math): P2.1 is done. |
+| **Next step** | **P2.2 · Exact equities.** P2.3 (solver core and best response) is also ready. |
 | **In progress** | Nothing. |
 | **Background run** | None. |
 | **Waiting on the owner** | Nothing blocks the next step. Q-12 is needed by P3.1 and P3.2. Two optional Cloudflare settings for `feltprep.app` (D-11): keep the path in the redirect, and add `www.feltprep.app`. |
@@ -375,11 +375,12 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
 - [ ] Benchmarks B-1 to B-5, B-9, B-11 and B-12 pass, and `docs/benchmarks.md` records them.
 - [ ] The jam-or-fold solution for 2 to 15 big blinds is in the solution registry with a manifest that meets all nine items of the grading gate.
 
-- [ ] **P2.1 · Spot, solution and grading contract** · Depends on: P1.1 (it imports nothing)
-  - [ ] `docs/grading.md` defines a spot (every field of grading-gate item 1), a solution artifact (per-hand action frequencies and values, versioned with a `"format"` field), its manifest, and the solution registry with its hash check.
-  - [ ] It defines a verdict: the action taken, the reference’s frequencies and values for that hand, the loss, the hand’s margin, the band (Q-7) and the “not graded” case with its reason.
-  - [ ] It says where a grade’s numbers come from: action values computed exactly from the finished strategies, each hand’s margin (B-12) and how often the range holds the hand at that decision, all stored in the artifact, with the minimum below which a hand is not graded.
-  - [ ] TypeScript types and a reader that refuses an artifact whose hashes or format do not match, with tests for each refusal.
+- [x] **P2.1 · Spot, solution and grading contract** · Depends on: P1.1 (it imports nothing)
+  - [x] `docs/grading.md` defines a spot (every field of grading-gate item 1), a solution artifact (per-hand action frequencies and values, versioned with a `"format"` field), its manifest, and the solution registry with its hash check.
+  - [x] It defines a verdict: the action taken, the reference’s frequencies and values for that hand, the loss, the hand’s margin, the band (Q-7) and the “not graded” case with its reason.
+  - [x] It says where a grade’s numbers come from: action values computed exactly from the finished strategies, each hand’s margin (B-12) and how often the range holds the hand at that decision, all stored in the artifact, with the minimum below which a hand is not graded.
+  - [x] TypeScript types and a reader that refuses an artifact whose hashes or format do not match, with tests for each refusal.
+  - Evidence: the commit that ticks this step. [`docs/grading.md`](docs/grading.md); `web/src/lib/spots/` holds the types, a Web Crypto SHA-256 and `loadSolution`, whose 16 tests load a valid fixture and refuse each of the eight reasons (unknown id, graded entry missing a gate item, manifest hash, file hash or size, missing file, format of registry, manifest or solution, another solution’s files, malformed tables or paths). `minReach` 0.01 is a proposal recorded in each manifest. Full gate: 310 Vitest tests, 24 Playwright tests.
 
 - [ ] **P2.2 · Exact equities** · Depends on: P1.4
   - [ ] An enumerator gives exact all-in equity for hand against hand, hand against range and range against range, on any board from pre-flop to river, handling shared cards correctly.
