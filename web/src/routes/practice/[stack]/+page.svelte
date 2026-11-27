@@ -120,6 +120,7 @@
 		readonly text: string | null;
 		readonly gloss: string | null;
 		readonly drill: string | null;
+		readonly seat: Seat;
 	}
 
 	// The finished hand's decisions (P3.9): every graded one with its verdict
@@ -148,7 +149,8 @@
 					loss: v.loss,
 					text: e?.text ?? null,
 					gloss: e?.gloss ?? null,
-					drill: explained ? targetQuery(seat, holes, 'practice') : null
+					drill: explained ? targetQuery(seat, holes, 'practice') : null,
+					seat
 				}
 			];
 		});
@@ -303,6 +305,15 @@
 						{/if}
 						{#if g.gloss}
 							<p class="text-sm text-muted">{g.gloss}</p>
+						{/if}
+						{#if g.text && data.lessons[g.seat]}
+							<a
+								href={resolve('/learn/[lesson]', { lesson: data.lessons[g.seat]?.id ?? '' })}
+								class="self-start text-sm font-semibold text-accent underline"
+								data-testid="decision-lesson"
+							>
+								Read the lesson
+							</a>
 						{/if}
 					</div>
 				{/each}

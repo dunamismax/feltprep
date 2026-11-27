@@ -17,9 +17,19 @@
 		it in realistic spots, then apply it in full practice hands.
 	</p>
 	<p class="rounded-panel border border-line bg-raised px-4 py-3 text-muted">
-		FeltPrep is in development. The first solved spot can be studied, drilled and played in full
-		hands now; lessons and hand review come next.
+		FeltPrep is in development. The first solved spot has a lesson, and can be studied, drilled and
+		played in full hands now; hand review comes next.
 	</p>
+	<a
+		href={resolve('/learn/[lesson]', { lesson: 'jam-or-fold-10bb' })}
+		class="flex min-h-target flex-col gap-1 rounded-panel border border-line-strong bg-raised px-4 py-3 hover:border-accent"
+	>
+		<span class="text-sm font-semibold tracking-wide text-muted uppercase">Learn</span>
+		<span class="text-lg font-semibold text-accent">Jam or fold: heads-up at 10 big blinds</span>
+		<span class="text-sm text-muted">
+			Why short stacks move all-in so often, and how to answer.
+		</span>
+	</a>
 	<a
 		href={resolve('/study/jam-or-fold/[stack]', { stack: '10' })}
 		class="flex min-h-target flex-col gap-1 rounded-panel border border-line-strong bg-raised px-4 py-3 hover:border-accent"

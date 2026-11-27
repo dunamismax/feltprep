@@ -3,6 +3,7 @@
 // drill itself, its deals and its grades, run in the browser (A-3).
 import { error } from '@sveltejs/kit';
 import { jamOrFoldAt, jamOrFoldFactsAt } from '#lib/server/solutions.ts';
+import { lessonLinkFor } from '#lib/server/lessons.ts';
 import { JAM_OR_FOLD_STACKS } from '#lib/solver/jam-or-fold.ts';
 import type { EntryGenerator, PageServerLoad } from './$types';
 
@@ -20,6 +21,10 @@ export const load: PageServerLoad = async ({ params }) => {
 		stack,
 		stacks: JAM_OR_FOLD_STACKS,
 		solution: await jamOrFoldAt(stack),
-		facts: await jamOrFoldFactsAt(stack)
+		facts: await jamOrFoldFactsAt(stack),
+		lessons: {
+			button: await lessonLinkFor(`jof-${stack}bb-button`),
+			'big-blind': await lessonLinkFor(`jof-${stack}bb-big-blind`)
+		}
 	};
 };

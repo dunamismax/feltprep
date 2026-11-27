@@ -10,13 +10,13 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 
 | | |
 | --- | --- |
-| **Current phase** | [Phase 3 · The first loop](#phase-3--the-first-loop): P3.1, P3.3, P3.5, P3.8 and P3.9 done; P3.4 lacks only its lesson link. A mistake at `/practice/12` now shows its cost and reason and drills in one tap. |
-| **Next step** | **P3.2 · Lesson pipeline and the first lesson** (D-12 unblocks it), then P3.6 (hand review, calling `explain` and offering “Drill this spot”) and P3.7 (the M1 journey). |
+| **Current phase** | [Phase 3 · The first loop](#phase-3--the-first-loop): every step but P3.6 (review) and P3.7 (the M1 journey) is done. The first lesson is at `/learn/jam-or-fold-10bb`. |
+| **Next step** | **P3.6 · Hand review**: a page that steps through a finished practice hand from local storage, calling `explain` and offering “Drill this spot”; then P3.7, the M1 journey test. |
 | **In progress** | Nothing. |
 | **Background run** | None. |
 | **Waiting on the owner** | Nothing: every open decision was answered on 2026-11-26 (D-12 to D-24). P7.2 will need the owner’s iPhone, and P4.3 and P7.6 their word. |
 | **Live** | <https://feltprep.com> serves `main` as a preview, redeployed by every push whose CI passes (D-10); `/healthz` names the live commit. `feltprep.app` redirects to it in Cloudflare (D-11). |
-| **`main`** | Phases 1 and 2; theme, study view, drill, practice table with stored hands, D-20’s bands, and the mistake-to-drill path. `origin` pushes to GitHub and Codeberg. |
+| **`main`** | Phases 1 and 2; theme, study view, drill, practice table with stored hands, D-20’s bands, the mistake-to-drill path and the first lesson. `origin` pushes to GitHub and Codeberg. |
 | **Last updated** | 2026-11-26 |
 
 ## How to work this file
@@ -446,11 +446,12 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
   - [x] Nothing is taken from RiverMind’s art, palette, fonts or layouts (D-4); fonts are recorded in `docs/provenance.md`.
   - Evidence: the commit that ticks this step. Tokens in `web/src/app.css`; `theme.spec.ts` measures 37 foreground/background pairs (`contrast.ts`) at 4.5:1 for text and 3:1 for graphics in both themes, and fails on a raw colour in any component. `PlayingCard.svelte` draws a four-colour deck with FeltPrep’s own suit shapes and a back; `/style` shows tokens, contrast measured live, type, spacing and all 52 cards, checked at 375 × 812 in both themes in the browser and by `style.e2e.ts` in six projects (no overflow, no CSP violation, no page error). No font file: system faces, recorded in provenance. No brand artwork (Q-12). Full gate: 467 Vitest tests, 36 Playwright tests.
 
-- [ ] **P3.2 · Lesson pipeline and the first lesson** · Depends on: P3.1, P2.4, D-12
-  - [ ] The lesson text’s license, CC BY-SA 4.0 (D-12), is stated in `content/`, recorded in `docs/provenance.md`, and shown on every lesson page with a link to the license.
-  - [ ] Lessons are Markdown files in `content/lessons/`, prerendered, each with a title, a summary and the IDs of the spots it teaches. A build fails on a lesson that names an unknown spot.
-  - [ ] The first lesson, “Jam or fold: heads-up at 10 big blinds”, is original writing. It explains why jamming wins, states the game’s assumptions and limits (P2.4’s caveat), and links to its study view and drill.
-  - [ ] It reads well at 375 pixels wide, checked in a browser.
+- [x] **P3.2 · Lesson pipeline and the first lesson** · Depends on: P3.1, P2.4, D-12
+  - [x] The lesson text’s license, CC BY-SA 4.0 (D-12), is stated in `content/`, recorded in `docs/provenance.md`, and shown on every lesson page with a link to the license.
+  - [x] Lessons are Markdown files in `content/lessons/`, prerendered, each with a title, a summary and the IDs of the spots it teaches. A build fails on a lesson that names an unknown spot.
+  - [x] The first lesson, “Jam or fold: heads-up at 10 big blinds”, is original writing. It explains why jamming wins, states the game’s assumptions and limits (P2.4’s caveat), and links to its study view and drill.
+  - [x] It reads well at 375 pixels wide, checked in a browser.
+  - Evidence: the commit that ticks this step. `content/README.md` states the license; `content/lessons/jam-or-fold-10bb.md` is read by FeltPrep’s own Markdown subset (`web/src/lib/lessons/markdown.ts`, rendered as elements, never HTML, so no package and no CSP change) and `lessons.ts`, which refuses an unknown spot, header field or markup; `/learn` and `/learn/[lesson]` are prerendered. Changing the lesson’s spot to `jof-40bb-button` failed `pnpm run build` with `LessonRefused`. Every number in the lesson was read from the 10 bb solution and the equity table. Drill feedback and a practice mistake link to the lesson for their spot; the home page leads to it. `lessons.spec.ts` (8 tests) and `learn.e2e.ts` in six projects (both themes, width, CSP, license link, study and drill links, 404, the links back from feedback); read at 375 × 812 in both themes. Full gate: see P3.4’s line.
 
 - [x] **P3.3 · Study view** · Depends on: P3.1, P2.4
   - [x] A 13 × 13 hand grid shows the reference for the chosen depth and position: each class’s frequency, and its value on selection.
@@ -458,13 +459,13 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
   - [x] The grid is usable by touch at 360 pixels wide and by keyboard, and does not rely on colour alone.
   - Evidence: the commit that ticks this step. `/study/jam-or-fold/[stack]`, prerendered at 2 to 15 big blinds from the solution bundled by `web/src/lib/server/solutions.ts`, whose reader checks every hash in the build (a changed byte in `solution.json` failed `pnpm run build` with `SolutionRefused`); `sliceSolution` grades every hand and action exactly as the whole solution does at all 14 depths (tested). Each cell fills from the bottom by frequency, so the strategy reads from height, not hue; arrow keys move with one tab stop; `#big-blind` links the other seat. `study.e2e.ts` checks the cells against `solution.json`, tap, keyboard, seat, depth links and a 404 outside the game, in six projects; looked at 360 × 640 in both themes. Full gate: 491 Vitest tests, 66 Playwright tests.
 
-- [ ] **P3.4 · Drill** · Depends on: P3.3, P2.5
+- [x] **P3.4 · Drill** · Depends on: P3.3, P2.5
   - [x] A drill deals hands for the spot and asks for the decision, with the practice table’s own action controls.
-  - [ ] Feedback follows each answer at once: the verdict, the loss in big blinds, the reference’s frequencies, a one-sentence reason and a link to the lesson.
+  - [x] Feedback follows each answer at once: the verdict, the loss in big blinds, the reference’s frequencies, a one-sentence reason and a link to the lesson.
   - [x] A session ends with a summary, and progress is kept in the browser (Q-4) and survives a reload.
   - [x] Deals come from a seed in tests, so every browser test plays known hands.
   - Evidence: the commit that adds `/drill/jam-or-fold/[stack]`. Each deal is a real engine hand stopped at the decision (`web/src/lib/drill/jam-or-fold.ts`), from both engine seats, graded through `locateJamOrFold` and `gradeDecision` as a full hand will be; a limp or smaller raise is “not graded”. `ActionPanel.svelte` (shared with P3.5) shows only what `legalActions` allows, checked over 300 random hands. Session and per-depth progress in local storage (`session.ts`), restored after a reload to the same decision or its feedback; `?seed=` fixes the deals. `drill.e2e.ts` in six projects: a 20-decision session answered from `solution.json` is all acceptable, a clear mistake shows its loss, limp and small raise not graded, reload, and controls at least 44 px, 8 px apart, in the viewport and unmoved by feedback. Full gate: 518 Vitest tests, 96 Playwright tests.
-  - Remaining: the feedback links to the study view but not yet to a lesson, which waits for P3.2. Everything else in the criterion is shown; since P3.9 the reason is `explain`’s, checked by B-13.
+  - Completed with P3.2: the feedback links to the lesson for its spot (“Read the lesson”, where one exists: at 10 big blinds now), checked in `learn.e2e.ts`; since P3.9 the reason is `explain`’s, checked by B-13. Full gate at that commit: 563 Vitest tests, 174 Playwright tests.
 
 - [x] **P3.5 · Short-stack practice table** · Depends on: P3.1, P2.5, P1.5. Split on 2026-11-26 into P3.5a (the table in the browser) and P3.5b (stored hands and the server’s check), because the table and its opponent can be built and verified with no database while storage needs a migration and a guest identity. P3.5 is ticked when both are.
   - [x] **P3.5a · The table in the browser**
@@ -625,6 +626,13 @@ Every session ends by prepending one entry to the log below, in this shape and i
 
 ## Handoff log
 
+### 2026-11-26 · P3.2, P3.4 · The first lesson; the drill complete
+
+- **Completed:** the lesson pipeline (a strict Markdown subset, no new package), `/learn` and the lesson “Jam or fold: heads-up at 10 big blinds” under CC BY-SA 4.0; links to it from drill feedback, practice mistakes and the home page, which completes P3.4 (the commit that ticks P3.2).
+- **Verified:** full gate; an unknown spot fails the build; every number in the lesson read from the solution; read on a phone in both themes.
+- **Open decisions:** none.
+- **Next ready task:** P3.6: a `/review` page that replays the last `FinishedHand` from the practice session in local storage.
+
 ### 2026-11-26 · P3.8, P3.9 · The owner’s bands; from a mistake straight to its drill
 
 - **Completed:** D-20’s bands in the grader (`7686e28`) and the rebuilt manifest (`1042709`); `explain` with B-13, grades with cost and reason at the end of a practice hand, and “Drill this spot” into a 10-deal drill of that decision with a way back (the commit that ticks P3.9).
@@ -678,10 +686,3 @@ Every session ends by prepending one entry to the log below, in this shape and i
 - **Open decisions:** none touched.
 - **Next ready task:** P1.5: write the heads-up short-stack fixtures by hand from the rules.
 - **Plan changes:** P1.5 gains Gate A’s rules trace, with the rules that had no fixture at import.
-
-### 2026-11-24 · P1.2 · Continuous integration
-
-- **Completed:** `.github/workflows/test.yml` runs the full gate on every push and pull request (`52edfd7`).
-- **Verified:** the first run on `main`, Test #45454058647, passed every step in 1 minute 34 seconds.
-- **Open decisions:** none touched.
-- **Next ready task:** P1.4: export RiverMind at its pinned commit into a scratch directory and copy the engine files into `web/src/lib/engine/`.

@@ -491,6 +491,15 @@
 						<a href={studyLink(answered.seat)} class="font-semibold text-accent underline">
 							Study this spot
 						</a>
+						{#if data.lessons[answered.seat]}
+							<a
+								href={resolve('/learn/[lesson]', { lesson: data.lessons[answered.seat]?.id ?? '' })}
+								class="font-semibold text-accent underline"
+								data-testid="lesson-link"
+							>
+								Read the lesson
+							</a>
+						{/if}
 					</p>
 					{#if explanation?.gloss}
 						<p class="text-sm text-muted" data-testid="gloss">{explanation.gloss}</p>

@@ -6,7 +6,7 @@ The record of everything in this repository that came from somewhere else: code,
 
 FeltPrep’s code is licensed under the GNU Affero General Public License, version 3 or later (`AGPL-3.0-or-later`; D-9 in [BUILD.md](../BUILD.md#settled-decisions)). [`LICENSE`](../LICENSE) is the license’s unmodified text.
 
-The license covers the code. Lesson text is licensed separately under Creative Commons Attribution-ShareAlike 4.0 International (`CC-BY-SA-4.0`), and the FeltPrep name, logo and artwork are reserved, under neither license (D-12 in BUILD.md, 2026-11-26). No lesson or brand artwork exists yet.
+The license covers the code. Lesson text is licensed separately under Creative Commons Attribution-ShareAlike 4.0 International (`CC-BY-SA-4.0`), and the FeltPrep name, logo and artwork are reserved, under neither license (D-12 in BUILD.md, 2026-11-26). Lessons live in `content/lessons/`; [`content/README.md`](../content/README.md) states their license, and every lesson page shows it with a link to the license (P3.2). The first, `jam-or-fold-10bb.md` (2026-11-26), is original writing; its numbers come from FeltPrep’s own jam-or-fold solution, and nothing in it is copied from a book, site or solver product. No brand artwork exists yet. Lessons are rendered by FeltPrep’s own Markdown reader (`web/src/lib/lessons/markdown.ts`), so no Markdown package was added.
 
 ## What may be imported
 

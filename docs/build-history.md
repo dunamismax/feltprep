@@ -2,6 +2,13 @@
 
 Handoff entries moved out of [BUILD.md](../BUILD.md#handoff-log), which keeps the newest eight. Oldest last.
 
+### 2026-11-24 · P1.2 · Continuous integration
+
+- **Completed:** `.github/workflows/test.yml` runs the full gate on every push and pull request (`52edfd7`).
+- **Verified:** the first run on `main`, Test #45454058647, passed every step in 1 minute 34 seconds.
+- **Open decisions:** none touched.
+- **Next ready task:** P1.4: export RiverMind at its pinned commit into a scratch directory and copy the engine files into `web/src/lib/engine/`.
+
 ### 2026-11-24 · P1.1 · Scaffold the app
 
 - **Completed:** `web/` from `sv create` 1.7.0, pinned to the host baseline, `pg` driver, optional database, `/healthz` with the build’s commit, a neutral home page with light and dark tokens, six Playwright projects against `node build`, root `.gitignore`. Docs, provenance and the sv notice updated.

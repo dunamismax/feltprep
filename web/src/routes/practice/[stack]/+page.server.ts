@@ -3,6 +3,7 @@
 // solution, whose hashes the build checks; hands are played in the browser.
 import { error } from '@sveltejs/kit';
 import { jamOrFoldAt, jamOrFoldFactsAt } from '#lib/server/solutions.ts';
+import { lessonLinkFor } from '#lib/server/lessons.ts';
 import { PRACTICE_STACKS } from '#lib/practice/table.ts';
 import type { EntryGenerator, PageServerLoad } from './$types';
 
@@ -20,6 +21,10 @@ export const load: PageServerLoad = async ({ params }) => {
 		stack,
 		stacks: PRACTICE_STACKS,
 		solution: await jamOrFoldAt(stack),
-		facts: await jamOrFoldFactsAt(stack)
+		facts: await jamOrFoldFactsAt(stack),
+		lessons: {
+			button: await lessonLinkFor(`jof-${stack}bb-button`),
+			'big-blind': await lessonLinkFor(`jof-${stack}bb-big-blind`)
+		}
 	};
 };

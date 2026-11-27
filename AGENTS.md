@@ -122,8 +122,11 @@ web/                       the SvelteKit app (exists; the same place RiverMind k
   drizzle.config.ts        drizzle-kit settings (exists)
   src/app.css              Tailwind entry and the theme tokens, light and dark, at AA contrast (exists)
   src/env.ts               environment variables, validated at build and start (exists)
-  src/routes/              pages and endpoints: the home page, /style, /study/jam-or-fold/[stack],
-                           /drill/jam-or-fold/[stack], /practice/[stack], /api/hands and /healthz exist
+  src/routes/              pages and endpoints: the home page, /style, /learn, /learn/[lesson],
+                           /study/jam-or-fold/[stack], /drill/jam-or-fold/[stack], /practice/[stack], /api/hands
+                           and /healthz exist
+  src/lib/lessons/         the lesson reader: a strict Markdown subset, the lesson header and its checks, and the
+                           component that renders a lesson as elements (exists)
   src/lib/ui/              shared components and their helpers: code-drawn playing cards and the
                            contrast pairs the theme test measures (exists)
   src/lib/study/           the study view's strategy grid and its formatting helpers (exists)
@@ -142,14 +145,16 @@ web/                       the SvelteKit app (exists; the same place RiverMind k
   src/lib/spots/           the contract's types (docs/grading.md), the reader that checks a solution's hashes and
                            sliceSolution, one game's share of a solution (exists)
   src/lib/server/          server-only code: database client and schema, health check, hands.ts (guest tokens
-                           and stored practice hands) and solutions.ts, which bundles solutions/ and the equity
-                           table, checks them in the build and computes explain.ts's facts (exist)
+                           and stored practice hands), lessons.ts (bundles content/lessons/) and solutions.ts,
+                           which bundles solutions/ and the equity table, checks them in the build and computes
+                           explain.ts's facts (exist)
   scripts/                 Node scripts run by package.json: db-migrate.ts, engine-fuzz.ts, engine-bench.ts,
                            engine-parity.ts and its Node-only helper engine/parity.ts, equity-build.ts,
                            solver-bench.ts, jam-or-fold-build.ts and jam-or-fold-compare.ts exist
   drizzle/                 SQL migrations (never edit an applied one): 0000 adds app.guests and app.practice_hands
   e2e/                     Playwright tests, desktop and phone (exists)
-content/lessons/           lessons as Markdown, kept in Git, prerendered
+content/                   README.md states the lesson text's license (CC BY-SA 4.0, D-12) (exists)
+content/lessons/           lessons as Markdown, kept in Git, prerendered (exists)
 solutions/                 small artifacts kept in Git, each with a manifest: registry.json, equity/ (the pre-flop
                            class equity table) and jam-or-fold/ exist
 deploy/                    the contract's deploy: prepare, cutover, provision and continuous-deploy scripts, the systemd
