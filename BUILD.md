@@ -10,8 +10,8 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 
 | | |
 | --- | --- |
-| **Current phase** | [Phase 3 · The first loop](#phase-3--the-first-loop): P3.1 and P3.3 done, P3.4 done but for its lesson link; study and drill at `/study/jam-or-fold/10` and `/drill/jam-or-fold/10`. |
-| **Next step** | **P3.5 · Short-stack practice table**, reusing the drill’s `ActionPanel`. P3.2 can build its pipeline but commits no lesson before Q-12, which also holds P3.4’s lesson link. |
+| **Current phase** | [Phase 3 · The first loop](#phase-3--the-first-loop): P3.1, P3.3 and P3.5a done; P3.4 lacks only its lesson link. Study, drill and practice are at `/study/jam-or-fold/10`, `/drill/jam-or-fold/10` and `/practice/12`. |
+| **Next step** | **P3.5b · Stored hands**: a guest identity, a Drizzle migration and an endpoint that replays each hand on the engine. P3.2 can build its pipeline but commits no lesson before Q-12, which also holds P3.4’s lesson link. |
 | **In progress** | Nothing. |
 | **Background run** | None. |
 | **Waiting on the owner** | Q-12 (lesson text and artwork terms) before P3.2 commits a lesson; Q-13 (the published push/fold chart’s terms) is optional. Two optional Cloudflare settings for `feltprep.app` (D-11). |
@@ -251,7 +251,7 @@ No player can take an illegal action, and every legal one is offered with the ri
 - [x] **Long fuzz.** At least 100,000 random hands at each seat count from 2 to 9, with no failure. The count of showdowns, side pots and all-ins is recorded, so the run is known to have reached them.
 - [x] **Parity at import.** One run of RiverMind’s differential check at the pinned commit shows the imported TypeScript files byte-identical in behaviour to its Python reference. Recorded once in `docs/provenance.md`; after that FeltPrep’s own tests carry the engine.
 - [x] **Replay.** Every fixture and a sample of fuzzed hands round-trip through the history format to an identical state.
-- [ ] **Interface.** A browser test plays seeded hands and asserts that the action panel offers exactly the engine’s legal actions, with the engine’s minimum and maximum raise, including an all-in for less than a full raise and a spot where raising is not allowed.
+- [x] **Interface.** A browser test plays seeded hands and asserts that the action panel offers exactly the engine’s legal actions, with the engine’s minimum and maximum raise, including an all-in for less than a full raise and a spot where raising is not allowed. Passed at P3.5a: `practice.e2e.ts` in six browser projects, seeded practice hands checked against the engine at every decision, and the engine-built examples on `/style`.
 - [ ] **Server.** Any endpoint that accepts an action rejects one the engine does not offer, and a test proves it.
 
 ### Gate B · Trustworthy feedback on reference spots
@@ -447,11 +447,15 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
   - Evidence: the commit that adds `/drill/jam-or-fold/[stack]`. Each deal is a real engine hand stopped at the decision (`web/src/lib/drill/jam-or-fold.ts`), from both engine seats, graded through `locateJamOrFold` and `gradeDecision` as a full hand will be; a limp or smaller raise is “not graded”. `ActionPanel.svelte` (shared with P3.5) shows only what `legalActions` allows, checked over 300 random hands. Session and per-depth progress in local storage (`session.ts`), restored after a reload to the same decision or its feedback; `?seed=` fixes the deals. `drill.e2e.ts` in six projects: a 20-decision session answered from `solution.json` is all acceptable, a clear mistake shows its loss, limp and small raise not graded, reload, and controls at least 44 px, 8 px apart, in the viewport and unmoved by feedback. Full gate: 518 Vitest tests, 96 Playwright tests.
   - Remaining: the feedback links to the study view but not yet to a lesson, which waits for P3.2 and Q-12. Everything else in the criterion is shown.
 
-- [ ] **P3.5 · Short-stack practice table** · Depends on: P3.1, P2.5, P1.5
-  - [ ] A heads-up table at a chosen depth from 10 to 15 big blinds plays complete hands on the engine against a labelled practice opponent: the reference strategy inside the jam-or-fold game, and the imported rule-based bot (with its provenance entry) elsewhere.
-  - [ ] The action panel offers exactly the engine’s legal actions and amounts, and the server rejects anything else (Gate A’s interface and server items).
-  - [ ] The button alternates, a finished hand shows who won and why, and a reload returns to the same decision.
-  - [ ] Finished hands are stored as versioned hand histories under the guest identity (Q-4), with a Drizzle migration.
+- [ ] **P3.5 · Short-stack practice table** · Depends on: P3.1, P2.5, P1.5. Split on 2026-11-26 into P3.5a (the table in the browser) and P3.5b (stored hands and the server’s check), because the table and its opponent can be built and verified with no database while storage needs a migration and a guest identity. P3.5 is ticked when both are.
+  - [x] **P3.5a · The table in the browser**
+    - [x] A heads-up table at a chosen depth from 10 to 15 big blinds plays complete hands on the engine against a labelled practice opponent: the reference strategy inside the jam-or-fold game, and the imported rule-based bot (with its provenance entry) elsewhere.
+    - [x] The action panel offers exactly the engine’s legal actions and amounts (Gate A’s interface item).
+    - [x] The button alternates, a finished hand shows who won and why, and a reload returns to the same decision.
+    - Evidence: the commit that adds `/practice/[stack]`. `web/src/lib/practice/`: `table.ts` replays each hand from the session’s seed and the player’s actions, grading each decision through the drill’s `gradeAction`; `opponent.ts` draws the reference’s frequencies inside the game (within 0.015 of a mixed hand’s frequency over 20,000 draws) and hands over to `heuristic.ts`, imported from RiverMind `233b9c6` (`docs/provenance.md`), elsewhere. Unit tests play 300 hands from both seats with chips conserved and every stored history replaying to the same result. `practice.e2e.ts` in six projects replays the seeded session in Node and checks the panel against `legalActions` at every decision (enabled places, call and all-in amounts, the raise sheet’s minimum and maximum), and the three engine-built examples on `/style` (opening, raising not allowed, all-in for less than a full raise); also the outcome sentence, hidden cards without a showdown, the alternating button and a reload mid-hand. Looked at 375 × 812 in the browser through a limped hand to showdown. Full gate: 529 Vitest tests, 114 Playwright tests.
+  - [ ] **P3.5b · Stored hands** · Depends on: P3.5a, Q-4
+    - [ ] Finished hands are stored as versioned hand histories under the guest identity (Q-4), with a Drizzle migration.
+    - [ ] The endpoint that stores a hand replays it on the engine and rejects any action the engine does not offer, and a test proves it (Gate A’s server item).
 
 - [ ] **P3.6 · Hand review** · Depends on: P3.5
   - [ ] A finished hand can be stepped through from the table, showing only what the player could see until the showdown.

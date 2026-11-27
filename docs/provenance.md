@@ -39,6 +39,15 @@ One entry per import, newest first, under [Imports](#imports):
 
 ## Imports
 
+### The rule-based practice opponent from RiverMind Poker · 2026-11-26
+
+- **Files here:** `web/src/lib/practice/heuristic.ts` and two of the tests in `web/src/lib/practice/heuristic.spec.ts`.
+- **Source:** `https://github.com/dunamismax/rivermind-poker` at commit `233b9c67934df790f13e02f4ce56209496712203`: `web/src/lib/server/bots/policies.ts` (SHA-256 `2bd9f56ada1f7f5f2117c6d3de5cb25965b2d87e1cbd10cb399061b5408db6bf`) and, for the tests “score hands as Chen does” and “RiverMind Easy opens strong hands and folds weak ones”, `web/src/lib/server/bots/bots.spec.ts` (SHA-256 `2166ddae5e8de5ff820cc3659195ba4aad04d7c11e227fd0ac60b81be1537e2b`), read with `git show` from the pinned commit.
+- **License:** GPL-3.0-or-later, as for the engine above (`licenses/GPL-3.0.txt`); both files carry a header saying so. The source is RiverMind’s own TypeScript port of its Python bots: Chen’s pre-flop score is a published formula, and no other project’s code is in it.
+- **Copyright:** the RiverMind Poker contributors (the owner of both projects).
+- **Changes:** kept `legalOf`, `passive`, `chenScore`, `handStrength` and `HeuristicPolicy` as they were; left out the random, calling-station and min-bet bots, `defaultBots`, and the `BotRandom` type with its port of Python’s generator, which only those bots used; `Policy.act` takes the view alone, since the heuristic never draws; imports point at FeltPrep’s engine; a new header says it is a practice opponent only. In the spec, imports changed and the other bots’ tests were left out.
+- **Verified:** both imported tests pass here unchanged in substance, and a new test plays 1,000 hands at short stacks from both seats with every action legal (BUILD.md’s reuse assessment asks for that).
+
 ### The exact pre-flop equity table of Irving and d’Eon · 2026-11-26
 
 - **Files here:** `web/src/lib/solver/fixtures/irving-exact.txt`, a test fixture only: nothing in the app reads it. It is the independent reference for benchmark B-4 in `web/src/lib/solver/preflop-table.spec.ts`.

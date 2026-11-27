@@ -71,14 +71,23 @@ export function dealDrill(seed: number, index: number, stack: number, mode: Seat
 	return { index, seat, player, state, hand };
 }
 
-/** The verdict for taking `action` in `deal`, against `solution`. */
-export function judge(solution: LoadedSolution, deal: DrillDeal, action: Action): Verdict {
-	if (!allows(legalActions(deal.state), action)) {
+/**
+ * The verdict for taking `action` in `state`, a heads-up hand at the player's
+ * decision, against `solution`. The drill and the practice table both grade
+ * through here.
+ */
+export function gradeAction(solution: LoadedSolution, state: HandState, action: Action): Verdict {
+	if (!allows(legalActions(state), action)) {
 		throw new RangeError('the engine does not offer that action here');
 	}
-	const located = locateJamOrFold(deal.state, action);
+	const located = locateJamOrFold(state, action);
 	if (!located.inside) return { graded: false, reason: located.reason, detail: located.detail };
 	return gradeDecision(solution, located.spot, located.hand, located.action);
+}
+
+/** The verdict for taking `action` in `deal`, against `solution`. */
+export function judge(solution: LoadedSolution, deal: DrillDeal, action: Action): Verdict {
+	return gradeAction(solution, deal.state, action);
 }
 
 const VERB: Record<string, string> = { jam: 'jamming', fold: 'folding', call: 'calling' };

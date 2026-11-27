@@ -17,8 +17,8 @@
 		it in realistic spots, then apply it in full practice hands.
 	</p>
 	<p class="rounded-panel border border-line bg-raised px-4 py-3 text-muted">
-		FeltPrep is in development. The first solved spot can be studied and drilled now; lessons and
-		practice hands come next.
+		FeltPrep is in development. The first solved spot can be studied, drilled and played in full
+		hands now; lessons and hand review come next.
 	</p>
 	<a
 		href={resolve('/study/jam-or-fold/[stack]', { stack: '10' })}
@@ -37,6 +37,14 @@
 		<span class="text-sm text-muted">
 			Twenty decisions at a time, each graded against the solved game at once.
 		</span>
+	</a>
+	<a
+		href={resolve('/practice/[stack]', { stack: '12' })}
+		class="flex min-h-target flex-col gap-1 rounded-panel border border-line-strong bg-raised px-4 py-3 hover:border-accent"
+	>
+		<span class="text-sm font-semibold tracking-wide text-muted uppercase">Practice</span>
+		<span class="text-lg font-semibold text-accent">Heads-up, 10 to 15 big blinds</span>
+		<span class="text-sm text-muted">Complete hands against a practice opponent.</span>
 	</a>
 	<p class="text-sm text-muted">
 		Free software under the GNU AGPL.

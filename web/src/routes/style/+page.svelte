@@ -10,6 +10,14 @@
 	import StrategyGrid from '#lib/study/StrategyGrid.svelte';
 	import { gridRows } from '#lib/study/strategy.ts';
 	import { CLASSES } from '#lib/solver/classes.ts';
+	import ActionPanel from '#lib/table/ActionPanel.svelte';
+	import { panelExamples } from '#lib/table/examples.ts';
+	import type { Action } from '#lib/engine/state.ts';
+
+	const examples = panelExamples();
+	let lastAction = $state('none yet');
+	const show = (a: Action) =>
+		(lastAction = a.amount === null ? a.kind : `${a.kind} to ${a.amount} chips`);
 
 	// A made-up pattern, only to show the grid: pairs and aces filled, suited
 	// connectors half filled. It is not a strategy.
@@ -236,6 +244,27 @@
 				label="Example strategy grid"
 			/>
 		</div>
+	</section>
+
+	<section aria-labelledby="panels" class="flex flex-col gap-4">
+		<h2 id="panels" class="text-xl font-semibold">Action panel</h2>
+		<p class="max-w-prose text-sm text-muted">
+			Built only from the engine’s legal actions for each state below. A place the engine does not
+			allow stays where it is, disabled. Last action chosen: <strong data-testid="last-action">
+				{lastAction}
+			</strong>.
+		</p>
+		{#each examples as example (example.id)}
+			<div class="flex max-w-md flex-col gap-2 pt-24" data-testid="panel-{example.id}">
+				<h3 class="text-sm font-semibold">{example.title}</h3>
+				<ActionPanel
+					legal={example.legal}
+					behind={example.behind}
+					bigBlind={example.bigBlind}
+					onact={show}
+				/>
+			</div>
+		{/each}
 	</section>
 
 	<section aria-labelledby="cards" class="flex flex-col gap-4">
