@@ -39,6 +39,15 @@ One entry per import, newest first, under [Imports](#imports):
 
 ## Imports
 
+### The exact pre-flop equity table of Irving and d’Eon · 2026-11-26
+
+- **Files here:** `web/src/lib/solver/fixtures/irving-exact.txt`, a test fixture only: nothing in the app reads it. It is the independent reference for benchmark B-4 in `web/src/lib/solver/preflop-table.spec.ts`.
+- **Source:** `exact.txt` in `https://github.com/girving/poker` at commit `06fa71d03cbeeb18c1647d7c3d946d328031376b` (the default branch, last pushed 2012-10-17), fetched through the GitHub API. The repository’s README says it holds the exact win, loss and tie probabilities of every pair of pre-flop classes as computed by its own exhaustive enumerator (`exact.cpp`, C++ and OpenCL), and the authors describe the method at `https://naml.us/post/exact-poker-probabilities/` (2011). It is the enumerator’s own output, not copied from elsewhere.
+- **License:** BSD 3-Clause, read in the repository’s `LICENSE`, which covers the repository and names no exception for this file. The notice is kept unchanged in [`licenses/Irving-dEon-poker.txt`](../licenses/Irving-dEon-poker.txt) (SHA-256 `9dd41fc8…5f758479`). The fixture cannot carry a header without changing it; this entry and the test that reads it name the source and the notice.
+- **Copyright:** Geoffrey Irving and Eugene d’Eon (2011).
+- **Changes:** none. It is byte-identical to the source: 1,764,083 bytes, SHA-256 `df010277bb74221bbe8897d16d75d2006418c2402a1be449c9b8a7726e18e4f4`. It is excluded from formatting (`web/.prettierignore`).
+- **Verified:** the file has 14,365 entries, one per unordered class pair, and FeltPrep’s own table (`solutions/equity/preflop-classes.json`, built by a different method in `preflop-table.ts`) agrees with every win, loss and tie fraction exactly.
+
 ### The rules engine and its rules from RiverMind Poker · 2026-11-24
 
 - **Files here:** `docs/rules.md`; in `web/src/lib/engine/`: `cards.ts`, `evaluator.ts`, `state.ts`, `pots.ts`, `seating.ts`, `random.ts`, `history.ts`, `view.ts`, `fuzz.ts`, `testing.ts`, `index.ts`, `rules.json` and the specs `cards.spec.ts`, `evaluator.spec.ts`, `rules.spec.ts`, `history.spec.ts`, `view.spec.ts`, `fuzz.spec.ts`; in `web/scripts/`: `engine/parity.ts`, `engine-bench.ts` and `engine-parity.ts`.

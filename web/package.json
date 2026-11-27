@@ -29,7 +29,8 @@
 		"db:migrate": "node --env-file-if-exists=.env scripts/db-migrate.ts",
 		"engine:fuzz": "node scripts/engine-fuzz.ts",
 		"engine:bench": "node scripts/engine-bench.ts",
-		"engine:parity": "node scripts/engine-parity.ts"
+		"engine:parity": "node scripts/engine-parity.ts",
+		"equity:build": "node scripts/equity-build.ts"
 	},
 	"dependencies": {
 		"drizzle-orm": "0.45.4",

@@ -1,0 +1,21 @@
+{
+	"format": 1,
+	"kind": "table-manifest",
+	"id": "preflop-class-equity",
+	"title": "Exact pre-flop all-in equity of every hand class against every hand class",
+	"files": [
+		{
+			"path": "preflop-classes.json",
+			"sha256": "c3ca25d5da66af615bb7d6920cd6338f22193fc853bc62afe5fee236a34790ad",
+			"bytes": 306595
+		}
+	],
+	"build": {
+		"command": "pnpm run equity:build",
+		"commit": "9f46c7aa0c46dc2feaa6f387e6d7ebf96b3fa58d",
+		"settings": {},
+		"seed": null
+	},
+	"method": "Every five-card board up to suit relabelling (134,459 of 2,598,960), weighted by its class size; on each, all 1,081 live hands ranked and swept worst to best (web/src/lib/solver/preflop-table.ts).",
+	"checks": "web/src/lib/solver/preflop-table.spec.ts (B-4)"
+}

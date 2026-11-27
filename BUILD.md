@@ -10,8 +10,8 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 
 | | |
 | --- | --- |
-| **Current phase** | [Phase 2 · Reference math](#phase-2--reference-math): P2.1 is done. |
-| **Next step** | **P2.2 · Exact equities.** P2.3 (solver core and best response) is also ready. |
+| **Current phase** | [Phase 2 · Reference math](#phase-2--reference-math): P2.1 and P2.2 are done. |
+| **Next step** | **P2.3 · Solver core and best response**, then P2.4 (the jam-or-fold solution), which needs both. |
 | **In progress** | Nothing. |
 | **Background run** | None. |
 | **Waiting on the owner** | Nothing blocks the next step. Q-12 is needed by P3.1 and P3.2. Two optional Cloudflare settings for `feltprep.app` (D-11): keep the path in the redirect, and add `www.feltprep.app`. |
@@ -382,10 +382,11 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
   - [x] TypeScript types and a reader that refuses an artifact whose hashes or format do not match, with tests for each refusal.
   - Evidence: the commit that ticks this step. [`docs/grading.md`](docs/grading.md); `web/src/lib/spots/` holds the types, a Web Crypto SHA-256 and `loadSolution`, whose 16 tests load a valid fixture and refuse each of the eight reasons (unknown id, graded entry missing a gate item, manifest hash, file hash or size, missing file, format of registry, manifest or solution, another solution’s files, malformed tables or paths). `minReach` 0.01 is a proposal recorded in each manifest. Full gate: 310 Vitest tests, 24 Playwright tests.
 
-- [ ] **P2.2 · Exact equities** · Depends on: P1.4
-  - [ ] An enumerator gives exact all-in equity for hand against hand, hand against range and range against range, on any board from pre-flop to river, handling shared cards correctly.
-  - [ ] The pre-flop table of all 169 × 169 class matchups is built by exact enumeration, with each matchup’s number of card combinations, as a reproducible artifact with a manifest. Its build time and memory on this Mac are recorded; if the build is impractical, the measurement is recorded and an alternative proposed (A-8).
-  - [ ] B-4 passes.
+- [x] **P2.2 · Exact equities** · Depends on: P1.4
+  - [x] An enumerator gives exact all-in equity for hand against hand, hand against range and range against range, on any board from pre-flop to river, handling shared cards correctly.
+  - [x] The pre-flop table of all 169 × 169 class matchups is built by exact enumeration, with each matchup’s number of card combinations, as a reproducible artifact with a manifest. Its build time and memory on this Mac are recorded; if the build is impractical, the measurement is recorded and an alternative proposed (A-8).
+  - [x] B-4 passes.
+  - Evidence: the commit that ticks this step. `web/src/lib/solver/` (`classes.ts`, `equity.ts`, `preflop-table.ts`); `solutions/equity/` holds the table and its manifest, built by `pnpm run equity:build` in 37 s and 150 MB on one core and rebuilt byte-identical with `-- --check`. B-4 passed ([`docs/benchmarks.md`](docs/benchmarks.md)): exact agreement with Irving and d’Eon’s published exact table on all 14,365 class pairs (imported as a fixture, BSD 3-Clause, `docs/provenance.md`) and with the direct enumerator on six class pairs. Full gate: 341 Vitest tests, 24 Playwright tests.
 
 - [ ] **P2.3 · Solver core and best response** · Depends on: P2.1 (its benchmark games need no imported code)
   - [ ] A game-tree interface, a CFR solver and an exact best-response evaluator, in plain TypeScript that runs in Node and in Vitest, deterministic for a given seed and settings.
