@@ -20,6 +20,20 @@ A solution is the equilibrium of a **stated game**, not of poker in general. The
 
 The two seats are `button`, which posts the small blind, and `big-blind`.
 
+## The jam-or-fold game
+
+The first solved game (A-8, P2.4): `solutions/jam-or-fold/`, registry entry `jam-or-fold-hu`, built by `pnpm run jof:build` from the pre-flop class table.
+
+- **Format.** Heads-up no-limit hold’em, a cash hand with no ante and no rake. The button posts the small blind of 0.5 big blinds and the other player the big blind of 1.
+- **Stacks.** Both players start with the same effective stack S, counted before the blinds are posted, for every whole S from 2 to 15 big blinds: one game per depth (`jof-<S>bb`).
+- **Betting.** Before the flop the button moves all-in for S or folds. Facing the all-in, the big blind calls or folds. A called hand is dealt to the river with no more betting. No other action exists in this game.
+- **Ranges.** Every two-card hand for both players, as dealt, with exact card removal: the chance of each pair of hand classes is its number of disjoint combination pairs over 1,326 × 1,225.
+- **Payoffs** for the button, against its stack before the hand: −0.5 for folding, +1 when the big blind folds, and 2S × equity − S when called, with the equity exact from the table (B-4). The big blind’s are the negatives.
+- **Spots.** `jof-<S>bb-button` (pot 1.5, fold or jam) and `jof-<S>bb-big-blind` (after `button:jam`, pot S + 1, fold or call).
+- **Hands.** The 169 classes. Every combination of a class has the same strategy and values by suit symmetry, so this is exact suit isomorphism, not bucketing.
+
+**The caveat, for the lesson and the study view.** This is the equilibrium of a simplified game in which the button may only move all-in or fold and the big blind may only call or fold. Real players can also limp or make a smaller raise. Those options matter more the deeper the stacks, so the chart is a sound guide at the shortest stacks and a looser one towards 15 big blinds; how much they are worth is not measured here. A grade from this solution therefore says “this was a mistake in the jam-or-fold game”, and a decision that leaves the game (a limp, a smaller raise) is not graded.
+
 ## A spot
 
 A **spot** (`Spot`) is one decision inside a stated game: the game it belongs to, the seat to act, the actions before it (such as `button:jam`), the pot at the decision and the actions the reference chooses between. A spot’s identifier is stable: lessons, drills and stored reviews refer to it.

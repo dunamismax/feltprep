@@ -126,18 +126,19 @@ web/                       the SvelteKit app (exists; the same place RiverMind k
   src/lib/engine/          cards, hand evaluator, hand state machine, histories, seat views, fuzzer and fixtures:
                            pure, browser-safe TypeScript imported from RiverMind (exists)
   src/lib/solver/          hand classes, exact equities, the pre-flop class table, games with a public betting
-                           tree (game.ts), CFR+ and exact best response (cfr.ts) exist; grading later.
+                           tree (game.ts), CFR+ and exact best response (cfr.ts), the jam-or-fold game and
+                           the verdict bands (grading.ts) exist.
                            fixtures/ holds imported reference data
   src/lib/spots/           the contract's types (docs/grading.md) and the reader that checks a solution's hashes (exists)
   src/lib/server/          server-only code: database client and health check exist; practice sessions and opponents later
   scripts/                 Node scripts run by package.json: db-migrate.ts, engine-fuzz.ts, engine-bench.ts,
                            engine-parity.ts and its Node-only helper engine/parity.ts, equity-build.ts,
-                           solver-bench.ts exist
+                           solver-bench.ts, jam-or-fold-build.ts and jam-or-fold-compare.ts exist
   drizzle/                 SQL migrations (never edit an applied one); only the empty journal exists
   e2e/                     Playwright tests, desktop and phone (exists)
 content/lessons/           lessons as Markdown, kept in Git, prerendered
-solutions/                 small artifacts kept in Git, each with a manifest: equity/ holds the pre-flop class
-                           equity table (exists)
+solutions/                 small artifacts kept in Git, each with a manifest: registry.json, equity/ (the pre-flop
+                           class equity table) and jam-or-fold/ exist
 deploy/                    the contract's deploy: prepare, cutover, provision and continuous-deploy scripts, the systemd
                            units, the Caddy fragment and the runbook, README.md (exists)
 docs/                      rules, grading, solver design, build history; rules.md and provenance.md exist
@@ -190,6 +191,8 @@ Rules for this section:
 | Engine benchmark | `pnpm run engine:bench` | Random self-play speed on one core at 2, 6 and 9 seats (`-- --hands 20000 --repeats 5`). Needs a quiet machine. |
 | Engine parity with RiverMind | `pnpm run engine:parity -- --reference <dir>` | Replays hands from RiverMind's Python reference and compares every state byte for byte, plus evaluator digests (`--all-five` for every five-card hand). `<dir>` is a scratch export of RiverMind at the pinned commit (`git -C <rivermind> archive 233b9c6 \| tar -x -C <dir>`), never a live checkout, since `uv` writes a virtual environment there. Needs `uv`. Run once at import (done, `docs/provenance.md`) and again only if RiverMind's engine is re-imported. |
 | Pre-flop equity table | `pnpm run equity:build` | Rebuilds `solutions/equity/preflop-classes.json` and its manifest from the code (P2.2): 134,459 boards, about 40 seconds and 150 MB on one core. `-- --check` rebuilds without writing and fails unless the bytes equal the committed table and its manifest. Run it after any change to the evaluator or `preflop-table.ts`, with `nice -n 19`; the full gate checks the committed table against the published one (B-4). |
+| Jam-or-fold solution | `pnpm run jof:build` | Solves the jam-or-fold game at 2 to 15 big blinds from the equity table (P2.4), twice per depth for the margins (B-12), and writes `solutions/jam-or-fold/` and the registry entry’s manifest hash, keeping its gate record. About a minute on one core; fails if a depth is over the exploitability threshold or a verdict jumps between acceptable and mistake. `-- --check` rebuilds without writing and fails unless the solution’s bytes are unchanged. Commit code changes first and build on a clean tree, so the manifest names a commit that holds the code. |
+| Jam-or-fold chart comparison | `node scripts/jam-or-fold-compare.ts --chart <file>` | B-5’s comparison with the published chart. `<file>` is a hand-made copy of the chart kept outside the repository (Q-13); the script’s header gives the format. |
 | Solver benchmarks | `pnpm run solver:bench` | B-1 (CFR+ on Kuhn poker), B-2 (best responses against hand-derived values) and B-3 (the polarized river game against its closed form); prints each measured number for `docs/benchmarks.md` and exits 1 if one fails. A second or two. The same checks run in the full gate (`src/lib/solver/cfr.spec.ts`). |
 | Build a release on the server | `deploy/prepare.sh [COMMIT]` | **On the server, as sawyer**, from `~/github/feltprep` (repository root, not `web/`). Exports `origin/main` into `~/web-work/feltprep.com-<commit>/`, runs install, check, lint, test and the build, assembles the release and smoke-tests it. Changes nothing live. |
 | Put a release live | `/usr/local/sbin/with-deploy-lock <candidate>/src/deploy/cutover.sh <candidate>` | **On the server, as root.** Stage, migrate, candidate check, switch, verify, Caddy, public check. A hand deploy is an owner gate (section 3). |

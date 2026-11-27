@@ -1,0 +1,884 @@
+{
+	"format": 1,
+	"kind": "manifest",
+	"id": "jam-or-fold-hu",
+	"title": "Jam or fold, heads-up, 2 to 15 big blinds",
+	"games": [
+		{
+			"id": "jof-2bb",
+			"title": "Jam or fold, heads-up, 2 big blinds",
+			"format": "heads-up no-limit hold’em",
+			"blinds": {
+				"small": 0.5,
+				"big": 1
+			},
+			"ante": 0,
+			"rake": 0,
+			"effectiveStack": 2,
+			"board": "",
+			"pot": 1.5,
+			"ranges": {
+				"button": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				},
+				"big-blind": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				}
+			},
+			"betting": [
+				"before the flop, the button moves all-in for 2 big blinds or folds",
+				"facing the all-in, the big blind calls or folds",
+				"a called hand is dealt to the river with no more betting"
+			],
+			"caveat": "This is the equilibrium of a simplified game in which the button may only move all-in or fold and the big blind may only call or fold. Real players can also limp or make a smaller raise. Those options matter more the deeper the stacks, so the chart is a sound guide at the shortest stacks and a looser one towards 15 big blinds; how much they are worth is not measured here."
+		},
+		{
+			"id": "jof-3bb",
+			"title": "Jam or fold, heads-up, 3 big blinds",
+			"format": "heads-up no-limit hold’em",
+			"blinds": {
+				"small": 0.5,
+				"big": 1
+			},
+			"ante": 0,
+			"rake": 0,
+			"effectiveStack": 3,
+			"board": "",
+			"pot": 1.5,
+			"ranges": {
+				"button": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				},
+				"big-blind": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				}
+			},
+			"betting": [
+				"before the flop, the button moves all-in for 3 big blinds or folds",
+				"facing the all-in, the big blind calls or folds",
+				"a called hand is dealt to the river with no more betting"
+			],
+			"caveat": "This is the equilibrium of a simplified game in which the button may only move all-in or fold and the big blind may only call or fold. Real players can also limp or make a smaller raise. Those options matter more the deeper the stacks, so the chart is a sound guide at the shortest stacks and a looser one towards 15 big blinds; how much they are worth is not measured here."
+		},
+		{
+			"id": "jof-4bb",
+			"title": "Jam or fold, heads-up, 4 big blinds",
+			"format": "heads-up no-limit hold’em",
+			"blinds": {
+				"small": 0.5,
+				"big": 1
+			},
+			"ante": 0,
+			"rake": 0,
+			"effectiveStack": 4,
+			"board": "",
+			"pot": 1.5,
+			"ranges": {
+				"button": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				},
+				"big-blind": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				}
+			},
+			"betting": [
+				"before the flop, the button moves all-in for 4 big blinds or folds",
+				"facing the all-in, the big blind calls or folds",
+				"a called hand is dealt to the river with no more betting"
+			],
+			"caveat": "This is the equilibrium of a simplified game in which the button may only move all-in or fold and the big blind may only call or fold. Real players can also limp or make a smaller raise. Those options matter more the deeper the stacks, so the chart is a sound guide at the shortest stacks and a looser one towards 15 big blinds; how much they are worth is not measured here."
+		},
+		{
+			"id": "jof-5bb",
+			"title": "Jam or fold, heads-up, 5 big blinds",
+			"format": "heads-up no-limit hold’em",
+			"blinds": {
+				"small": 0.5,
+				"big": 1
+			},
+			"ante": 0,
+			"rake": 0,
+			"effectiveStack": 5,
+			"board": "",
+			"pot": 1.5,
+			"ranges": {
+				"button": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				},
+				"big-blind": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				}
+			},
+			"betting": [
+				"before the flop, the button moves all-in for 5 big blinds or folds",
+				"facing the all-in, the big blind calls or folds",
+				"a called hand is dealt to the river with no more betting"
+			],
+			"caveat": "This is the equilibrium of a simplified game in which the button may only move all-in or fold and the big blind may only call or fold. Real players can also limp or make a smaller raise. Those options matter more the deeper the stacks, so the chart is a sound guide at the shortest stacks and a looser one towards 15 big blinds; how much they are worth is not measured here."
+		},
+		{
+			"id": "jof-6bb",
+			"title": "Jam or fold, heads-up, 6 big blinds",
+			"format": "heads-up no-limit hold’em",
+			"blinds": {
+				"small": 0.5,
+				"big": 1
+			},
+			"ante": 0,
+			"rake": 0,
+			"effectiveStack": 6,
+			"board": "",
+			"pot": 1.5,
+			"ranges": {
+				"button": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				},
+				"big-blind": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				}
+			},
+			"betting": [
+				"before the flop, the button moves all-in for 6 big blinds or folds",
+				"facing the all-in, the big blind calls or folds",
+				"a called hand is dealt to the river with no more betting"
+			],
+			"caveat": "This is the equilibrium of a simplified game in which the button may only move all-in or fold and the big blind may only call or fold. Real players can also limp or make a smaller raise. Those options matter more the deeper the stacks, so the chart is a sound guide at the shortest stacks and a looser one towards 15 big blinds; how much they are worth is not measured here."
+		},
+		{
+			"id": "jof-7bb",
+			"title": "Jam or fold, heads-up, 7 big blinds",
+			"format": "heads-up no-limit hold’em",
+			"blinds": {
+				"small": 0.5,
+				"big": 1
+			},
+			"ante": 0,
+			"rake": 0,
+			"effectiveStack": 7,
+			"board": "",
+			"pot": 1.5,
+			"ranges": {
+				"button": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				},
+				"big-blind": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				}
+			},
+			"betting": [
+				"before the flop, the button moves all-in for 7 big blinds or folds",
+				"facing the all-in, the big blind calls or folds",
+				"a called hand is dealt to the river with no more betting"
+			],
+			"caveat": "This is the equilibrium of a simplified game in which the button may only move all-in or fold and the big blind may only call or fold. Real players can also limp or make a smaller raise. Those options matter more the deeper the stacks, so the chart is a sound guide at the shortest stacks and a looser one towards 15 big blinds; how much they are worth is not measured here."
+		},
+		{
+			"id": "jof-8bb",
+			"title": "Jam or fold, heads-up, 8 big blinds",
+			"format": "heads-up no-limit hold’em",
+			"blinds": {
+				"small": 0.5,
+				"big": 1
+			},
+			"ante": 0,
+			"rake": 0,
+			"effectiveStack": 8,
+			"board": "",
+			"pot": 1.5,
+			"ranges": {
+				"button": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				},
+				"big-blind": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				}
+			},
+			"betting": [
+				"before the flop, the button moves all-in for 8 big blinds or folds",
+				"facing the all-in, the big blind calls or folds",
+				"a called hand is dealt to the river with no more betting"
+			],
+			"caveat": "This is the equilibrium of a simplified game in which the button may only move all-in or fold and the big blind may only call or fold. Real players can also limp or make a smaller raise. Those options matter more the deeper the stacks, so the chart is a sound guide at the shortest stacks and a looser one towards 15 big blinds; how much they are worth is not measured here."
+		},
+		{
+			"id": "jof-9bb",
+			"title": "Jam or fold, heads-up, 9 big blinds",
+			"format": "heads-up no-limit hold’em",
+			"blinds": {
+				"small": 0.5,
+				"big": 1
+			},
+			"ante": 0,
+			"rake": 0,
+			"effectiveStack": 9,
+			"board": "",
+			"pot": 1.5,
+			"ranges": {
+				"button": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				},
+				"big-blind": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				}
+			},
+			"betting": [
+				"before the flop, the button moves all-in for 9 big blinds or folds",
+				"facing the all-in, the big blind calls or folds",
+				"a called hand is dealt to the river with no more betting"
+			],
+			"caveat": "This is the equilibrium of a simplified game in which the button may only move all-in or fold and the big blind may only call or fold. Real players can also limp or make a smaller raise. Those options matter more the deeper the stacks, so the chart is a sound guide at the shortest stacks and a looser one towards 15 big blinds; how much they are worth is not measured here."
+		},
+		{
+			"id": "jof-10bb",
+			"title": "Jam or fold, heads-up, 10 big blinds",
+			"format": "heads-up no-limit hold’em",
+			"blinds": {
+				"small": 0.5,
+				"big": 1
+			},
+			"ante": 0,
+			"rake": 0,
+			"effectiveStack": 10,
+			"board": "",
+			"pot": 1.5,
+			"ranges": {
+				"button": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				},
+				"big-blind": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				}
+			},
+			"betting": [
+				"before the flop, the button moves all-in for 10 big blinds or folds",
+				"facing the all-in, the big blind calls or folds",
+				"a called hand is dealt to the river with no more betting"
+			],
+			"caveat": "This is the equilibrium of a simplified game in which the button may only move all-in or fold and the big blind may only call or fold. Real players can also limp or make a smaller raise. Those options matter more the deeper the stacks, so the chart is a sound guide at the shortest stacks and a looser one towards 15 big blinds; how much they are worth is not measured here."
+		},
+		{
+			"id": "jof-11bb",
+			"title": "Jam or fold, heads-up, 11 big blinds",
+			"format": "heads-up no-limit hold’em",
+			"blinds": {
+				"small": 0.5,
+				"big": 1
+			},
+			"ante": 0,
+			"rake": 0,
+			"effectiveStack": 11,
+			"board": "",
+			"pot": 1.5,
+			"ranges": {
+				"button": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				},
+				"big-blind": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				}
+			},
+			"betting": [
+				"before the flop, the button moves all-in for 11 big blinds or folds",
+				"facing the all-in, the big blind calls or folds",
+				"a called hand is dealt to the river with no more betting"
+			],
+			"caveat": "This is the equilibrium of a simplified game in which the button may only move all-in or fold and the big blind may only call or fold. Real players can also limp or make a smaller raise. Those options matter more the deeper the stacks, so the chart is a sound guide at the shortest stacks and a looser one towards 15 big blinds; how much they are worth is not measured here."
+		},
+		{
+			"id": "jof-12bb",
+			"title": "Jam or fold, heads-up, 12 big blinds",
+			"format": "heads-up no-limit hold’em",
+			"blinds": {
+				"small": 0.5,
+				"big": 1
+			},
+			"ante": 0,
+			"rake": 0,
+			"effectiveStack": 12,
+			"board": "",
+			"pot": 1.5,
+			"ranges": {
+				"button": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				},
+				"big-blind": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				}
+			},
+			"betting": [
+				"before the flop, the button moves all-in for 12 big blinds or folds",
+				"facing the all-in, the big blind calls or folds",
+				"a called hand is dealt to the river with no more betting"
+			],
+			"caveat": "This is the equilibrium of a simplified game in which the button may only move all-in or fold and the big blind may only call or fold. Real players can also limp or make a smaller raise. Those options matter more the deeper the stacks, so the chart is a sound guide at the shortest stacks and a looser one towards 15 big blinds; how much they are worth is not measured here."
+		},
+		{
+			"id": "jof-13bb",
+			"title": "Jam or fold, heads-up, 13 big blinds",
+			"format": "heads-up no-limit hold’em",
+			"blinds": {
+				"small": 0.5,
+				"big": 1
+			},
+			"ante": 0,
+			"rake": 0,
+			"effectiveStack": 13,
+			"board": "",
+			"pot": 1.5,
+			"ranges": {
+				"button": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				},
+				"big-blind": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				}
+			},
+			"betting": [
+				"before the flop, the button moves all-in for 13 big blinds or folds",
+				"facing the all-in, the big blind calls or folds",
+				"a called hand is dealt to the river with no more betting"
+			],
+			"caveat": "This is the equilibrium of a simplified game in which the button may only move all-in or fold and the big blind may only call or fold. Real players can also limp or make a smaller raise. Those options matter more the deeper the stacks, so the chart is a sound guide at the shortest stacks and a looser one towards 15 big blinds; how much they are worth is not measured here."
+		},
+		{
+			"id": "jof-14bb",
+			"title": "Jam or fold, heads-up, 14 big blinds",
+			"format": "heads-up no-limit hold’em",
+			"blinds": {
+				"small": 0.5,
+				"big": 1
+			},
+			"ante": 0,
+			"rake": 0,
+			"effectiveStack": 14,
+			"board": "",
+			"pot": 1.5,
+			"ranges": {
+				"button": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				},
+				"big-blind": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				}
+			},
+			"betting": [
+				"before the flop, the button moves all-in for 14 big blinds or folds",
+				"facing the all-in, the big blind calls or folds",
+				"a called hand is dealt to the river with no more betting"
+			],
+			"caveat": "This is the equilibrium of a simplified game in which the button may only move all-in or fold and the big blind may only call or fold. Real players can also limp or make a smaller raise. Those options matter more the deeper the stacks, so the chart is a sound guide at the shortest stacks and a looser one towards 15 big blinds; how much they are worth is not measured here."
+		},
+		{
+			"id": "jof-15bb",
+			"title": "Jam or fold, heads-up, 15 big blinds",
+			"format": "heads-up no-limit hold’em",
+			"blinds": {
+				"small": 0.5,
+				"big": 1
+			},
+			"ante": 0,
+			"rake": 0,
+			"effectiveStack": 15,
+			"board": "",
+			"pot": 1.5,
+			"ranges": {
+				"button": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				},
+				"big-blind": {
+					"kind": "all",
+					"source": "every two-card hand, as dealt"
+				}
+			},
+			"betting": [
+				"before the flop, the button moves all-in for 15 big blinds or folds",
+				"facing the all-in, the big blind calls or folds",
+				"a called hand is dealt to the river with no more betting"
+			],
+			"caveat": "This is the equilibrium of a simplified game in which the button may only move all-in or fold and the big blind may only call or fold. Real players can also limp or make a smaller raise. Those options matter more the deeper the stacks, so the chart is a sound guide at the shortest stacks and a looser one towards 15 big blinds; how much they are worth is not measured here."
+		}
+	],
+	"spots": [
+		{
+			"id": "jof-2bb-button",
+			"game": "jof-2bb",
+			"actor": "button",
+			"history": [],
+			"pot": 1.5,
+			"actions": [
+				"fold",
+				"jam"
+			]
+		},
+		{
+			"id": "jof-2bb-big-blind",
+			"game": "jof-2bb",
+			"actor": "big-blind",
+			"history": [
+				"button:jam"
+			],
+			"pot": 3,
+			"actions": [
+				"fold",
+				"call"
+			]
+		},
+		{
+			"id": "jof-3bb-button",
+			"game": "jof-3bb",
+			"actor": "button",
+			"history": [],
+			"pot": 1.5,
+			"actions": [
+				"fold",
+				"jam"
+			]
+		},
+		{
+			"id": "jof-3bb-big-blind",
+			"game": "jof-3bb",
+			"actor": "big-blind",
+			"history": [
+				"button:jam"
+			],
+			"pot": 4,
+			"actions": [
+				"fold",
+				"call"
+			]
+		},
+		{
+			"id": "jof-4bb-button",
+			"game": "jof-4bb",
+			"actor": "button",
+			"history": [],
+			"pot": 1.5,
+			"actions": [
+				"fold",
+				"jam"
+			]
+		},
+		{
+			"id": "jof-4bb-big-blind",
+			"game": "jof-4bb",
+			"actor": "big-blind",
+			"history": [
+				"button:jam"
+			],
+			"pot": 5,
+			"actions": [
+				"fold",
+				"call"
+			]
+		},
+		{
+			"id": "jof-5bb-button",
+			"game": "jof-5bb",
+			"actor": "button",
+			"history": [],
+			"pot": 1.5,
+			"actions": [
+				"fold",
+				"jam"
+			]
+		},
+		{
+			"id": "jof-5bb-big-blind",
+			"game": "jof-5bb",
+			"actor": "big-blind",
+			"history": [
+				"button:jam"
+			],
+			"pot": 6,
+			"actions": [
+				"fold",
+				"call"
+			]
+		},
+		{
+			"id": "jof-6bb-button",
+			"game": "jof-6bb",
+			"actor": "button",
+			"history": [],
+			"pot": 1.5,
+			"actions": [
+				"fold",
+				"jam"
+			]
+		},
+		{
+			"id": "jof-6bb-big-blind",
+			"game": "jof-6bb",
+			"actor": "big-blind",
+			"history": [
+				"button:jam"
+			],
+			"pot": 7,
+			"actions": [
+				"fold",
+				"call"
+			]
+		},
+		{
+			"id": "jof-7bb-button",
+			"game": "jof-7bb",
+			"actor": "button",
+			"history": [],
+			"pot": 1.5,
+			"actions": [
+				"fold",
+				"jam"
+			]
+		},
+		{
+			"id": "jof-7bb-big-blind",
+			"game": "jof-7bb",
+			"actor": "big-blind",
+			"history": [
+				"button:jam"
+			],
+			"pot": 8,
+			"actions": [
+				"fold",
+				"call"
+			]
+		},
+		{
+			"id": "jof-8bb-button",
+			"game": "jof-8bb",
+			"actor": "button",
+			"history": [],
+			"pot": 1.5,
+			"actions": [
+				"fold",
+				"jam"
+			]
+		},
+		{
+			"id": "jof-8bb-big-blind",
+			"game": "jof-8bb",
+			"actor": "big-blind",
+			"history": [
+				"button:jam"
+			],
+			"pot": 9,
+			"actions": [
+				"fold",
+				"call"
+			]
+		},
+		{
+			"id": "jof-9bb-button",
+			"game": "jof-9bb",
+			"actor": "button",
+			"history": [],
+			"pot": 1.5,
+			"actions": [
+				"fold",
+				"jam"
+			]
+		},
+		{
+			"id": "jof-9bb-big-blind",
+			"game": "jof-9bb",
+			"actor": "big-blind",
+			"history": [
+				"button:jam"
+			],
+			"pot": 10,
+			"actions": [
+				"fold",
+				"call"
+			]
+		},
+		{
+			"id": "jof-10bb-button",
+			"game": "jof-10bb",
+			"actor": "button",
+			"history": [],
+			"pot": 1.5,
+			"actions": [
+				"fold",
+				"jam"
+			]
+		},
+		{
+			"id": "jof-10bb-big-blind",
+			"game": "jof-10bb",
+			"actor": "big-blind",
+			"history": [
+				"button:jam"
+			],
+			"pot": 11,
+			"actions": [
+				"fold",
+				"call"
+			]
+		},
+		{
+			"id": "jof-11bb-button",
+			"game": "jof-11bb",
+			"actor": "button",
+			"history": [],
+			"pot": 1.5,
+			"actions": [
+				"fold",
+				"jam"
+			]
+		},
+		{
+			"id": "jof-11bb-big-blind",
+			"game": "jof-11bb",
+			"actor": "big-blind",
+			"history": [
+				"button:jam"
+			],
+			"pot": 12,
+			"actions": [
+				"fold",
+				"call"
+			]
+		},
+		{
+			"id": "jof-12bb-button",
+			"game": "jof-12bb",
+			"actor": "button",
+			"history": [],
+			"pot": 1.5,
+			"actions": [
+				"fold",
+				"jam"
+			]
+		},
+		{
+			"id": "jof-12bb-big-blind",
+			"game": "jof-12bb",
+			"actor": "big-blind",
+			"history": [
+				"button:jam"
+			],
+			"pot": 13,
+			"actions": [
+				"fold",
+				"call"
+			]
+		},
+		{
+			"id": "jof-13bb-button",
+			"game": "jof-13bb",
+			"actor": "button",
+			"history": [],
+			"pot": 1.5,
+			"actions": [
+				"fold",
+				"jam"
+			]
+		},
+		{
+			"id": "jof-13bb-big-blind",
+			"game": "jof-13bb",
+			"actor": "big-blind",
+			"history": [
+				"button:jam"
+			],
+			"pot": 14,
+			"actions": [
+				"fold",
+				"call"
+			]
+		},
+		{
+			"id": "jof-14bb-button",
+			"game": "jof-14bb",
+			"actor": "button",
+			"history": [],
+			"pot": 1.5,
+			"actions": [
+				"fold",
+				"jam"
+			]
+		},
+		{
+			"id": "jof-14bb-big-blind",
+			"game": "jof-14bb",
+			"actor": "big-blind",
+			"history": [
+				"button:jam"
+			],
+			"pot": 15,
+			"actions": [
+				"fold",
+				"call"
+			]
+		},
+		{
+			"id": "jof-15bb-button",
+			"game": "jof-15bb",
+			"actor": "button",
+			"history": [],
+			"pot": 1.5,
+			"actions": [
+				"fold",
+				"jam"
+			]
+		},
+		{
+			"id": "jof-15bb-big-blind",
+			"game": "jof-15bb",
+			"actor": "big-blind",
+			"history": [
+				"button:jam"
+			],
+			"pot": 16,
+			"actions": [
+				"fold",
+				"call"
+			]
+		}
+	],
+	"solutionFile": "solution.json",
+	"files": [
+		{
+			"path": "solution.json",
+			"sha256": "95db8be4d15ef138ce236342c9f88aba332f53d8ff8573d3eac6c815640b1c03",
+			"bytes": 279820
+		}
+	],
+	"inputs": [
+		{
+			"id": "preflop-class-equity",
+			"path": "equity/preflop-classes.json",
+			"sha256": "c3ca25d5da66af615bb7d6920cd6338f22193fc853bc62afe5fee236a34790ad"
+		}
+	],
+	"build": {
+		"command": "pnpm run jof:build",
+		"commit": "812e4c23c9d06320ded750f19984634b9c761892-dirty",
+		"settings": {
+			"solver": "CFR+ (alternating, linear averaging)",
+			"iterations": 10000,
+			"marginIterations": 20000,
+			"precision": 1e-10
+		},
+		"seed": null
+	},
+	"exploitability": [
+		{
+			"game": "jof-2bb",
+			"value": 2.31345e-8,
+			"unit": "big blinds per hand",
+			"threshold": 0.001
+		},
+		{
+			"game": "jof-3bb",
+			"value": 7.03782e-8,
+			"unit": "big blinds per hand",
+			"threshold": 0.001
+		},
+		{
+			"game": "jof-4bb",
+			"value": 1.03023e-8,
+			"unit": "big blinds per hand",
+			"threshold": 0.001
+		},
+		{
+			"game": "jof-5bb",
+			"value": 5.24041e-8,
+			"unit": "big blinds per hand",
+			"threshold": 0.001
+		},
+		{
+			"game": "jof-6bb",
+			"value": 2.64746e-8,
+			"unit": "big blinds per hand",
+			"threshold": 0.001
+		},
+		{
+			"game": "jof-7bb",
+			"value": 6.24793e-8,
+			"unit": "big blinds per hand",
+			"threshold": 0.001
+		},
+		{
+			"game": "jof-8bb",
+			"value": 7.17411e-8,
+			"unit": "big blinds per hand",
+			"threshold": 0.001
+		},
+		{
+			"game": "jof-9bb",
+			"value": 2.70011e-8,
+			"unit": "big blinds per hand",
+			"threshold": 0.001
+		},
+		{
+			"game": "jof-10bb",
+			"value": 2.85097e-8,
+			"unit": "big blinds per hand",
+			"threshold": 0.001
+		},
+		{
+			"game": "jof-11bb",
+			"value": 4.1466e-8,
+			"unit": "big blinds per hand",
+			"threshold": 0.001
+		},
+		{
+			"game": "jof-12bb",
+			"value": 1.72696e-8,
+			"unit": "big blinds per hand",
+			"threshold": 0.001
+		},
+		{
+			"game": "jof-13bb",
+			"value": 2.43181e-8,
+			"unit": "big blinds per hand",
+			"threshold": 0.001
+		},
+		{
+			"game": "jof-14bb",
+			"value": 2.73855e-8,
+			"unit": "big blinds per hand",
+			"threshold": 0.001
+		},
+		{
+			"game": "jof-15bb",
+			"value": 4.52166e-8,
+			"unit": "big blinds per hand",
+			"threshold": 0.001
+		}
+	],
+	"grading": {
+		"acceptableFrequency": 0.05,
+		"acceptableLoss": 0.01,
+		"inaccuracyLoss": 0.05,
+		"minReach": 0.01
+	}
+}

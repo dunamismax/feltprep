@@ -1,0 +1,31 @@
+{
+	"format": 1,
+	"kind": "registry",
+	"solutions": [
+		{
+			"id": "jam-or-fold-hu",
+			"manifest": "jam-or-fold/manifest.json",
+			"sha256": "56bc68d041b72766c261697cb71c84bbe40cc53fe111200b4230d60ded5c43ef",
+			"status": "unverified",
+			"gate": {
+				"statedGame": true,
+				"noAbstraction": true,
+				"exploitability": true,
+				"verifiedVerifier": true,
+				"independentAgreement": true,
+				"invariants": true,
+				"reproducible": true,
+				"bothPositions": false,
+				"perHandValues": true
+			},
+			"benchmarks": [
+				"B-1",
+				"B-2",
+				"B-4",
+				"B-5",
+				"B-11",
+				"B-12"
+			]
+		}
+	]
+}

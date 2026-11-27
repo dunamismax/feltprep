@@ -10,8 +10,8 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 
 | | |
 | --- | --- |
-| **Current phase** | [Phase 2 · Reference math](#phase-2--reference-math): P2.1 to P2.3 are done. |
-| **Next step** | **P2.4 · The jam-or-fold solution**; P2.5 (grading) follows it. |
+| **Current phase** | [Phase 2 · Reference math](#phase-2--reference-math): P2.1 to P2.4 are done. |
+| **Next step** | **P2.5 · Grading**, the last step of Phase 2: the verdict function, the jam-or-fold game test for full hands, and B-9. |
 | **In progress** | Nothing. |
 | **Background run** | None. |
 | **Waiting on the owner** | Nothing blocks the next step. Q-12 is needed by P3.1 and P3.2. Two optional Cloudflare settings for `feltprep.app` (D-11): keep the path in the redirect, and add `www.feltprep.app`. |
@@ -122,6 +122,7 @@ Use each default until the owner decides otherwise. **Needed by** names the firs
 | Q-10 | **Server setup.** May agents provision the host (database, roles, units, Caddy fragment) without asking each time, as RiverMind’s D-10 allows there? | No. Every server change and hand deploy needs the owner’s word until they say otherwise. Pushes to `main` deploy themselves (D-10); that is not a server change. | P4.1 |
 | Q-11 | **Independent solver for cross-checks.** Which tool, under which license? | Chosen at P5.3 after reading the tool’s own license file. It runs as an external program on reference spots; none of its code enters the repository. | P5.3 |
 | Q-12 | **Terms for lesson text, and for the FeltPrep name and artwork.** D-9 covers the code. Are lessons and brand assets under the same license, a content license, or reserved? | Undecided, and nothing of either kind exists yet. A lesson may be drafted, but none is committed to this public repository until the owner answers, because publishing under a free license cannot be taken back. | P3.1 (artwork), P3.2 (lessons) |
+| Q-13 | **The published jam-or-fold chart.** B-5 compares FeltPrep’s solution with HoldemResources’ heads-up push/fold chart (<https://www.holdemresources.net/hune>), whose page names no license. May the chart, or the unsimplified equilibrium data the page offers for download, be kept in the repository or downloaded for the comparison? | No. The chart stays out of Git; the full gate checks five cited values, and `scripts/jam-or-fold-compare.ts` compares the rest against a hand-made copy outside the repository. The unsimplified data, which would settle the six differences recorded under B-5, is not downloaded. | — (B-5 passed without it) |
 
 ## Architecture proposals
 
@@ -394,12 +395,14 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
   - [x] `docs/benchmarks.md` exists and records the three results with their commit and command.
   - Evidence: the commit that ticks this step. `web/src/lib/solver/game.ts` (private hands dealt once, then a public betting tree, which covers Kuhn, river games and jam-or-fold), `cfr.ts` (alternating CFR+ with linear averaging, exact best response, exploitability, exact per-type action values) and `benchmark-games.ts`; `pnpm run solver:bench`. B-1: value −0.055556, exploitability 4.4 × 10⁻⁵ antes after 2,000 iterations; B-2: six hand-derived values matched exactly; B-3: four pot and bet sizes within 0.02 points of the closed form ([`docs/benchmarks.md`](docs/benchmarks.md)). The solver draws no random numbers, so it has no seed; two runs give identical strategies (tested). The equity build now marks a dirty tree, and the table’s manifest names `8726459`, the commit holding the code that built it.
 
-- [ ] **P2.4 · The jam-or-fold solution** · Depends on: P2.2, P2.3
-  - [ ] The game is stated in `docs/grading.md`: heads-up, blinds of half and one big blind, no ante; the button jams or folds; the big blind calls or folds; effective stacks from 2 to 15 big blinds in whole steps.
-  - [ ] The solution for every depth is committed under `solutions/` with a manifest and a registry entry, and a second build reproduces its hashes.
-  - [ ] B-5 passes, with the published chart it was compared against cited and every difference listed.
-  - [ ] B-11 and B-12 pass at every depth: each hand class’s value for jamming, folding and calling matches the value derived from the equity table and the opponent’s range, and each class’s margin is stored.
-  - [ ] The lesson’s caveat is recorded here for P3.2: this is the equilibrium of the jam-or-fold game, and where that simplification weakens as stacks grow.
+- [x] **P2.4 · The jam-or-fold solution** · Depends on: P2.2, P2.3
+  - [x] The game is stated in `docs/grading.md`: heads-up, blinds of half and one big blind, no ante; the button jams or folds; the big blind calls or folds; effective stacks from 2 to 15 big blinds in whole steps.
+  - [x] The solution for every depth is committed under `solutions/` with a manifest and a registry entry, and a second build reproduces its hashes.
+  - [x] B-5 passes, with the published chart it was compared against cited and every difference listed.
+  - [x] B-11 and B-12 pass at every depth: each hand class’s value for jamming, folding and calling matches the value derived from the equity table and the opponent’s range, and each class’s margin is stored.
+  - [x] The lesson’s caveat is recorded here for P3.2: this is the equilibrium of the jam-or-fold game, and where that simplification weakens as stacks grow.
+  - Evidence: the commits that tick this step. `web/src/lib/solver/jam-or-fold.ts`; `solutions/jam-or-fold/` (manifest and solution, 280 KB) and `solutions/registry.json`, built by `pnpm run jof:build` in 63 s and rebuilt byte-identical with `-- --check`. B-5: exploitability 1.0 to 7.2 × 10⁻⁸ bb a hand; against HoldemResources’ published chart, 4,712 pure decisions compared and 6 differ, each a fold by under 0.008 bb, and the chart’s own strategy measures within 8.6 × 10⁻⁵ bb of equilibrium with the same game values (Q-13 for the chart’s terms). B-11: 9,464 stored values equal a separate calculation to 1e-9. B-12: one band change, none between acceptable and mistake. All in [`docs/benchmarks.md`](docs/benchmarks.md). The registry entry is `unverified` until B-9 tests the grading path from both seats (P2.5).
+  - **Caveat for P3.2** (also in `docs/grading.md` and every game statement): this is the equilibrium of a simplified game in which the button may only move all-in or fold and the big blind may only call or fold. Real players can also limp or make a smaller raise. Those options matter more the deeper the stacks, so the chart is a sound guide at the shortest stacks and a looser one towards 15 big blinds; how much they are worth is not measured here. A limp or a smaller raise leaves the game and is not graded.
 
 - [ ] **P2.5 · Grading** · Depends on: P2.4
   - [ ] A pure function turns a spot, a hand and an action into a verdict under the Q-7 bands, and returns “not graded” with a reason when no registered reference covers the decision or the hand is outside the spot’s ranges.
