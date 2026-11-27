@@ -14,7 +14,7 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 | **Next step** | **P2.1 · Spot, solution and grading contract.** It needs no decision from the owner; P2.2 (exact equities) is also ready. |
 | **In progress** | Nothing. |
 | **Background run** | None. |
-| **Waiting on the owner** | Nothing blocks the next step. Q-12 is needed by P3.1 and P3.2; Q-2 (`feltprep.app` DNS records) and adding `feltprep.com` to the host’s DDNS job (P4.2 **Remaining**) need the owner’s word. |
+| **Waiting on the owner** | Nothing blocks the next step. Q-12 is needed by P3.1 and P3.2; Q-2 (`feltprep.app` DNS records, P4.2 **Remaining**) needs the owner’s word. |
 | **Live** | <https://feltprep.com> serves `main` as a preview, redeployed by every push whose CI passes (D-10); `/healthz` names the live commit. `feltprep.app` has no DNS records yet. |
 | **`main`** | Phase 1, plus the host deploy in `deploy/` and a strict Content Security Policy (P4.1, most of P4.2). `origin` pushes to GitHub and Codeberg. |
 | **Last updated** | 2026-11-26 |
@@ -471,7 +471,8 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
 - [ ] **P4.2 · Deploy files and runbook** · Depends on: P4.1, Q-2 — a Caddy fragment for the canonical name and the redirects, a sandboxed systemd unit, database provisioning with separate owner, migration and web roles, a fix-forward deploy with a candidate check, a strict Content Security Policy, and `deploy/README.md`.
 
   Evidence: `b61c1dc` deployed by hand on 2026-11-26 through every step (dump, 0 of 0 migrations, candidate on 4400, switch, `web-live` on Node 26.13.1, `caddy-apply`, public check); `bin/web-conformance` passes. From outside: `/healthz` names the commit with database `ok`, Let’s Encrypt certificate, `www` answers 301, HTTP 308, unknown path 404, the CSP and security headers present; checked at 375 × 812 in light and dark with no console errors. The e2e CSP test passes in all six projects. The backup registry gained the site (`ubuntu-vm-backup` `9766f4c`), its drill rehearsed against the live release. Continuous deploy (D-10): `feltprep-autodeploy.timer`.
-  Remaining: the `feltprep.app` redirect (needs its A records, Q-2, owner), and adding `feltprep.com` and `www` to the host’s Cloudflare DDNS job in the `xrayservice` repository (`cloudflare-ddns/README.md`), without which the site goes dark if the home address changes.
+  Remaining: the `feltprep.app` redirect (needs its A records, Q-2, owner). `deploy/README.md`’s “Not yet done” still says the DDNS job lacks the feltprep.com records; correct it with the next `deploy/` change, since any edit there waits for a hand deploy.
+  DDNS: since `xrayservice` `8bc2e05` (switched 2026-11-27 00:16 UTC, X-6 there), the host’s Cloudflare DDNS job keeps `feltprep.com` and `www` on the home connection’s address; the 00:20 timer run checked 26 records with nothing to change, and both names answer with the host’s address from 1.1.1.1.
 - [ ] **P4.3 · First deploy** · Depends on: P4.2, P3.7 · **Owner gate:** the deploy — the M1 release serves on the domain; the live smoke test and the redirect checks pass. A rehearsal deploy before M1 is the owner’s call and does not tick this step.
 - [ ] **P4.4 · Backups and upkeep** · Depends on: P4.3 — a nightly database dump with rotation, and the deploy recorded in **Now**.
 - [ ] **P4.5 · M1 pilot** · Depends on: P4.3 · **Needs the owner:** a few players (proposal: three to five) and their agreement to be observed
