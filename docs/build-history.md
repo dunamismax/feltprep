@@ -2,6 +2,14 @@
 
 Handoff entries moved out of [BUILD.md](../BUILD.md#handoff-log), which keeps the newest eight. Oldest last.
 
+### 2026-11-26 · P3.1, P3.3, P3.4, P3.5 · Study, drill and practice on a phone
+
+- **Completed:** theme and cards (`cd8293a`), study view (`7f5e000`), drill (`c0b1394`), practice table with RiverMind’s heuristic imported (`4e59ed9`), stored hands (the commit that ticks P3.5b). Gate A complete.
+- **Verified:** full gate before each commit (535 Vitest, 120 Playwright at the end); every page looked at on a phone size in both themes; DB tests against a scratch PostgreSQL 18; a damaged solution fails the build. Not verified: storage on the host until the migration deploys.
+- **Open decisions:** Q-4 default used, with an unsigned random token instead of a signed cookie (no secret needed). Q-12 still holds P3.2 and P3.4’s lesson link.
+- **Next ready task:** P3.6: a review page that replays a `FinishedHand` from local storage.
+- **Plan changes:** P3.5 split into P3.5a and P3.5b.
+
 ### 2026-11-26 · P2.1 to P2.5 · Reference math; Phase 2 complete
 
 - **Completed:** the grading contract and reader (`9f46c7a`); exact equities and the pre-flop class table (`8726459`); CFR+ and exact best response (`812e4c2`); the jam-or-fold solution (`ced11f4`); grading, the full-hand locator and B-9, with the solution now graded (the commit that ticks P2.5).

@@ -14,7 +14,7 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 | **Next step** | **P5.3 · Independent cross-check**: read an open-source river solver’s license (D-21), convert the reference river spots to it, and compare at least ten for B-7. |
 | **In progress** | None. |
 | **Background run** | None. |
-| **Waiting on the owner** | Nothing blocking. Q-15 (how an on-demand river solve qualifies its grades) has a default and is needed by P5.4; P7.6 (the release) needs their word. |
+| **Waiting on the owner** | Nothing blocking. Q-15 (how an on-demand river solve qualifies its grades) has a default and is needed by P5.4. |
 | **Live** | <https://feltprep.com> serves `main` as a preview, redeployed by every push whose CI passes (D-10); `/healthz` names the live commit. `feltprep.app` redirects to it in Cloudflare (D-11). |
 | **`main`** | Phases 1 to 3 (M1), and the post-flop solver core measured to the flop (P5.1), with the river solver checked on 20 reference spots (P5.2). `origin` pushes to GitHub and Codeberg. |
 | **Last updated** | 2026-11-27 |
@@ -45,7 +45,7 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 
 ## The first release
 
-The first release is the smallest FeltPrep that is coherent: a player can take a small set of ideas through the whole loop (lesson, solver study, drill, full-hand practice, review) on a phone, and every grade they see rests on a reference that passed [Gate B](#gate-b--trustworthy-feedback-on-reference-spots).
+**FeltPrep’s end is to be folded into RiverMind** (D-29). Its “first release” is therefore the point where it is **ready to fold in**, not a public launch: the site stays the owner’s unshared preview, and nothing is tagged or announced. The first release is the smallest FeltPrep that is coherent: a player can take a small set of ideas through the whole loop (lesson, solver study, drill, full-hand practice, review) on a phone, and every grade they see rests on a reference that passed [Gate B](#gate-b--trustworthy-feedback-on-reference-spots).
 
 ### Scope
 
@@ -55,18 +55,18 @@ Rows marked **Proposal** are this plan’s recommendation, not yet confirmed by 
 | --- | --- | --- |
 | Game | No-limit Texas hold’em cash game, 52-card deck, no ante, no rake, no straddle | Proposal |
 | Graded format | Heads-up only. Two-player zero-sum play is where “how far from equilibrium” has a measurable answer | Settled (D-15) |
-| Table sizes for full-hand practice | 2 seats. 6 seats only as ungraded practice, if a six-seat opponent fits on the host | Settled (D-15); 6 seats depend on P6.1’s memory measurement (D-14) |
+| Table sizes for full-hand practice | 2 seats | Settled (D-15, D-29) |
 | Stack depths, graded | 2 to 15 big blinds for the jam-or-fold game; 100 big blinds effective for the post-flop spot library | Proposal |
-| Stack depths, practice | A short-stack table at 10 to 15 big blinds and a 100 big blind table | Proposal |
+| Stack depths, practice | A short-stack table at 10 to 15 big blinds and a 100 big blind table, both against the rule-based opponent | Proposal (D-29) |
 | Solver capability 1 | Exact equities: hand against hand, hand against range, range against range | Proposal |
 | Solver capability 2 | The heads-up jam-or-fold equilibrium at each depth from 2 to 15 big blinds, precomputed | Proposal |
 | Solver capability 3 | Heads-up post-flop subgame solving for a stated pair of ranges and bet sizes: river spots on demand, turn and flop spots as a precomputed library | Proposal (D-19 for how it is computed) |
 | Spot library | One pre-flop line (button opens, big blind calls) on at least 12 flops chosen to cover distinct textures, each solved to the river | Proposal; the count and the choice of flops are set at P5.5 from measured solve cost (P5.1); there is no pilot (D-23) |
 | Curriculum | At least 8 lessons, each tied to at least one spot with a study view and a drill | Proposal |
-| Practice opponents | A rule-based opponent and a reference-strategy opponent for the jam-or-fold game; RiverMind’s trained heads-up champion at 100 big blinds | Settled (D-14) |
+| Practice opponents | The rule-based opponent, and a reference-strategy opponent for the jam-or-fold game. No trained opponent: RiverMind serves its champions, and Train practises at RiverMind’s tables | Settled (D-29) |
 | Devices | Phone first (375 × 812 and 360 × 640), then tablet and desktop, in Chromium, Firefox and WebKit | Proposal |
 | Identity | No sign-in. Progress lives in the browser, and a random guest token in a cookie identifies server-stored hands | Settled (D-16) |
-| Hosting | The owner’s server behind Caddy, on `feltprep.com`, with `feltprep.app` redirecting to it | Settled (D-3, D-11) |
+| Hosting | The owner’s server behind Caddy, on `feltprep.com`, as an unshared preview that redeploys `main` (D-10, D-28); `feltprep.app` redirects to it | Settled (D-3, D-11, D-29) |
 
 ### Not in the first release
 
@@ -81,7 +81,7 @@ The first release is done when every item in the [first-release checklist](#firs
 3. **Grades are earned.** Every reference that grades a decision is listed in the solution registry with its Gate B results, and every decision without one is shown as “not graded”.
 4. **It works on a phone.** Gate C passes in three browser engines, and one pass on a real phone is recorded.
 5. **Claims match benchmarks.** Every statement about accuracy in the app and the README names a benchmark in this file.
-6. **It is live and recoverable.** The release commit serves on the canonical domain with a health check, a database backup and a one-command redeploy.
+6. **It is ready to fold in.** D-29’s rules for moving into RiverMind hold, so RiverMind’s Phase 9 can import the code, solutions and lessons without rework. The preview on `feltprep.com` serves the commit, but no backup, tag or public launch is needed.
 7. **Provenance is complete.** Every imported file, table and model is in `docs/provenance.md` with its license, and no asset is of unknown origin.
 
 ---
@@ -105,8 +105,8 @@ These come from the owner’s brief of 2026-11-24 and the owner’s standing rul
 | D-9 | **License** (owner, 2026-11-24, answering Q-1). FeltPrep’s code is licensed under the GNU Affero General Public License, version 3 or later (`AGPL-3.0-or-later`), so that anyone who runs a modified FeltPrep as a service must offer its source. GPL-3.0 code, RiverMind’s included, may be combined with it under section 13 of both licenses and stays under the GPL. The terms for lesson text and for the name and artwork are Q-12. |
 | D-12 | **Content and brand terms** (owner, 2026-11-26, answering Q-12). Lesson text in `content/lessons/` is licensed under Creative Commons Attribution-ShareAlike 4.0 International (`CC-BY-SA-4.0`), stated in the repository and on every lesson page. The FeltPrep name, logo and brand artwork are reserved (all rights reserved) and covered by neither the AGPL nor the CC license. Theme tokens and code-drawn cards are code, under D-9. Lessons may now be committed; brand artwork may be committed once it is marked as reserved. |
 | D-13 | **Agents run FeltPrep’s own host pieces** (owner, 2026-11-26, answering Q-10). Without asking each time, an agent may do anything to what FeltPrep owns on the host, under the web platform contract: hand deploys (`prepare.sh` and `cutover.sh`, including a commit that `feltprep-autodeploy` held for changing `deploy/`), FeltPrep’s account, database, roles and credentials, its systemd units and timer, and its Caddy fragment. The owner’s word is still needed for other sites, anything the host’s sites share (the contract’s scripts, the main Caddy configuration, other repositories such as `ubuntu-vm-backup`), DNS, Cloudflare, and anything that creates an account or costs money. Each such change is recorded in the step’s evidence line. |
-| D-14 | **Trained practice opponent** (owner, 2026-11-26, answering Q-9). RiverMind’s heads-up champion `hu-m1-s0-1024m` is served at P6.1 after its memory is measured on the host (about 450 MB). The six-seat champion only if that measurement leaves room. Never for grading. |
-| D-15 | **Formats** (owner, 2026-11-26, answering Q-3). Heads-up is the only graded format. Six-seat practice ships, labelled ungraded, only if a six-seat opponent fits on the host (D-14). No 9-max. |
+| D-14 | **Trained practice opponent** (owner, 2026-11-26, answering Q-9). **Withdrawn by D-29** (2026-11-27): RiverMind’s champions are not served from FeltPrep, and P6.1 is dropped. It said: RiverMind’s heads-up champion `hu-m1-s0-1024m` is served at P6.1 after its memory is measured on the host (about 450 MB), the six-seat champion only if that leaves room, never for grading. |
+| D-15 | **Formats** (owner, 2026-11-26, answering Q-3; narrowed by D-29). Heads-up is the only graded format, and practice is at two seats. No six-seat practice (P6.6 is dropped) and no 9-max. |
 | D-16 | **No sign-in** (owner, 2026-11-26, answering Q-4). The first release is guest-only, as built at P3.4 and P3.5b: drill progress in browser storage and a random guest token in an HTTP-only cookie, stored as its SHA-256, for server-stored hands. Syncing across devices stays after the release. |
 | D-17 | **Free** (owner, 2026-11-26, answering Q-5). The first release is free, with no payments, donations, ads or third-party trackers. |
 | D-18 | **Range assumptions** (owner, 2026-11-26, answering Q-8). Post-flop spots use starting ranges written for FeltPrep, recorded with their reasoning and shown to the player as assumptions; a grade is conditional on the ranges shown. RiverMind’s champion does not supply them. |
@@ -120,6 +120,7 @@ These come from the owner’s brief of 2026-11-24 and the owner’s standing rul
 | D-26 | **Agents choose imports** (owner, 2026-11-27, answering Q-14). FeltPrep is for the owner’s own use. Agents may add any dependency, tool or data they need, under any license whose terms they have read, without asking: each is still recorded in `docs/provenance.md` (source, version, license, where its notice is kept) in the same commit, and anything that ships to the browser or the server must be compatible with distributing FeltPrep under the AGPL. Nothing of unknown origin or with no license is imported. axe-core (MPL-2.0) is approved for Gate C’s accessibility check. |
 | D-27 | **Heavy compute needs no asking** (owner, 2026-11-27). Agents may run the post-flop solver and any other long build on every core of the development Mac whenever they need to, still naming it under **Background run** in **Now** with the command that resumes it. |
 | D-28 | **The real-phone pass** (owner, 2026-11-27). The owner tested FeltPrep on an iPhone and reported that everything works. This is the real-phone pass of Gate C and P7.2, as of `43f656a` (the browser was not named in the report; D-24 names Safari). The site stays `noindex` and unshared: going public (P4.3’s owner gate) is not wanted. |
+| D-29 | **FeltPrep is folded into RiverMind after RiverMind’s 1.0** (owner, 2026-11-27). FeltPrep is the owner’s own trainer, used by nobody else. Once RiverMind Poker reaches 1.0, its Phase 9 (D-20 in RiverMind’s BUILD.md) brings FeltPrep in as the Train section of rivermindpoker.com and its iOS app, and FeltPrep is then eliminated: no redirects, no data kept, its code and lessons relicensed to GPL-3.0-or-later there. Until then FeltPrep keeps being built here, and its goal is to be **ready to fold in** (see [The first release](#the-first-release)), not a public release. **Cut**, because Phase 9 throws them away or redoes them inside RiverMind: P4.3 and P4.4 (going public, backups), P6.1 (a trained opponent, D-14 withdrawn), P6.6 (six-seat practice), P7.3 (the security review; its limits on solving move to P5.4) and P7.1’s performance budgets. **Shrunk:** P6.2 uses the rule-based opponent only. **Rules that keep the move cheap**, for every step: (1) the engine stays the same code as RiverMind’s `web/src/lib/server/engine/` and `web/src/lib/engine/`: on 2026-11-27 the only differences were the import headers, import paths, a few type annotations FeltPrep’s lint asks for and the split of `random.ts` (`docs/provenance.md`), so a change to how the engine behaves lands in both repositories with a fixture worked out by hand, or not at all; (2) review and grading work from the engine’s hand history (format 1) and the player’s seat, not from types that only FeltPrep’s practice table has, so they can review RiverMind’s stored hands; (3) drill progress and other learner state are read and written through one storage module, so Phase 9 swaps browser storage for RiverMind’s database in one place; (4) on-demand solves run in a worker with limits, never on the request path; (5) lessons name spots by their IDs and do not use the FeltPrep name in their text; (6) the solver, grading and spots stay free of UI and server imports, as section 6 of AGENTS.md already says; (7) screens are kept working, accessible and tested, but not polished: Train is rebuilt on RiverMind’s components and look, so effort on FeltPrep’s look, theme and brand is lost. |
 
 ## Open decisions
 
@@ -328,10 +329,10 @@ Results at P3.7 (`web/e2e/journey.e2e.ts`, with `mistake.e2e.ts`, `review.e2e.ts
 - [x] **Phase 1 · Foundation.** A running app on the settled stack and a verified rules engine. *Outcome: a clean clone builds, tests and serves a page, and plays legal hands in a test.*
 - [x] **Phase 2 · Reference math.** Exact equities, a verified solver core and the jam-or-fold solution. *Outcome: FeltPrep can grade one family of decisions, with the evidence recorded.*
 - [x] **Phase 3 · The first loop (milestone M1).** One idea taken through lesson, study, drill, practice and review on a phone. *Outcome: a usable trainer for short-stack heads-up play.*
-- [ ] **Phase 4 · Production.** The app live on its domain with a repeatable deploy. *Outcome: M1 on `feltprep.com`, tried by a few players.* Host preparation (P4.1, P4.2) needs only P1.1 and the owner, so it may run beside Phases 2 and 3; the first public deploy (P4.3) waits for M1 to pass (P3.7).
+- [x] **Phase 4 · Production.** The app on its domain with a repeatable deploy. *Outcome: `feltprep.com` serves `main` as the owner’s preview (D-10).* Going public and backups were cut by D-29.
 - [ ] **Phase 5 · Post-flop solver.** Heads-up subgame solving, a cross-checked spot library and on-demand river solves. *Outcome: study and drills for post-flop spots at 100 big blinds.*
 - [ ] **Phase 6 · Full practice and curriculum.** Practice at 100 big blinds, graded review inside library spots, the lesson set and progress. *Outcome: the whole first-release loop.*
-- [ ] **Phase 7 · Hardening and the first release.** Accessibility, performance, security, backups and the release checklist. *Outcome: the first release.*
+- [ ] **Phase 7 · Ready to fold in.** Accessibility, the provenance and claims audits, and the first-release checklist (D-29). *Outcome: FeltPrep ready for RiverMind’s Phase 9.*
 
 **The first end-to-end milestone is M1, “one spot, end to end”,** the exit of Phase 3: on a phone, a player reads the lesson on jamming or folding heads-up at 10 big blinds, studies the solved chart, drills it with graded feedback, plays full short-stack hands against a practice opponent, takes a mistake from the table straight into a drill of that decision, and reviews a hand whose pre-flop decision is graded against the same chart. The mistake-to-drill path (D-25) is the part of M1 that matters most.
 
@@ -516,15 +517,13 @@ Results at P3.7 (`web/e2e/journey.e2e.ts`, with `mistake.e2e.ts`, `review.e2e.ts
 
 ## Phase 4 · Production
 
-**Goal.** M1 live on its domain, deployed the way the host’s other sites are.
+**Goal.** M1 live on its domain, deployed the way the host’s other sites are. Since D-29 the domain stays the owner’s preview: going public and backups are cut, and the phase closes with P4.1 and P4.2.
 
 **Entry.** P1.1 is done, for host preparation (P4.1 and P4.2). The first public deploy (P4.3) also waits for M1 (P3.7), so the domain’s first release is the milestone that passed its gates. Changes to what FeltPrep owns on the host are the agent’s to make (D-13); public DNS, Cloudflare and the host’s shared pieces stay owner gates.
 
 **Exit criteria**
 
-- [ ] The canonical domain serves the release commit over HTTPS; the other names redirect to it.
-- [ ] `/healthz` reports the deployed commit, a database backup exists, and a redeploy is one documented command sequence.
-- [ ] A live smoke test passes against the public site.
+- [x] P4.1 and P4.2 are done, and P4.3 and P4.4 are cut (D-29). The criteria that stood here (the release on the canonical domain, a backup and a public smoke test) went with them.
 
 - [x] **P4.1 · Host facts** · Depends on: P1.1 · **Owner gate:** server access (given 2026-11-26)
   - [x] The host’s web platform contract (`docs/web-platform.md` in `ubuntu-vm-backup`) has been read, and anything in AGENTS.md or A-1 that differs from it is corrected.
@@ -537,8 +536,8 @@ Results at P3.7 (`web/e2e/journey.e2e.ts`, with `mistake.e2e.ts`, `review.e2e.ts
   Evidence: `b61c1dc` deployed by hand on 2026-11-26 through every step (dump, 0 of 0 migrations, candidate on 4400, switch, `web-live` on Node 26.13.1, `caddy-apply`, public check); `bin/web-conformance` passes. From outside: `/healthz` names the commit with database `ok`, Let’s Encrypt certificate, `www` answers 301, HTTP 308, unknown path 404, the CSP and security headers present; checked at 375 × 812 in light and dark with no console errors. The e2e CSP test passes in all six projects. The backup registry gained the site (`ubuntu-vm-backup` `9766f4c`), its drill rehearsed against the live release. Continuous deploy (D-10): `feltprep-autodeploy.timer`.
   Redirects: `www.feltprep.com` in the Caddy fragment (301, path kept); `feltprep.app` in Cloudflare (D-11, 301 to the home page). The deploy notes were brought up to date in `1b09b36`, the first hand deploy after the first, on 2026-11-27: `feltprep-autodeploy` held it as designed (it changes `deploy/`) after waiting on CI for `61c39b8`, so both of its untested paths were seen working; `prepare.sh` and `cutover.sh` passed every step, `caddy-apply` reloaded the fragment, and `/healthz` reports `1b09b36` with database `ok`.
   DDNS: since `xrayservice` `8bc2e05` (switched 2026-11-27 00:16 UTC, X-6 there), the host’s Cloudflare DDNS job keeps `feltprep.com` and `www` on the home connection’s address; the 00:20 timer run checked 26 records with nothing to change, and both names answer with the host’s address from 1.1.1.1.
-- [ ] **P4.3 · First deploy** · Depends on: P4.2, P3.7 · **Owner gate:** going public (dropping `noindex`); D-13 covers the deploy itself — the M1 release serves on the domain; the live smoke test and the redirect checks pass. A rehearsal deploy before M1 is the owner’s call and does not tick this step.
-- [ ] **P4.4 · Backups and upkeep** · Depends on: P4.3 — a nightly database dump with rotation, and the deploy recorded in **Now**.
+- [ ] ~~**P4.3 · First deploy**~~ · **Cut by the owner** on 2026-11-27 (D-29): the site is never made public. Its ID is kept so that older entries still resolve.
+- [ ] ~~**P4.4 · Backups and upkeep**~~ · **Cut by the owner** on 2026-11-27 (D-29): nothing in the preview’s database needs keeping. Its ID is kept so that older entries still resolve.
 - [ ] ~~**P4.5 · M1 pilot**~~ · **Dropped by the owner** on 2026-11-26 (D-23). Its ID is kept so that older entries still resolve.
 
 ## Phase 5 · Post-flop solver
@@ -575,9 +574,9 @@ Results at P3.7 (`web/e2e/journey.e2e.ts`, with `mistake.e2e.ts`, `review.e2e.ts
   - [x] **Invariants and reproducibility** (grading-gate items 6 and 7): every stored frequency row sums to one, the two players’ values sum to zero, a hand that cannot lose at a decision folds less than 0.1% of the time; solutions are written to the ignored `artifacts/river-reference/`, their SHA-256 recorded in a committed manifest, and `river:bench -- --check` rebuilds identical bytes.
   - Evidence: `76d2c35` adds the code; the commit that ticks P5.2 adds the clean rebuild’s manifest and the record ([benchmarks](docs/benchmarks.md#b-6--river-solutions-are-near-equilibrium), [solver.md](docs/solver.md#reference-river-spots)). B-3 through `buildRiver` within 0.5 points at three ratios; 20 spots, each at most 0.5% of the pot (worst 0.491%) in 100 to 525 iterations; B-11 on 3,236 hands, worst 1.1 × 10⁻⁹ of the pot; B-12 with no acceptable↔mistake move once each solve is carried on, doubling, until a doubling moves none (1 to 256 times B-6’s iterations, median 16: raised as Q-15 for P5.4); invariants hold; a rebuild on the clean tree at `76d2c35` and `river:bench -- --check` gave identical solution hashes; `jof:build -- --check` unchanged. Full gate: 625 Vitest tests, 228 Playwright tests.
 - [ ] **P5.3 · Independent cross-check** · Depends on: P5.2, D-21 — the tool’s license read and recorded, a harness that converts a spot both ways, and B-7.
-- [ ] **P5.4 · On-demand river solving** · Depends on: P5.2, Q-15 — a server endpoint with limits, cancellation and a cache keyed by the spot’s hash; B-10; and Gate C’s on-demand item, in a browser test at phone size. From P5.2’s measurements: how a solve qualifies its grades within the budget (Q-15), and margins stored per action rather than per hand for post-flop solutions, since an action no hand takes (an all-in with air) can move by more than the pot between solves and would soften the grade of the hand’s other actions (`docs/solver.md`, “Reference river spots”).
+- [ ] **P5.4 · On-demand river solving** · Depends on: P5.2, Q-15 — a server endpoint with limits, cancellation and a cache keyed by the spot’s hash; B-10; and Gate C’s on-demand item, in a browser test at phone size. From P5.2’s measurements: how a solve qualifies its grades within the budget (Q-15), and margins stored per action rather than per hand for post-flop solutions, since an action no hand takes (an all-in with air) can move by more than the pot between solves and would soften the grade of the hand’s other actions (`docs/solver.md`, “Reference river spots”). From D-29: the solves run in a worker with a time limit, a queue and input limits, never on the request path, and the endpoint has rate limits (moved here from P7.3).
 - [ ] **P5.5 · Turn and flop solving and the spot library** · Depends on: P5.2, D-18 — offline solves for the library’s flops with manifests and registry entries; range assumptions recorded with their source; B-8, B-11 and B-12. The library’s size and choice of flops cite P5.1’s measurements; there is no pilot to cite (D-23).
-- [ ] **P5.6 · Study and drill for post-flop spots** · Depends on: P5.5 — the study view for a spot with a board and a range grid per action, drills that start on a library spot (including “Drill this spot” from a post-flop mistake, D-25), and the journey extended.
+- [ ] **P5.6 · Study and drill for post-flop spots** · Depends on: P5.5 — the study view for a spot with a board and a range grid per action, drills that start on a library spot (including “Drill this spot” from a post-flop mistake, D-25), and the journey extended. Screens working and tested, not polished (D-29, rule 7).
 
 ## Phase 6 · Full practice and curriculum
 
@@ -591,24 +590,24 @@ Results at P3.7 (`web/e2e/journey.e2e.ts`, with `mistake.e2e.ts`, `review.e2e.ts
 - [ ] A practice hand at 100 big blinds is graded wherever it stays inside a library spot’s tree and is marked “not graded” elsewhere.
 - [ ] A graded mistake in review leads to its lesson and drill.
 
-- [ ] **P6.1 · Trained practice opponent** · Depends on: D-14, P3.5 — RiverMind’s heads-up champion loaded from a bundle checked against its registry hashes, labelled as a practice opponent with its published evaluation linked, memory measured on the host, and a test that its output never reaches the grading path.
-- [ ] **P6.2 · Practice at 100 big blinds** · Depends on: P6.1 or the rule-based opponent — free play of complete hands, and spot play that starts a hand on a library spot.
-- [ ] **P6.3 · Graded review inside library spots** · Depends on: P5.5, P6.2 — the review follows a hand through a library spot’s tree street by street and stops grading, with the reason shown, when the hand leaves it. Each graded post-flop mistake shows its cost and an explanation from that node’s values, with B-13 extended to the library spots, and one tap drills that node (D-25).
-- [ ] **P6.4 · Curriculum** · Depends on: P5.6 — the lesson set, each original, each tied to spots, in a recommended order.
-- [ ] **P6.5 · Progress and weak spots** · Depends on: P6.3 — results per spot over time, drills resurfaced by need, and mistakes from practice feeding the drill queue.
-- [ ] **P6.6 · Six-seat practice** · Depends on: P6.1 — only if P6.1’s measurement leaves room for a six-seat opponent (D-14, D-15); ungraded and labelled so.
+- [ ] ~~**P6.1 · Trained practice opponent**~~ · **Cut by the owner** on 2026-11-27 (D-29, withdrawing D-14): RiverMind serves its champions, and Train will practise at RiverMind’s tables. Its ID is kept so that older entries still resolve.
+- [ ] **P6.2 · Practice at 100 big blinds** · Depends on: P3.5 — free play of complete hands against the rule-based opponent, and spot play that starts a hand on a library spot. Kept small (D-29): it exists so that P6.3 has hands to review, and FeltPrep’s practice table stays behind when Train moves to RiverMind.
+- [ ] **P6.3 · Graded review inside library spots** · Depends on: P5.5, P6.2 — the review follows a hand through a library spot’s tree street by street and stops grading, with the reason shown, when the hand leaves it. Each graded post-flop mistake shows its cost and an explanation from that node’s values, with B-13 extended to the library spots, and one tap drills that node (D-25). The review is computed from the engine’s hand history and the player’s seat alone (D-29, rule 2), with a test that reviews a hand built only from a history.
+- [ ] **P6.4 · Curriculum** · Depends on: P5.6 — the lesson set, each original, each tied to spots by their IDs, in a recommended order, without the FeltPrep name in its text (D-29, rule 5).
+- [ ] **P6.5 · Progress and weak spots** · Depends on: P6.3 — results per spot over time, drills resurfaced by need, and mistakes from practice feeding the drill queue, all read and written through one storage module (D-29, rule 3).
+- [ ] ~~**P6.6 · Six-seat practice**~~ · **Cut by the owner** on 2026-11-27 (D-29): RiverMind already plays six seats. Its ID is kept so that older entries still resolve.
 
-## Phase 7 · Hardening and the first release
+## Phase 7 · Ready to fold in
 
-**Goal.** Everything in the first-release checklist.
+**Goal.** Everything in the first-release checklist, which since D-29 means FeltPrep is ready for RiverMind’s Phase 9.
 
-- [ ] **P7.1 · Accessibility and performance** — axe-core on every page in both themes, keyboard paths, and page weight and interaction budgets measured on a mid-range phone profile.
+- [ ] **P7.1 · Accessibility** — axe-core on every page in both themes, and keyboard paths. The performance budgets were cut by D-29: Train’s pages are rebuilt in RiverMind.
 - [x] **P7.2 · Real-phone pass** — Gate C’s last item, on a physical phone, recorded. The owner runs it on an iPhone in Safari (D-24).
   - Evidence: the owner tested everything on an iPhone and reported that it works (2026-11-27, D-28), with `43f656a` live. Repeat before the release if the flows change much.
-- [ ] **P7.3 · Security review** — headers and Content Security Policy, input validation on every endpoint, rate limits on solving, and dependency advisories.
+- [ ] ~~**P7.3 · Security review**~~ · **Cut by the owner** on 2026-11-27 (D-29): RiverMind’s review covers Train after the move, and the limits on solving moved to P5.4. Its ID is kept so that older entries still resolve.
 - [ ] **P7.4 · Provenance and license audit** — every file, font, table and model traced; `docs/provenance.md` complete; notices in place.
 - [ ] **P7.5 · Claims audit** — every accuracy statement in the app, the lessons and the README matched to a Gate B row.
-- [ ] **P7.6 · Release** · **Owner gate:** the release — the checklist ticked on the release commit, deployed and tagged.
+- [ ] **P7.6 · Ready to fold in** — the first-release checklist ticked on one commit, which **Now** names as the one for RiverMind’s Phase 9 to import. No tag and no public launch (D-29).
 
 ---
 
@@ -621,13 +620,13 @@ Results at P3.7 (`web/e2e/journey.e2e.ts`, with `mistake.e2e.ts`, `review.e2e.ts
 - [ ] Every decision without a qualified reference is shown as “not graded”, and a test proves no practice opponent’s output reaches a grade.
 - [ ] Gate C passes, including the recorded real-phone pass.
 - [ ] Every accuracy claim in the app and the README names a Gate B row.
-- [ ] The release commit serves on the canonical domain; `/healthz` reports it; a backup exists; a redeploy is documented.
+- [ ] D-29’s rules for the move hold on the release commit, and `feltprep.com` serves it.
 - [ ] `docs/provenance.md` is complete and no asset is of unknown origin.
-- [ ] Every open decision the release relied on is either settled or listed in the release notes with the default that shipped.
+- [ ] Every open decision the release relied on is either settled or listed in **Now** with the default it uses, so that RiverMind’s Phase 9 sees it.
 
 ## After the first release
 
-Ideas that do not gate it. Triage one into a phase, with criteria, when it is picked up.
+Ideas that do not gate it. Triage one into a phase, with criteria, when it is picked up. When FeltPrep is folded in (D-29), those still open become ideas in RiverMind’s Phase 8; a native app and accounts are already RiverMind’s.
 
 - Graded 6-max play, which needs a position on what “correct” means when more than two players are in the hand.
 - A pre-flop solve at 100 big blinds, which would replace the range assumptions of D-18.
@@ -655,6 +654,14 @@ Every session ends by prepending one entry to the log below, in this shape and i
 ```
 
 ## Handoff log
+
+### 2026-11-27 · Decisions · D-29: ready to fold into RiverMind
+
+- **Completed:** D-29 at the owner’s request: FeltPrep is folded into RiverMind’s Train section after RiverMind’s 1.0 (its Phase 9, D-20 there), so the first release means **ready to fold in**, not a public launch. D-14 withdrawn and D-15 narrowed.
+- **Verified:** documents only; no code changed. Comparing the engine with RiverMind’s at their current commits: the same code apart from import headers, import paths, a few lint annotations and the split of `random.ts`.
+- **Open decisions:** none raised; Q-15 unchanged.
+- **Next ready task:** P5.3, as before.
+- **Plan changes:** P4.3, P4.4, P6.1, P6.6 and P7.3 cut, and P7.1’s performance budgets; Phase 4 closed with P4.1 and P4.2; P6.2 against the rule-based opponent only; P5.4 gains the solve worker and the rate limits from P7.3; P6.3, P6.4, P6.5 and P5.6 gain D-29's rules; Phase 7 and P7.6 renamed to “ready to fold in”.
 
 ### 2026-11-27 · P5.2 · River solver on 20 reference spots
 
@@ -707,11 +714,3 @@ Every session ends by prepending one entry to the log below, in this shape and i
 - **Open decisions:** none left. D-12 unblocks P3.2; D-13 lets agents run hand deploys; D-20’s stricter bands are not yet applied.
 - **Next ready task:** P3.8: set D-20’s bands in `grading.ts` and rebuild the solution with `pnpm run jof:build`; then P3.9.
 - **Plan changes:** P3.8 added; D-25 (from the owner’s review of the idea) adds P3.9 (cost, plain-English reason and one-tap drill of a mistake), B-13 (explanations are true) and two Gate C items; P3.6 and P3.7 depend on P3.9; P3.2 gains a license criterion; P4.5 dropped; P6.6 depends on P6.1’s measurement.
-
-### 2026-11-26 · P3.1, P3.3, P3.4, P3.5 · Study, drill and practice on a phone
-
-- **Completed:** theme and cards (`cd8293a`), study view (`7f5e000`), drill (`c0b1394`), practice table with RiverMind’s heuristic imported (`4e59ed9`), stored hands (the commit that ticks P3.5b). Gate A complete.
-- **Verified:** full gate before each commit (535 Vitest, 120 Playwright at the end); every page looked at on a phone size in both themes; DB tests against a scratch PostgreSQL 18; a damaged solution fails the build. Not verified: storage on the host until the migration deploys.
-- **Open decisions:** Q-4 default used, with an unsigned random token instead of a signed cookie (no secret needed). Q-12 still holds P3.2 and P3.4’s lesson link.
-- **Next ready task:** P3.6: a review page that replays a `FinishedHand` from local storage.
-- **Plan changes:** P3.5 split into P3.5a and P3.5b.
