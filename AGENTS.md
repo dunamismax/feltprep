@@ -122,17 +122,20 @@ web/                       the SvelteKit app (exists; the same place RiverMind k
   drizzle.config.ts        drizzle-kit settings (exists)
   src/app.css              Tailwind entry and the theme tokens, light and dark, at AA contrast (exists)
   src/env.ts               environment variables, validated at build and start (exists)
-  src/routes/              pages and endpoints: the home page, /style and /healthz exist
+  src/routes/              pages and endpoints: the home page, /style, /study/jam-or-fold/[stack] and /healthz exist
   src/lib/ui/              shared components and their helpers: code-drawn playing cards and the
                            contrast pairs the theme test measures (exists)
+  src/lib/study/           the study view's strategy grid and its formatting helpers (exists)
   src/lib/engine/          cards, hand evaluator, hand state machine, histories, seat views, fuzzer and fixtures:
                            pure, browser-safe TypeScript imported from RiverMind (exists)
   src/lib/solver/          hand classes, exact equities, the pre-flop class table, games with a public betting
                            tree (game.ts), CFR+ and exact best response (cfr.ts), the jam-or-fold game, its
                            location in a full hand (jam-or-fold-hand.ts) and grading (grading.ts) exist.
                            fixtures/ holds imported reference data
-  src/lib/spots/           the contract's types (docs/grading.md) and the reader that checks a solution's hashes (exists)
-  src/lib/server/          server-only code: database client and health check exist; practice sessions and opponents later
+  src/lib/spots/           the contract's types (docs/grading.md), the reader that checks a solution's hashes and
+                           sliceSolution, one game's share of a solution (exists)
+  src/lib/server/          server-only code: database client, health check and solutions.ts, which bundles
+                           solutions/ and checks it in the build (exist); practice sessions and opponents later
   scripts/                 Node scripts run by package.json: db-migrate.ts, engine-fuzz.ts, engine-bench.ts,
                            engine-parity.ts and its Node-only helper engine/parity.ts, equity-build.ts,
                            solver-bench.ts, jam-or-fold-build.ts and jam-or-fold-compare.ts exist

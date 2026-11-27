@@ -10,8 +10,8 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 
 | | |
 | --- | --- |
-| **Current phase** | [Phase 3 · The first loop](#phase-3--the-first-loop): P3.1 done, so theme tokens and code-drawn cards are on `/style`. |
-| **Next step** | **P3.3 · Study view**: the 13 × 13 grid for the jam-or-fold solution. P3.2 can build its pipeline but commits no lesson before Q-12. |
+| **Current phase** | [Phase 3 · The first loop](#phase-3--the-first-loop): P3.1 and P3.3 done; the jam-or-fold study view is at `/study/jam-or-fold/10`. |
+| **Next step** | **P3.4 · Drill**: deal seeded hands for the jam-or-fold spot and grade each answer in the browser. P3.2 can build its pipeline but commits no lesson before Q-12. |
 | **In progress** | Nothing. |
 | **Background run** | None. |
 | **Waiting on the owner** | Q-12 (lesson text and artwork terms) before P3.2 commits a lesson; Q-13 (the published push/fold chart’s terms) is optional. Two optional Cloudflare settings for `feltprep.app` (D-11). |
@@ -433,10 +433,11 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
   - [ ] The first lesson, “Jam or fold: heads-up at 10 big blinds”, is original writing. It explains why jamming wins, states the game’s assumptions and limits (P2.4’s caveat), and links to its study view and drill.
   - [ ] It reads well at 375 pixels wide, checked in a browser.
 
-- [ ] **P3.3 · Study view** · Depends on: P3.1, P2.4
-  - [ ] A 13 × 13 hand grid shows the reference for the chosen depth and position: each class’s frequency, and its value on selection.
-  - [ ] The spot’s stated game, the solution’s measured exploitability and a link to the benchmark are visible on the page.
-  - [ ] The grid is usable by touch at 360 pixels wide and by keyboard, and does not rely on colour alone.
+- [x] **P3.3 · Study view** · Depends on: P3.1, P2.4
+  - [x] A 13 × 13 hand grid shows the reference for the chosen depth and position: each class’s frequency, and its value on selection.
+  - [x] The spot’s stated game, the solution’s measured exploitability and a link to the benchmark are visible on the page.
+  - [x] The grid is usable by touch at 360 pixels wide and by keyboard, and does not rely on colour alone.
+  - Evidence: the commit that ticks this step. `/study/jam-or-fold/[stack]`, prerendered at 2 to 15 big blinds from the solution bundled by `web/src/lib/server/solutions.ts`, whose reader checks every hash in the build (a changed byte in `solution.json` failed `pnpm run build` with `SolutionRefused`); `sliceSolution` grades every hand and action exactly as the whole solution does at all 14 depths (tested). Each cell fills from the bottom by frequency, so the strategy reads from height, not hue; arrow keys move with one tab stop; `#big-blind` links the other seat. `study.e2e.ts` checks the cells against `solution.json`, tap, keyboard, seat, depth links and a 404 outside the game, in six projects; looked at 360 × 640 in both themes. Full gate: 491 Vitest tests, 66 Playwright tests.
 
 - [ ] **P3.4 · Drill** · Depends on: P3.3, P2.5
   - [ ] A drill deals hands for the spot and asks for the decision, with the practice table’s own action controls.

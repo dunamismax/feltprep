@@ -1,3 +1,7 @@
+<script lang="ts">
+	import { resolve } from '$app/paths';
+</script>
+
 <svelte:head>
 	<title>FeltPrep</title>
 	<meta
@@ -12,9 +16,18 @@
 		One place to learn, study and practice No-Limit Texas Hold’em: learn why a decision works, drill
 		it in realistic spots, then apply it in full practice hands.
 	</p>
-	<p class="rounded-lg border border-line bg-raised px-4 py-3 text-muted">
-		FeltPrep is in development. Nothing is playable yet.
+	<p class="rounded-panel border border-line bg-raised px-4 py-3 text-muted">
+		FeltPrep is in development. The first solved spot can be studied now; lessons, drills and
+		practice hands come next.
 	</p>
+	<a
+		href={resolve('/study/jam-or-fold/[stack]', { stack: '10' })}
+		class="flex min-h-target flex-col gap-1 rounded-panel border border-line-strong bg-raised px-4 py-3 hover:border-accent"
+	>
+		<span class="text-sm font-semibold tracking-wide text-muted uppercase">Study</span>
+		<span class="text-lg font-semibold text-accent">Jam or fold, heads-up, 2 to 15 big blinds</span>
+		<span class="text-sm text-muted">The solved strategy for both seats, hand by hand.</span>
+	</a>
 	<p class="text-sm text-muted">
 		Free software under the GNU AGPL.
 		<a

@@ -7,6 +7,29 @@
 	import PlayingCard from '#lib/ui/PlayingCard.svelte';
 	import { CONTRAST_PAIRS, contrast } from '#lib/ui/contrast.ts';
 	import { RANKS } from '#lib/engine/cards.ts';
+	import StrategyGrid from '#lib/study/StrategyGrid.svelte';
+	import { gridRows } from '#lib/study/strategy.ts';
+	import { CLASSES } from '#lib/solver/classes.ts';
+
+	// A made-up pattern, only to show the grid: pairs and aces filled, suited
+	// connectors half filled. It is not a strategy.
+	const demo = (name: string) =>
+		name.length === 2 || name[0] === 'A'
+			? 1
+			: name.endsWith('s') &&
+				  '23456789TJQKA'.indexOf(name[0]) - '23456789TJQKA'.indexOf(name[1]) === 1
+				? 0.5
+				: 0;
+	const demoRows = gridRows({
+		spot: 'demo',
+		actions: ['fold', 'jam'],
+		hands: CLASSES.map((c) => c.name),
+		reach: CLASSES.map(() => 1),
+		frequencies: CLASSES.map((c) => [1 - demo(c.name), demo(c.name)]),
+		values: CLASSES.map(() => [0, 0]),
+		margins: CLASSES.map(() => 0)
+	});
+	let demoSelected = $state('AA');
 
 	// Class names are written out in full so Tailwind generates each one.
 	const groups: { title: string; swatches: { name: string; cls: string }[] }[] = [
@@ -194,6 +217,24 @@
 					<span class="font-mono text-xs text-muted">{step.px}</span>
 				</div>
 			{/each}
+		</div>
+	</section>
+
+	<section aria-labelledby="components" class="flex flex-col gap-4">
+		<h2 id="components" class="text-xl font-semibold">Components</h2>
+		<div class="flex max-w-md flex-col gap-2">
+			<h3 class="text-sm font-semibold tracking-wide text-muted uppercase">Strategy grid</h3>
+			<p class="text-sm text-muted">
+				A made-up pattern, not a strategy: the fill’s height is how often a hand takes the action.
+				Arrow keys move; Enter selects. Selected: <strong>{demoSelected}</strong>.
+			</p>
+			<StrategyGrid
+				rows={demoRows}
+				action="jam"
+				actionIndex={1}
+				bind:selected={demoSelected}
+				label="Example strategy grid"
+			/>
 		</div>
 	</section>
 

@@ -5,6 +5,8 @@ test('the home page names FeltPrep and says it is in development', async ({ page
 	await expect(page).toHaveTitle(/FeltPrep/);
 	await expect(page.getByRole('heading', { level: 1 })).toHaveText('FeltPrep');
 	await expect(page.getByText('in development', { exact: false })).toBeVisible();
+	await page.getByRole('link', { name: /Jam or fold, heads-up/ }).click();
+	await expect(page).toHaveURL(/\/study\/jam-or-fold\/10$/);
 });
 
 test('nothing on the home page scrolls sideways', async ({ page }) => {
