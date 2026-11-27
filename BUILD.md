@@ -507,7 +507,7 @@ Results at P3.7 (`web/e2e/journey.e2e.ts`, with `mistake.e2e.ts`, `review.e2e.ts
   - [x] The Gate C journey test exists and passes in all six browser projects and at 360 × 640.
   - [ ] Every Gate C item that applies at M1 passes, with results in the evidence line: all but on-demand solving (P5.4) and the real-phone pass (P7.2).
   - [x] The README’s status says what a visitor can now do.
-  - Evidence: the commit that adds `web/e2e/journey.e2e.ts`: lesson, study, drill, a seeded practice hand, its mistake drilled in one tap, back to the table, review and back to the lesson, in six projects and again at 360 × 640 (12 runs); Gate C’s results are recorded under the gate. The practice table gained a “Review” link in its header. Full gate: 565 Vitest tests, 210 Playwright tests.
+  - Evidence: the commit that adds `web/e2e/journey.e2e.ts`: lesson, study, drill, a seeded practice hand, its mistake drilled in one tap, back to the table, review and back to the lesson, in six projects and again at 360 × 640 (12 runs); Gate C’s results are recorded under the gate. The practice table gained a “Review” link in its header. Full gate: 565 Vitest tests, 210 Playwright tests. CI’s first run failed at 360 × 640: with Linux fonts the “choose size” sublabel wrapped and the buttons shrank by 6 px once disabled, so each action place now has a fixed 64 px height, checked by forcing the wrap at 300 px wide.
   - Remaining: Gate C’s accessibility item. It needs an axe-core check, and axe-core and `@axe-core/playwright` are MPL-2.0, a license `docs/provenance.md` does not list, so adding them waits on the owner (Q-14); the keyboard pass through the journey is to be written with it.
 
 ## Phase 4 · Production

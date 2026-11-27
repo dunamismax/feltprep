@@ -4,7 +4,8 @@
 	// check or call, raise (which opens a sizing sheet laid over the content
 	// above the panel, never pushing it), and all-in. Every action comes from
 	// the engine's legal actions; a place it does not allow stays in position,
-	// disabled.
+	// disabled. Each place has a fixed height (64 px), so a sublabel that wraps
+	// on a narrow phone, or disappears once the place is disabled, never moves it.
 	import type { Action, LegalActions } from '../engine/state.ts';
 	import { inBigBlinds, places, stepSize } from './actions.ts';
 
@@ -128,7 +129,7 @@
 				data-place={place.key}
 				disabled={off}
 				aria-expanded={place.key === 'raise' ? sizing : undefined}
-				class="flex min-h-14 min-w-0 flex-col items-center justify-center rounded-md border px-1 py-1 leading-tight font-semibold {off
+				class="flex h-16 min-w-0 flex-col items-center justify-center overflow-hidden rounded-md border px-1 py-1 leading-tight font-semibold {off
 					? 'border-line bg-sunken text-muted'
 					: place.key === 'all-in'
 						? 'border-accent bg-accent text-on-accent'
