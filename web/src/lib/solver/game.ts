@@ -1,11 +1,16 @@
 // Two-player zero-sum games with private hands dealt once at the start and a
-// public betting tree after it (P2.3). This covers every game the first
-// release solves: Kuhn poker, river games between two ranges, and the
-// jam-or-fold game. Player 0 and player 1 each receive one of their own
-// "types" (a card, a hand or a hand class) from a joint distribution, which
-// is how card removal enters; after that every action is public. An
-// information set is therefore a decision node together with the acting
+// public tree after it (P2.3, P5.1). This covers every game FeltPrep solves:
+// Kuhn poker, the jam-or-fold game, and post-flop spots between two ranges.
+// Player 0 and player 1 each receive one of their own "types" (a card, a hand
+// or a hand class) from a joint distribution, which is how card removal
+// enters; after that every action and every chance card is public. An
+// information set is therefore a public node together with the acting
 // player's own type, and the game has perfect recall.
+//
+// Post-flop games also describe their deal as two-card combinations with
+// weights (`CardDeal`). That lets the solver compute fold and showdown values
+// in time linear in the number of combinations, and lets a chance node deal a
+// board card: a combination holding the card cannot be at any node below it.
 //
 // Payoffs are always player 0's; player 1 receives the negative.
 
@@ -34,7 +39,57 @@ export interface Decision {
 	readonly children: readonly GameNode[];
 }
 
-export type GameNode = Terminal | Decision;
+/**
+ * A showdown on a complete board: the stronger hand wins `scale` chips from
+ * the other, a tie moves nothing. Needs the game's `deal`.
+ */
+export interface Showdown {
+	readonly kind: 'showdown';
+	readonly table: ShowdownTable;
+	/** Chips player 0 wins with the stronger hand and loses with the weaker. */
+	readonly scale: number;
+}
+
+/** Who beats whom on one five-card board, shared by every showdown on it. */
+export interface ShowdownTable {
+	/** The board's five cards. */
+	readonly board: readonly number[];
+	/**
+	 * rank[p][t]: the evaluator's rank of type t's best hand on the board
+	 * (lower is stronger), or −1 when the type holds a board card.
+	 */
+	readonly rank: readonly [Int32Array, Int32Array];
+	/** Each player's types that the board leaves possible, weakest first. */
+	readonly order: readonly [Int32Array, Int32Array];
+}
+
+/**
+ * A public card dealt by chance. Each child deals one card; for a pair of
+ * hands, every card neither holds is equally likely, with chance `weight`
+ * (one over the number of unseen cards). A type holding a child's card cannot
+ * reach that child. Needs the game's `deal`.
+ */
+export interface Chance {
+	readonly kind: 'chance';
+	readonly id: string;
+	readonly cards: readonly number[];
+	readonly children: readonly GameNode[];
+	readonly weight: number;
+}
+
+export type GameNode = Terminal | Decision | Showdown | Chance;
+
+/**
+ * A deal of two-card combinations: the prior of a pair is
+ * weights[0][t0] × weights[1][t1] / norm when the two share no card, and zero
+ * when they do.
+ */
+export interface CardDeal {
+	/** Each type's two cards: cards[p][2t] and cards[p][2t + 1]. */
+	readonly cards: readonly [Uint8Array, Uint8Array];
+	readonly weights: readonly [Float64Array, Float64Array];
+	readonly norm: number;
+}
 
 export interface Game {
 	/** Number of types for each player. */
@@ -44,6 +99,8 @@ export interface Game {
 	/** Joint chance of each pair of types, prior[t0 * types1 + t1]; sums to one. */
 	readonly prior: Float64Array;
 	readonly root: GameNode;
+	/** Present for games between card ranges; `prior` then follows from it. */
+	readonly deal?: CardDeal;
 }
 
 /** A behaviour strategy: for each decision node, a row per type of its actor. */
@@ -71,8 +128,8 @@ export function decision(
 export function decisions(game: Game): Decision[] {
 	const out: Decision[] = [];
 	const walk = (node: GameNode) => {
-		if (node.kind === 'terminal') return;
-		out.push(node);
+		if (node.kind === 'terminal' || node.kind === 'showdown') return;
+		if (node.kind === 'decision') out.push(node);
 		node.children.forEach(walk);
 	};
 	walk(game.root);
@@ -92,12 +149,51 @@ export function validateGame(game: Game): void {
 		sum += p;
 	}
 	if (Math.abs(sum - 1) > 1e-12) throw new RangeError(`the prior sums to ${sum}`);
+	const deal = game.deal;
+	if (deal) {
+		for (const p of [0, 1] as const) {
+			const n = game.types[p];
+			if (deal.cards[p].length !== 2 * n || deal.weights[p].length !== n) {
+				throw new RangeError('the deal does not match the type counts');
+			}
+		}
+		for (let t0 = 0; t0 < n0; t0++) {
+			for (let t1 = 0; t1 < n1; t1++) {
+				const a = deal.cards[0][2 * t0];
+				const b = deal.cards[0][2 * t0 + 1];
+				const x = deal.cards[1][2 * t1];
+				const y = deal.cards[1][2 * t1 + 1];
+				const shared = a === x || a === y || b === x || b === y;
+				const expected = shared ? 0 : (deal.weights[0][t0] * deal.weights[1][t1]) / deal.norm;
+				if (Math.abs(game.prior[t0 * n1 + t1] - expected) > 1e-15) {
+					throw new RangeError('the prior does not follow from the deal');
+				}
+			}
+		}
+	}
 	const ids = new Set<string>();
 	const walk = (node: GameNode) => {
 		if (node.kind === 'terminal') {
 			if (typeof node.payoff !== 'number' && node.payoff.length !== n0 * n1) {
 				throw new RangeError('a payoff matrix has the wrong size');
 			}
+			return;
+		}
+		if (node.kind === 'showdown') {
+			if (!deal) throw new RangeError('a showdown needs the game to describe its deal');
+			if (node.table.rank[0].length !== n0 || node.table.rank[1].length !== n1) {
+				throw new RangeError('a showdown table has the wrong size');
+			}
+			return;
+		}
+		if (node.kind === 'chance') {
+			if (!deal) throw new RangeError('a chance node needs the game to describe its deal');
+			if (node.cards.length < 1 || node.cards.length !== node.children.length) {
+				throw new RangeError(`chance node ${node.id} needs one child per card`);
+			}
+			if (ids.has(node.id)) throw new RangeError(`node id ${node.id} is used twice`);
+			ids.add(node.id);
+			node.children.forEach(walk);
 			return;
 		}
 		if (ids.has(node.id)) throw new RangeError(`decision id ${node.id} is used twice`);

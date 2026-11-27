@@ -12,12 +12,12 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 | --- | --- |
 | **Current phase** | [Phase 5 · Post-flop solver](#phase-5--post-flop-solver). Phase 3 (M1) is complete: Gate C passes, accessibility and the owner’s iPhone pass included. |
 | **Next step** | **P5.1 · Solver design and measurements**: write `docs/solver.md` and time reference river, turn and flop solves on this Mac (D-27 allows every core). P4.3 is not wanted (D-28); P4.4 (nightly dump) can run beside it. |
-| **In progress** | P5.1 · first part done (design, river builder, river measured); next the linear showdown and public chance cards (2026-11-27). |
-| **Background run** | None. |
-| **Waiting on the owner** | Nothing. P4.3 (going public) is not wanted for now (D-28), and P7.6 (the release) needs their word. |
+| **In progress** | P5.1 · linear terminals and chance cards done, river and turn measured; the flop run and the decisions remain (2026-11-27). |
+| **Background run** | P5.1’s flop measurement, about an hour on one core: `node scripts/postflop-measure.ts --street flop --bets 0.5 --raises= --max-bets 2 --iterations 400 --every 50` from `web/`. |
+| **Waiting on the owner** | SSH to the host asks for a Tailscale sign-in check (`ssh ubuntu-vm` prints the link); once passed, P5.1’s river is measured there. P7.6 (the release) needs their word. |
 | **Live** | <https://feltprep.com> serves `main` as a preview, redeployed by every push whose CI passes (D-10); `/healthz` names the live commit. `feltprep.app` redirects to it in Cloudflare (D-11). |
 | **`main`** | Phases 1 and 2; theme, study view, drill, practice table with stored hands, D-20’s bands, the mistake-to-drill path, the first lesson and hand review. `origin` pushes to GitHub and Codeberg. |
-| **Last updated** | 2026-11-26 |
+| **Last updated** | 2026-11-27 |
 
 ## How to work this file
 
@@ -560,7 +560,8 @@ Results at P3.7 (`web/e2e/journey.e2e.ts`, with `mistake.e2e.ts`, `review.e2e.ts
   - [ ] **Turn and flop.** Public chance cards are added to the game model, checked against a small game solved by hand, and a reference turn and a reference flop spot are solved, or their cost measured on enough of the tree to extrapolate, with the method stated.
   - [ ] **Decisions recorded** from the measurements: B-10’s budget, the library’s size and flops (P5.5), and whether the Rust/WebAssembly core of D-19 is needed.
   - Evidence (first part): the commit that adds `docs/solver.md`. `buildRiver` (`web/src/lib/solver/postflop.ts`) sets up the spot on the engine and offers only the engine’s actions at the stated sizes; `postflop.spec.ts` replays every path of a reference tree on the engine, checks clamping and merging, the prior against a separate count with card removal and weights, and fold and showdown payoffs against the engine’s chips. Showdowns share one win matrix scaled per terminal (`Terminal.scale` in `game.ts`); `jof:build -- --check` still gives identical bytes. The reference river (693 × 503 combinations, 24 decisions) reached 1% of the pot in 6.1 s and 0.5% in 9.7 s on one core of this Mac, peak 182 MB (`node scripts/postflop-measure.ts`). Full gate: 572 Vitest tests, 228 Playwright tests.
-  - Remaining: the river measured on the host; the linear (rank-sorted) showdown and its re-measurement; public chance cards and the turn and flop measurements; then the decisions of the last criterion. The reference spot’s ranges and sizes are in `docs/solver.md`.
+  - Evidence (second part): the commit that adds `removal.ts`. Folds and showdowns now cost one pass over each range with a per-card correction for card removal, checked against the plain sum over pairs (`removal.spec.ts`) and against the whole river game written with a matrix of who wins (`postflop.spec.ts`); chance nodes deal the turn and river, checked against a turn counted by hand (34 rivers to 10), separate enumerations of every runout on a turn and a flop, and an all-in on the turn. The reference river now reaches 1% in 0.3 s and 0.5% in 0.4 s at the same iteration counts as before; the reference turn 1% in 196 s and 0.5% in 308 s, peak 1.06 GB; the reference flop needs 111 GB of solver state, and a flop with one bet size and all-in (6.2 GB) costs 12 s an iteration. `jof:build -- --check` gives identical bytes. Full gate: 589 Vitest tests, 228 Playwright tests.
+  - Remaining: the river on the host (SSH now asks for a Tailscale check only the owner can pass); the flop run’s times to 1% and 0.5%, then the library’s size and flops. B-10’s budget (5 s, kept) and D-19 (no Rust core now) are recorded in `docs/solver.md`.
 - [ ] **P5.2 · River solver** · Depends on: P5.1 — B-3 on the full solver, B-6, and B-11 and B-12 on the reference river spots.
 - [ ] **P5.3 · Independent cross-check** · Depends on: P5.2, D-21 — the tool’s license read and recorded, a harness that converts a spot both ways, and B-7.
 - [ ] **P5.4 · On-demand river solving** · Depends on: P5.2 — a server endpoint with limits, cancellation and a cache keyed by the spot’s hash; B-10; and Gate C’s on-demand item, in a browser test at phone size.
