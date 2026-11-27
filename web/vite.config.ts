@@ -30,7 +30,33 @@ export default defineConfig({
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
 			adapter: adapter(),
-			version: { name: revision() }
+			version: { name: revision() },
+			// A strict Content Security Policy from the first deploy (AGENTS.md
+			// section 13): nothing inline except SvelteKit's own start-up script,
+			// which gets a nonce on rendered pages and a hash on prerendered ones.
+			csp: {
+				mode: 'auto',
+				directives: {
+					'default-src': ['self'],
+					'script-src': ['self'],
+					'style-src': ['self'],
+					// SvelteKit's route announcer (kit/src/runtime/components/root.svelte)
+					// carries one fixed visually-hidden style attribute. Allow exactly
+					// that value by its hash rather than every inline style; the e2e
+					// CSP test fails if a SvelteKit update changes it.
+					'style-src-attr': [
+						'unsafe-hashes',
+						'sha256-S8qMpvofolR8Mpjy4kQvEm7m1q8clzU4dfDH0AmvZjo='
+					],
+					'img-src': ['self', 'data:'],
+					'font-src': ['self'],
+					'connect-src': ['self'],
+					'object-src': ['none'],
+					'base-uri': ['self'],
+					'form-action': ['self'],
+					'frame-ancestors': ['none']
+				}
+			}
 		})
 	],
 	test: {

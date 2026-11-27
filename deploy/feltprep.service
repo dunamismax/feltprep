@@ -1,0 +1,53 @@
+# /etc/systemd/system/feltprep.service: installed by deploy/cutover.sh.
+#
+# Runs the live release's SvelteKit server (adapter-node, build/) on loopback
+# as the site's own system account, on the host's Node 26 (/opt/node-26). The
+# deploy also starts a transient copy of this file on a candidate port with
+# `current` replaced by the new release, so name the release only as
+# /srv/www/feltprep.com/current and keep HOST and PORT on one Environment= line.
+# Learner state lives in the host PostgreSQL 18 database `feltprep` (schema
+# `app`), reached over 127.0.0.1 as feltprep_web; DATABASE_URL is in the
+# root-only web.env. This service never runs migrations (cutover.sh does, as
+# the migration role). Resource limits: feltprep.service.d/50-resource-boundaries.conf.
+#
+# Client addresses: Caddy is the only proxy (Cloudflare DNS only) and sets
+# X-Forwarded-For to the visitor's address, so XFF_DEPTH=1 makes
+# event.getClientAddress() return it. ORIGIN fixes the scheme and host.
+[Unit]
+Description=feltprep.com SvelteKit website
+After=network.target postgresql.service
+Wants=postgresql.service
+
+[Service]
+Type=simple
+User=feltprep-web
+Group=feltprep-web
+WorkingDirectory=/srv/www/feltprep.com/current
+Environment=NODE_ENV=production HOST=127.0.0.1 PORT=4316
+Environment=ORIGIN=https://feltprep.com ADDRESS_HEADER=X-Forwarded-For XFF_DEPTH=1
+EnvironmentFile=/etc/web-apps/feltprep/web.env
+ExecStart=/opt/node-26/bin/node /srv/www/feltprep.com/current/build/index.js
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=30
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+CapabilityBoundingSet=
+ProtectKernelLogs=true
+ProtectClock=true
+ProtectHostname=true
+RestrictNamespaces=true
+LockPersonality=true
+
+[Install]
+WantedBy=multi-user.target

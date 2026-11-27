@@ -1,0 +1,23 @@
+# /etc/systemd/system/feltprep-autodeploy.service: installed by
+# deploy/cutover.sh and started by feltprep-autodeploy.timer.
+#
+# Deploys each new origin/main whose GitHub Actions run passed (README.md,
+# "Continuous deploy"). Runs the live release's copy of autodeploy.sh.
+#
+# Sandbox exception: this job is the deploy itself. It stages releases in
+# /srv/www, installs units, runs systemctl and pg_dump, applies the Caddy
+# fragment and runs the build as sawyer, so it cannot carry the web units'
+# sandbox. It runs only scripts from the live release, which is root-owned and
+# immutable, and holds any commit that changes those scripts for a hand deploy.
+[Unit]
+Description=Continuous deploy of feltprep.com from origin/main
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/srv/www/feltprep.com/current/deploy/autodeploy.sh
+TimeoutStartSec=45min
+Nice=10
+IOSchedulingClass=idle
+UMask=0022

@@ -1,0 +1,12 @@
+# /etc/systemd/system/feltprep-autodeploy.timer: installed and enabled by
+# deploy/cutover.sh. Two minutes after each run ends, so runs never overlap.
+[Unit]
+Description=Check origin/main for a new feltprep.com release
+
+[Timer]
+OnBootSec=3min
+OnUnitInactiveSec=2min
+AccuracySec=15s
+
+[Install]
+WantedBy=timers.target

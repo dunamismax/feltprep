@@ -31,6 +31,10 @@
 		"engine:bench": "node scripts/engine-bench.ts",
 		"engine:parity": "node scripts/engine-parity.ts"
 	},
+	"dependencies": {
+		"drizzle-orm": "0.45.4",
+		"pg": "8.23.1"
+	},
 	"devDependencies": {
 		"@eslint/js": "10.0.1",
 		"@playwright/test": "1.65.1",
@@ -42,12 +46,10 @@
 		"@types/pg": "8.23.1",
 		"@vitest/browser-playwright": "5.1.1",
 		"drizzle-kit": "0.31.11",
-		"drizzle-orm": "0.45.4",
 		"eslint": "10.15.0",
 		"eslint-config-prettier": "10.1.8",
 		"eslint-plugin-svelte": "3.24.1",
 		"globals": "17.14.0",
-		"pg": "8.23.1",
 		"playwright": "1.65.1",
 		"prettier": "3.10.1",
 		"prettier-plugin-svelte": "4.2.0",

@@ -1,0 +1,79 @@
+# feltprep.com: installed as /etc/caddy/sites/feltprep.com.caddy by
+# deploy/cutover.sh through caddy-apply, and loaded by the host's main
+# Caddyfile (`import /etc/caddy/sites/*.caddy`), which this file never touches.
+#
+# The site is a SvelteKit app built with adapter-node (feltprep.service on
+# 127.0.0.1:4316). Caddy serves client assets straight from the live release
+# on disk (with their .br/.gz variants) and proxies everything else to Node.
+# Automatic HTTPS: both names are Cloudflare "DNS only" A records pointing at
+# the host, so Caddy obtains and renews the certificates itself.
+#
+# feltprep.app is not served yet: it has no DNS records (Q-2 in BUILD.md).
+#
+# The Content Security Policy comes from SvelteKit (vite.config.ts), which
+# adds a fresh nonce to every rendered page; Caddy adds the other headers.
+#
+# Change it only through the deploy; never reload Caddy by hand.
+
+www.feltprep.com {
+	redir https://feltprep.com{uri} permanent
+}
+
+feltprep.com {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		# A preview of work in progress until the first release (P4.3).
+		X-Robots-Tag "noindex, nofollow"
+		-Server
+	}
+
+	# SvelteKit fingerprints everything under /_app/immutable/, so it can be
+	# cached forever. Everything else revalidates; /healthz sets no-store.
+	@immutable path /_app/immutable/*
+	header @immutable Cache-Control "public, max-age=31536000, immutable"
+	@fresh {
+		not path /_app/immutable/*
+		not path /healthz
+	}
+	header @fresh ?Cache-Control "public, max-age=0, must-revalidate"
+
+	# Client assets: static/ files and the Vite bundles. Paths ending in / are
+	# pages, which Node renders.
+	@asset {
+		not path */
+		file {
+			root /srv/www/feltprep.com/current/build/client
+			try_files {path}
+		}
+	}
+	handle @asset {
+		root * /srv/www/feltprep.com/current/build/client
+		file_server {
+			precompressed br gzip
+		}
+	}
+
+	# Everything else: SvelteKit (pages, /healthz, the 404 page).
+	handle {
+		reverse_proxy 127.0.0.1:4316
+	}
+
+	handle_errors 502 503 504 {
+		header Cache-Control "no-store"
+		respond "FeltPrep is restarting. Try again in a few seconds." 503
+	}
+
+	log {
+		output file /var/log/caddy/feltprep-access.log {
+			roll_size 10MiB
+			roll_keep 7
+			roll_keep_for 168h
+		}
+	}
+}
