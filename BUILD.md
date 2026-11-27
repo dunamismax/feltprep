@@ -16,7 +16,7 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 | **Background run** | None. |
 | **Waiting on the owner** | Nothing blocks the next step. Q-12 is needed by P3.1 and P3.2. Two optional Cloudflare settings for `feltprep.app` (D-11): keep the path in the redirect, and add `www.feltprep.app`. |
 | **Live** | <https://feltprep.com> serves `main` as a preview, redeployed by every push whose CI passes (D-10); `/healthz` names the live commit. `feltprep.app` has no DNS records yet. |
-| **`main`** | Phase 1, plus the host deploy in `deploy/` and a strict Content Security Policy (P4.1, most of P4.2). `origin` pushes to GitHub and Codeberg. |
+| **`main`** | Phase 1, plus the host deploy in `deploy/` and a strict Content Security Policy (P4.1, P4.2). `origin` pushes to GitHub and Codeberg. |
 | **Last updated** | 2026-11-26 |
 
 ## How to work this file
@@ -469,10 +469,10 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
   - [x] The Cloudflare records for both domains are confirmed DNS-only, so Caddy’s automatic HTTPS applies, as C From The Ground Up’s D10 found for its domain; or the difference is recorded with what it changes.
 
   Evidence: read on the server at `ubuntu-vm-backup` `3a4610f`; nothing in AGENTS.md or A-1 contradicted it, and AGENTS.md section 6 now points at it. Releases `/srv/www/feltprep.com`, `feltprep.service` as `feltprep-web` on `127.0.0.1:4316` (free in `ss -ltn` and every Caddy fragment on 2026-11-26; now in the contract’s port table), database `feltprep` with `feltprep_owner`, `feltprep_migration`, `feltprep_web`, credentials in `/etc/web-apps/feltprep/`. Cloudflare API: `feltprep.com` and `www` are A records, not proxied. `feltprep.app` had no records then; the owner has since made it a Cloudflare redirect (D-11).
-- [ ] **P4.2 · Deploy files and runbook** · Depends on: P4.1, Q-2 (D-11) — a Caddy fragment for the canonical name and the redirects, a sandboxed systemd unit, database provisioning with separate owner, migration and web roles, a fix-forward deploy with a candidate check, a strict Content Security Policy, and `deploy/README.md`.
+- [x] **P4.2 · Deploy files and runbook** · Depends on: P4.1, Q-2 (D-11) — a Caddy fragment for the canonical name and the redirects, a sandboxed systemd unit, database provisioning with separate owner, migration and web roles, a fix-forward deploy with a candidate check, a strict Content Security Policy, and `deploy/README.md`.
 
   Evidence: `b61c1dc` deployed by hand on 2026-11-26 through every step (dump, 0 of 0 migrations, candidate on 4400, switch, `web-live` on Node 26.13.1, `caddy-apply`, public check); `bin/web-conformance` passes. From outside: `/healthz` names the commit with database `ok`, Let’s Encrypt certificate, `www` answers 301, HTTP 308, unknown path 404, the CSP and security headers present; checked at 375 × 812 in light and dark with no console errors. The e2e CSP test passes in all six projects. The backup registry gained the site (`ubuntu-vm-backup` `9766f4c`), its drill rehearsed against the live release. Continuous deploy (D-10): `feltprep-autodeploy.timer`.
-  Remaining: the text in `deploy/` is out of date in two places. `deploy/README.md`’s “Not yet done” says the DDNS job lacks the feltprep.com records and that `feltprep.app` is not served. The comment in `deploy/feltprep.com.caddy` says `feltprep.app` has no DNS records. Both should say what D-11 and X-6 record. Fix them with the next `deploy/` change, since any edit there waits for a hand deploy; then tick this step. The `feltprep.app` redirect itself is done, in Cloudflare (D-11).
+  Redirects: `www.feltprep.com` in the Caddy fragment (301, path kept); `feltprep.app` in Cloudflare (D-11, 301 to the home page). The deploy notes were brought up to date in `1b09b36`, the first hand deploy after the first, on 2026-11-27: `feltprep-autodeploy` held it as designed (it changes `deploy/`) after waiting on CI for `61c39b8`, so both of its untested paths were seen working; `prepare.sh` and `cutover.sh` passed every step, `caddy-apply` reloaded the fragment, and `/healthz` reports `1b09b36` with database `ok`.
   DDNS: since `xrayservice` `8bc2e05` (switched 2026-11-27 00:16 UTC, X-6 there), the host’s Cloudflare DDNS job keeps `feltprep.com` and `www` on the home connection’s address; the 00:20 timer run checked 26 records with nothing to change, and both names answer with the host’s address from 1.1.1.1.
 - [ ] **P4.3 · First deploy** · Depends on: P4.2, P3.7 · **Owner gate:** the deploy — the M1 release serves on the domain; the live smoke test and the redirect checks pass. A rehearsal deploy before M1 is the owner’s call and does not tick this step.
 - [ ] **P4.4 · Backups and upkeep** · Depends on: P4.3 — a nightly database dump with rotation, and the deploy recorded in **Now**.
@@ -582,11 +582,11 @@ Every session ends by prepending one entry to the log below, in this shape and i
 
 ### 2026-11-26 · P4.1, P4.2 · feltprep.com live through the build
 
-- **Completed:** `deploy/` on the host contract with continuous deploy of `main` (D-10), a strict CSP, the contract’s migrator (`b61c1dc`); account, database and roles provisioned; site registered in `ubuntu-vm-backup` (`9766f4c`).
-- **Verified:** full gate locally and in CI; prepare and cutover on the server; public checks from outside; phone width in both themes; backup drill rehearsed; autodeploy shipped this entry’s commit by itself.
-- **Open decisions:** Q-2 default (`.com` canonical; `.app` not served yet); Q-10 kept for hand deploys and server changes.
+- **Completed:** `deploy/` on the host contract with continuous deploy of `main` (D-10), a strict CSP, the contract’s migrator (`b61c1dc`); account, database and roles provisioned; site registered in `ubuntu-vm-backup` (`9766f4c`); DDNS covers both names (`xrayservice` `8bc2e05`); `feltprep.app` redirects in Cloudflare (D-11).
+- **Verified:** full gate locally and in CI; prepare and cutover on the server; public checks from outside; phone width in both themes; backup drill rehearsed; autodeploy shipped, waited on CI and held a `deploy/` change as designed; one more hand deploy (`1b09b36`).
+- **Open decisions:** Q-2 settled as D-11; Q-10 kept for hand deploys and server changes.
 - **Next ready task:** P2.1: write `docs/grading.md`.
-- **Plan changes:** D-10 added at the owner’s request; P4.2 partial with **Remaining**.
+- **Plan changes:** D-10 and D-11 added at the owner’s request.
 
 ### 2026-11-24 · P1.5 · Heads-up fixtures and the rules trace; Phase 1 complete
 
