@@ -2,6 +2,14 @@
 
 Handoff entries moved out of [BUILD.md](../BUILD.md#handoff-log), which keeps the newest eight. Oldest last.
 
+### 2026-11-24 · P1.4 · Rules and engine imported from RiverMind
+
+- **Completed:** `docs/rules.md` and the engine from RiverMind `233b9c6`, now in `web/src/lib/engine/`; Web Crypto `cryptoRandom`; `engine:fuzz`, `engine:bench`, `engine:parity`; a property test applying every offered action; provenance with per-file hashes, GPL and Deuces notices.
+- **Verified:** gate from a clean copy; parity byte-identical with Python, all five-card hands included; fuzz of 800,000 hands passed: per seat count 2 to 9, side-pot hands 0, 21,637, 42,119, 58,583, 71,390, 80,606, 86,871, 91,261 and odd-chip splits 0, 841, 1,239, 2,042, 2,693, 3,702, 4,573, 5,487.
+- **Open decisions:** none touched.
+- **Next ready task:** P1.5: write the heads-up short-stack fixtures by hand from the rules.
+- **Plan changes:** P1.5 gains Gate A’s rules trace, with the rules that had no fixture at import.
+
 ### 2026-11-24 · P1.2 · Continuous integration
 
 - **Completed:** `.github/workflows/test.yml` runs the full gate on every push and pull request (`52edfd7`).

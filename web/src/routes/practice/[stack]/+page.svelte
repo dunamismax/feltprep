@@ -207,12 +207,23 @@
 	<header class="flex flex-col gap-1 px-1">
 		<div class="flex items-center justify-between gap-2 text-sm">
 			<a href={resolve('/')} class="text-accent underline underline-offset-2">FeltPrep</a>
-			<a
-				href={resolve('/drill/jam-or-fold/[stack]', { stack: String(data.stack) })}
-				class="text-accent underline underline-offset-2"
-			>
-				Drill
-			</a>
+			<span class="flex gap-4">
+				{#if session && session.finished.length > 0}
+					<a
+						href={resolve('/practice/[stack]/review', { stack: String(data.stack) })}
+						class="text-accent underline underline-offset-2"
+						data-testid="review-link"
+					>
+						Review
+					</a>
+				{/if}
+				<a
+					href={resolve('/drill/jam-or-fold/[stack]', { stack: String(data.stack) })}
+					class="text-accent underline underline-offset-2"
+				>
+					Drill
+				</a>
+			</span>
 		</div>
 		<p class="text-sm font-semibold tracking-wide text-muted uppercase">Practice</p>
 		<h1 class="text-2xl font-semibold tracking-tight">Heads-up at {data.stack} big blinds</h1>

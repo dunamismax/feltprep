@@ -10,11 +10,11 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 
 | | |
 | --- | --- |
-| **Current phase** | [Phase 3 · The first loop](#phase-3--the-first-loop): every step but P3.7 (the M1 journey) is done; review is at `/practice/10/review` after a hand. |
-| **Next step** | **P3.7 · M1 journey**: one Playwright test through lesson, study, drill, practice, a mistake drilled from the table, review and back to the lesson, at 375 × 812, 360 × 640 and desktop, with Gate C’s M1 items. |
+| **Current phase** | [Phase 3 · The first loop](#phase-3--the-first-loop): every step is done except P3.7’s accessibility item; the M1 journey passes in six projects and at 360 × 640. |
+| **Next step** | **P3.7’s accessibility item** once Q-14 is answered; meanwhile **P5.1 · Solver design and measurements** (Phase 5 needs only Phase 2) or a keyboard pass through the journey. |
 | **In progress** | Nothing. |
 | **Background run** | None. |
-| **Waiting on the owner** | Nothing: every open decision was answered on 2026-11-26 (D-12 to D-24). P7.2 will need the owner’s iPhone, and P4.3 and P7.6 their word. |
+| **Waiting on the owner** | Q-14: may axe-core and `@axe-core/playwright` (MPL-2.0) be added as test-only dependencies for Gate C’s accessibility check? P7.2 will need the owner’s iPhone, and P4.3 and P7.6 their word. |
 | **Live** | <https://feltprep.com> serves `main` as a preview, redeployed by every push whose CI passes (D-10); `/healthz` names the live commit. `feltprep.app` redirects to it in Cloudflare (D-11). |
 | **`main`** | Phases 1 and 2; theme, study view, drill, practice table with stored hands, D-20’s bands, the mistake-to-drill path, the first lesson and hand review. `origin` pushes to GitHub and Codeberg. |
 | **Last updated** | 2026-11-26 |
@@ -120,7 +120,7 @@ These come from the owner’s brief of 2026-11-24 and the owner’s standing rul
 
 ## Open decisions
 
-Use each default until the owner decides otherwise. **Needed by** names the first step that relies on the answer. The owner answered every open question on 2026-11-26; a new one is added here with a default.
+Use each default until the owner decides otherwise. **Needed by** names the first step that relies on the answer. The owner answered Q-1 to Q-13 on 2026-11-26; Q-14 is open.
 
 | ID | Question | Default until decided | Needed by |
 | --- | --- | --- | --- |
@@ -137,6 +137,7 @@ Use each default until the owner decides otherwise. **Needed by** names the firs
 | Q-11 | **Independent solver for cross-checks.** Which tool, under which license? | **Decided** (D-21): an open-source tool, license read at P5.3. | — |
 | Q-12 | **Terms for lesson text, and for the FeltPrep name and artwork.** D-9 covers the code. Are lessons and brand assets under the same license, a content license, or reserved? | **Decided** (D-12): lessons CC BY-SA 4.0; name and artwork reserved. | — |
 | Q-13 | **The published jam-or-fold chart.** B-5 compares FeltPrep’s solution with HoldemResources’ heads-up push/fold chart (<https://www.holdemresources.net/hune>), whose page names no license. May the chart, or the unsimplified equilibrium data the page offers for download, be kept in the repository or downloaded for the comparison? | **Decided** (D-22): the chart stays out, and its data is not downloaded. | — |
+| Q-14 | **An accessibility checker.** Gate C requires no axe-core WCAG 2.2 AA violation on any page of the journey. axe-core 4.14.1 and `@axe-core/playwright` 4.14.1 are MPL-2.0 (npm metadata, read 2026-11-26; their license files are to be read before adding), which the provenance table does not list. May they be added as test-only development dependencies, never shipped to players? | Not added: Gate C’s accessibility item and P3.7 stay open, and everything else proceeds. | P3.7 |
 
 ## Architecture proposals
 
@@ -300,19 +301,21 @@ Rules for this gate:
 
 A player can complete the loop on a phone. M1 (P3.7) passes every item except the two that name a later step: on-demand solving, which does not exist until P5.4, and the real-phone pass (P7.2).
 
-- [ ] **Journey.** One browser test goes lesson → study → drill → practice hand → a mistake drilled from the table → review → back to the lesson, on seeded deals, against the production build.
-- [ ] **Sizes and engines.** It passes at 375 × 812 and 360 × 640 with touch, in Chromium, Firefox and WebKit, and at a desktop size.
-- [ ] **No sideways scrolling** on any page of the journey at either phone size.
-- [ ] **Controls in reach.** While a decision is pending, every action control is fully inside the viewport without scrolling, with the board and the player’s cards visible at the same time.
-- [ ] **Targets.** Every action control is at least 44 × 44 CSS pixels (proposal), with at least 8 pixels between neighbouring actions.
-- [ ] **Nothing moves under a finger.** Action controls have the same positions before and after the turn arrives, and after feedback appears.
-- [ ] **Fast feedback.** A grade from a precomputed spot appears within 200 ms of the tap in Chromium with the processor throttled four times (proposal).
-- [ ] **Mistake to drill** (D-25). Wherever a graded mistake or inaccuracy is shown (drill feedback, the end of a practice hand, review), its cost and explanation are visible without another tap, and one tap on “Drill this spot” starts a drill whose first deal is that decision: the same depth, seat and hole cards. From the end of a hand that is at most one tap (proposal).
-- [ ] **Mistake to drill is quick** (D-25). From the tap on “Drill this spot” to that first deal accepting an answer takes at most 1 second in Chromium with the processor throttled four times (proposal), and one more tap after the drill returns the player to the table at their next hand.
+- [x] **Journey.** One browser test goes lesson → study → drill → practice hand → a mistake drilled from the table → review → back to the lesson, on seeded deals, against the production build.
+- [x] **Sizes and engines.** It passes at 375 × 812 and 360 × 640 with touch, in Chromium, Firefox and WebKit, and at a desktop size.
+- [x] **No sideways scrolling** on any page of the journey at either phone size.
+- [x] **Controls in reach.** While a decision is pending, every action control is fully inside the viewport without scrolling, with the board and the player’s cards visible at the same time.
+- [x] **Targets.** Every action control is at least 44 × 44 CSS pixels (proposal), with at least 8 pixels between neighbouring actions.
+- [x] **Nothing moves under a finger.** Action controls have the same positions before and after the turn arrives, and after feedback appears.
+- [x] **Fast feedback.** A grade from a precomputed spot appears within 200 ms of the tap in Chromium with the processor throttled four times (proposal).
+- [x] **Mistake to drill** (D-25). Wherever a graded mistake or inaccuracy is shown (drill feedback, the end of a practice hand, review), its cost and explanation are visible without another tap, and one tap on “Drill this spot” starts a drill whose first deal is that decision: the same depth, seat and hole cards. From the end of a hand that is at most one tap (proposal).
+- [x] **Mistake to drill is quick** (D-25). From the tap on “Drill this spot” to that first deal accepting an answer takes at most 1 second in Chromium with the processor throttled four times (proposal), and one more tap after the drill returns the player to the table at their next hand.
 - [ ] **Slow work shows itself** (from P5.4; not part of M1). An on-demand solve shows progress, can be cancelled, and leaves the rest of the page usable while it runs.
-- [ ] **Resume.** Reloading mid-drill and mid-hand returns to the same decision.
+- [x] **Resume.** Reloading mid-drill and mid-hand returns to the same decision.
 - [ ] **Accessibility.** No axe-core WCAG 2.2 AA violation on any page of the journey, in both themes, and the journey can be completed with a keyboard.
 - [ ] **A real phone.** Before the first release, one pass of the journey on a physical phone is recorded, with the device and browser named. Simulators do not satisfy this item.
+
+Results at P3.7 (`web/e2e/journey.e2e.ts`, with `mistake.e2e.ts`, `review.e2e.ts`, `drill.e2e.ts` and `practice.e2e.ts`): the journey passes in Chromium, Firefox and WebKit at 1440 × 900, at 375 × 812 with touch and at 360 × 640; no page of it scrolls sideways; at every decision the four controls are inside the viewport, at least 44 × 44 and 8 pixels apart, with the cards (and at the table the board) fully visible, and they do not move when feedback or the result appears; in Chromium at 4× throttling a grade appeared 46 to 52 ms after the tap and the drill of a mistake accepted an answer 80 to 166 ms after it; reloads mid-drill and mid-hand return to the same decision. Accessibility waits on Q-14 (the axe-core check) and a keyboard pass.
 
 ---
 
@@ -436,8 +439,8 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
 
 - [ ] Gate C’s M1 items pass on the M1 journey: every item except on-demand solving (P5.4) and the real-phone pass (P7.2).
 - [x] Gate A’s interface and server items pass.
-- [ ] Every grade shown in the journey comes from the P2.4 solution, and a decision outside it is shown as “not graded”.
-- [ ] Every graded mistake in the journey shows its cost and a plain-English reason, and one tap drills that decision (D-25, Gate C’s two mistake-to-drill items, B-13).
+- [x] Every grade shown in the journey comes from the P2.4 solution, and a decision outside it is shown as “not graded”.
+- [x] Every graded mistake in the journey shows its cost and a plain-English reason, and one tap drills that decision (D-25, Gate C’s two mistake-to-drill items, B-13).
 
 - [x] **P3.1 · Design foundation** · Depends on: P1.1, D-12 (for brand artwork; tokens and code-drawn cards are code)
   - [x] An original identity: colour, type and spacing tokens in the Tailwind theme, light and dark, with text at WCAG AA contrast in both.
@@ -501,9 +504,11 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
   - Evidence: the commit that ticks this step. `explain` in `web/src/lib/solver/explain.ts` writes every reason, from the verdict and three facts per class computed from the equity table (checked against the hash the solution’s manifest records) and the solution’s frequencies; the drill’s old `reason` is gone. B-13 passed on all 9,464 explanations (`explain.spec.ts`, [`docs/benchmarks.md`](docs/benchmarks.md)), and a planted error failed it. The practice table’s result shows each graded decision’s band and cost, and for an inaccuracy or mistake the explanation and “Drill this spot”, which closes the hand and opens `/drill/jam-or-fold/<stack>?seat=…&cards=…&from=practice`: deal 0 is that decision, then nearest classes whose best action differs alternating with random hands (`targetedPlan`), 10 in all; the summary says whether the spot is now right and leads back to the table at the next hand. The drill offers the same from its own feedback. `mistake.e2e.ts` in six projects: cost and reason at once, the button in view and 44 px tall, one tap to the same cards, 99 ms to an enabled first deal in Chromium at 4× throttling (budget 1 s), back to hand 2 in one tap, reloads, and “not graded” with its reason after a limp. Looked at 375 × 812 in both themes. Full gate: 555 Vitest tests, 150 Playwright tests. Review (P3.6) is still to call `explain` and offer the drill; Gate C’s two items are ticked with the journey at P3.7.
 
 - [ ] **P3.7 · M1 journey** · Depends on: P3.2 to P3.6, P3.8, P3.9
-  - [ ] The Gate C journey test exists and passes in all six browser projects and at 360 × 640.
+  - [x] The Gate C journey test exists and passes in all six browser projects and at 360 × 640.
   - [ ] Every Gate C item that applies at M1 passes, with results in the evidence line: all but on-demand solving (P5.4) and the real-phone pass (P7.2).
-  - [ ] The README’s status says what a visitor can now do.
+  - [x] The README’s status says what a visitor can now do.
+  - Evidence: the commit that adds `web/e2e/journey.e2e.ts`: lesson, study, drill, a seeded practice hand, its mistake drilled in one tap, back to the table, review and back to the lesson, in six projects and again at 360 × 640 (12 runs); Gate C’s results are recorded under the gate. The practice table gained a “Review” link in its header. Full gate: 565 Vitest tests, 210 Playwright tests.
+  - Remaining: Gate C’s accessibility item. It needs an axe-core check, and axe-core and `@axe-core/playwright` are MPL-2.0, a license `docs/provenance.md` does not list, so adding them waits on the owner (Q-14); the keyboard pass through the journey is to be written with it.
 
 ## Phase 4 · Production
 
@@ -627,6 +632,13 @@ Every session ends by prepending one entry to the log below, in this shape and i
 
 ## Handoff log
 
+### 2026-11-26 · P3.6, P3.7 · Hand review; the M1 journey
+
+- **Completed:** review of a finished hand from the table (`27c62a0`); `journey.e2e.ts`, the whole M1 journey, with Gate C’s measurable items ticked (the commit that adds it).
+- **Verified:** full gate; the journey in six projects and at 360 × 640; 46–52 ms to a grade and 80–166 ms to a drilled mistake in Chromium at 4× throttling; review looked at on a phone in both themes. Not verified: accessibility (Q-14), a real phone (P7.2).
+- **Open decisions:** Q-14 raised (axe-core is MPL-2.0); default: not added, P3.7 stays open.
+- **Next ready task:** P5.1: write `docs/solver.md` and time a reference river solve with the existing CFR+ core.
+
 ### 2026-11-26 · P3.2, P3.4 · The first lesson; the drill complete
 
 - **Completed:** the lesson pipeline (a strict Markdown subset, no new package), `/learn` and the lesson “Jam or fold: heads-up at 10 big blinds” under CC BY-SA 4.0; links to it from drill feedback, practice mistakes and the home page, which completes P3.4 (the commit that ticks P3.2).
@@ -679,11 +691,3 @@ Every session ends by prepending one entry to the log below, in this shape and i
 - **Open decisions:** none touched.
 - **Next ready task:** P2.1: write `docs/grading.md` defining a spot, a solution artifact, its manifest and the registry.
 - **Plan changes:** none.
-
-### 2026-11-24 · P1.4 · Rules and engine imported from RiverMind
-
-- **Completed:** `docs/rules.md` and the engine from RiverMind `233b9c6`, now in `web/src/lib/engine/`; Web Crypto `cryptoRandom`; `engine:fuzz`, `engine:bench`, `engine:parity`; a property test applying every offered action; provenance with per-file hashes, GPL and Deuces notices.
-- **Verified:** gate from a clean copy; parity byte-identical with Python, all five-card hands included; fuzz of 800,000 hands passed: per seat count 2 to 9, side-pot hands 0, 21,637, 42,119, 58,583, 71,390, 80,606, 86,871, 91,261 and odd-chip splits 0, 841, 1,239, 2,042, 2,693, 3,702, 4,573, 5,487.
-- **Open decisions:** none touched.
-- **Next ready task:** P1.5: write the heads-up short-stack fixtures by hand from the rules.
-- **Plan changes:** P1.5 gains Gate A’s rules trace, with the rules that had no fixture at import.
