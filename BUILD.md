@@ -14,7 +14,7 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 | **Next step** | **P2.1 · Spot, solution and grading contract.** It needs no decision from the owner; P2.2 (exact equities) is also ready. |
 | **In progress** | Nothing. |
 | **Background run** | None. |
-| **Waiting on the owner** | Nothing blocks the next step. Q-12 is needed by P3.1 and P3.2; Q-2 (`feltprep.app` DNS records, P4.2 **Remaining**) needs the owner’s word. |
+| **Waiting on the owner** | Nothing blocks the next step. Q-12 is needed by P3.1 and P3.2. Two optional Cloudflare settings for `feltprep.app` (D-11): keep the path in the redirect, and add `www.feltprep.app`. |
 | **Live** | <https://feltprep.com> serves `main` as a preview, redeployed by every push whose CI passes (D-10); `/healthz` names the live commit. `feltprep.app` has no DNS records yet. |
 | **`main`** | Phase 1, plus the host deploy in `deploy/` and a strict Content Security Policy (P4.1, most of P4.2). `origin` pushes to GitHub and Codeberg. |
 | **Last updated** | 2026-11-26 |
@@ -66,7 +66,7 @@ Rows marked **Proposal** are this plan’s recommendation, not yet confirmed by 
 | Practice opponents | A rule-based opponent and a reference-strategy opponent for the jam-or-fold game; RiverMind’s trained heads-up champion at 100 big blinds if Q-9 is answered yes | Proposal; champion **Open** (Q-9) |
 | Devices | Phone first (375 × 812 and 360 × 640), then tablet and desktop, in Chromium, Firefox and WebKit | Proposal |
 | Identity | No sign-in. Progress lives in the browser, and a signed guest cookie identifies server-stored hands | **Open** (Q-4) |
-| Hosting | The owner’s server behind Caddy, on `feltprep.com`, with `feltprep.app` redirecting to it | Hosting settled (D-3); canonical name **Open** (Q-2) |
+| Hosting | The owner’s server behind Caddy, on `feltprep.com`, with `feltprep.app` redirecting to it | Settled (D-3, D-11) |
 
 ### Not in the first release
 
@@ -101,6 +101,7 @@ These come from the owner’s brief of 2026-11-24 and the owner’s standing rul
 | D-7 | **This file is the authority** on the plan and its progress. An implementation item is ticked only when the work and its verification exist in FeltPrep. |
 | D-8 | **Git.** `main` only, no branches or pull requests, and no AI attribution anywhere. |
 | D-10 | **Live through the build** (owner, 2026-11-26). `feltprep.com` serves `main` from the start of the build, so the owner can review each change in a browser. Every push to `main` whose GitHub Actions run passes deploys itself through `feltprep-autodeploy` on the host, by the contract’s fix-forward flow with a candidate check ([`deploy/README.md`](deploy/README.md)). A commit that changes `deploy/` is held for a hand deploy, which stays an owner gate (Q-10). The preview is not the first public release: P4.3 still waits for M1, and the site sends `noindex` until then. |
+| D-11 | **Canonical domain** (owner, 2026-11-27, answering Q-2). `feltprep.com` serves the app and `www.feltprep.com` redirects to it in Caddy. `feltprep.app` is a permanent (301) redirect to `https://feltprep.com/` set up by the owner in Cloudflare: its records are proxied, so it never reaches the host, and neither Caddy nor the host’s DDNS job handles it. Checked 2026-11-27: http and https both answer 301; the redirect drops the path, and `www.feltprep.app` has no record. Both are the owner’s Cloudflare settings to change if wanted. |
 | D-9 | **License** (owner, 2026-11-24, answering Q-1). FeltPrep’s code is licensed under the GNU Affero General Public License, version 3 or later (`AGPL-3.0-or-later`), so that anyone who runs a modified FeltPrep as a service must offer its source. GPL-3.0 code, RiverMind’s included, may be combined with it under section 13 of both licenses and stays under the GPL. The terms for lesson text and for the name and artwork are Q-12. |
 
 ## Open decisions
@@ -110,7 +111,7 @@ Use each default until the owner decides otherwise. **Needed by** names the firs
 | ID | Question | Default until decided | Needed by |
 | --- | --- | --- | --- |
 | Q-1 | **License.** RiverMind is GPL-3.0-or-later; C From The Ground Up is MIT. Which license does FeltPrep carry? | **Decided** (D-9): AGPL-3.0-or-later. | — |
-| Q-2 | **Canonical domain.** Which of `feltprep.com` and `feltprep.app` serves the app? | `feltprep.com` serves; `feltprep.app` and both `www` names redirect to it. `.app` is an HTTPS-only top-level domain, so the redirect needs its own certificate. | P4.2 |
+| Q-2 | **Canonical domain.** Which of `feltprep.com` and `feltprep.app` serves the app? | **Decided** (D-11): `feltprep.com`. | — |
 | Q-3 | **Formats in the first release.** Is heads-up the only graded format, and does 6-max full-hand practice ship ungraded? | Heads-up graded. 6-max practice ships only if Q-9 allows a six-seat opponent, and is labelled ungraded. No 9-max. | P3.5, P6.5 |
 | Q-4 | **Accounts.** Guest-only, or sign-in to keep progress across devices? | No sign-in. Drill progress in browser storage; a signed guest cookie for server-stored practice hands. | P3.4, P3.5 |
 | Q-5 | **Business model.** Free, paid or mixed? | Free, with no payments, ads or third-party trackers in the first release. | P7 |
@@ -467,11 +468,11 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
   - [x] Recorded here: the app’s directory, service name, database and role names, and a loopback port confirmed free on the server itself (RiverMind uses 4320 and 4323, C From The Ground Up 4317, and others are taken).
   - [x] The Cloudflare records for both domains are confirmed DNS-only, so Caddy’s automatic HTTPS applies, as C From The Ground Up’s D10 found for its domain; or the difference is recorded with what it changes.
 
-  Evidence: read on the server at `ubuntu-vm-backup` `3a4610f`; nothing in AGENTS.md or A-1 contradicted it, and AGENTS.md section 6 now points at it. Releases `/srv/www/feltprep.com`, `feltprep.service` as `feltprep-web` on `127.0.0.1:4316` (free in `ss -ltn` and every Caddy fragment on 2026-11-26; now in the contract’s port table), database `feltprep` with `feltprep_owner`, `feltprep_migration`, `feltprep_web`, credentials in `/etc/web-apps/feltprep/`. Cloudflare API: `feltprep.com` and `www` are A records, not proxied; `feltprep.app` has no records at all, so it is not served until Q-2’s redirect gets records.
-- [ ] **P4.2 · Deploy files and runbook** · Depends on: P4.1, Q-2 — a Caddy fragment for the canonical name and the redirects, a sandboxed systemd unit, database provisioning with separate owner, migration and web roles, a fix-forward deploy with a candidate check, a strict Content Security Policy, and `deploy/README.md`.
+  Evidence: read on the server at `ubuntu-vm-backup` `3a4610f`; nothing in AGENTS.md or A-1 contradicted it, and AGENTS.md section 6 now points at it. Releases `/srv/www/feltprep.com`, `feltprep.service` as `feltprep-web` on `127.0.0.1:4316` (free in `ss -ltn` and every Caddy fragment on 2026-11-26; now in the contract’s port table), database `feltprep` with `feltprep_owner`, `feltprep_migration`, `feltprep_web`, credentials in `/etc/web-apps/feltprep/`. Cloudflare API: `feltprep.com` and `www` are A records, not proxied. `feltprep.app` had no records then; the owner has since made it a Cloudflare redirect (D-11).
+- [ ] **P4.2 · Deploy files and runbook** · Depends on: P4.1, Q-2 (D-11) — a Caddy fragment for the canonical name and the redirects, a sandboxed systemd unit, database provisioning with separate owner, migration and web roles, a fix-forward deploy with a candidate check, a strict Content Security Policy, and `deploy/README.md`.
 
   Evidence: `b61c1dc` deployed by hand on 2026-11-26 through every step (dump, 0 of 0 migrations, candidate on 4400, switch, `web-live` on Node 26.13.1, `caddy-apply`, public check); `bin/web-conformance` passes. From outside: `/healthz` names the commit with database `ok`, Let’s Encrypt certificate, `www` answers 301, HTTP 308, unknown path 404, the CSP and security headers present; checked at 375 × 812 in light and dark with no console errors. The e2e CSP test passes in all six projects. The backup registry gained the site (`ubuntu-vm-backup` `9766f4c`), its drill rehearsed against the live release. Continuous deploy (D-10): `feltprep-autodeploy.timer`.
-  Remaining: the `feltprep.app` redirect (needs its A records, Q-2, owner). `deploy/README.md`’s “Not yet done” still says the DDNS job lacks the feltprep.com records; correct it with the next `deploy/` change, since any edit there waits for a hand deploy.
+  Remaining: the text in `deploy/` is out of date in two places. `deploy/README.md`’s “Not yet done” says the DDNS job lacks the feltprep.com records and that `feltprep.app` is not served. The comment in `deploy/feltprep.com.caddy` says `feltprep.app` has no DNS records. Both should say what D-11 and X-6 record. Fix them with the next `deploy/` change, since any edit there waits for a hand deploy; then tick this step. The `feltprep.app` redirect itself is done, in Cloudflare (D-11).
   DDNS: since `xrayservice` `8bc2e05` (switched 2026-11-27 00:16 UTC, X-6 there), the host’s Cloudflare DDNS job keeps `feltprep.com` and `www` on the home connection’s address; the 00:20 timer run checked 26 records with nothing to change, and both names answer with the host’s address from 1.1.1.1.
 - [ ] **P4.3 · First deploy** · Depends on: P4.2, P3.7 · **Owner gate:** the deploy — the M1 release serves on the domain; the live smoke test and the redirect checks pass. A rehearsal deploy before M1 is the owner’s call and does not tick this step.
 - [ ] **P4.4 · Backups and upkeep** · Depends on: P4.3 — a nightly database dump with rotation, and the deploy recorded in **Now**.

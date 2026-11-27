@@ -7,7 +7,7 @@
 | **Status** | Early development. The foundation is done: the app builds, tests and serves a placeholder page at feltprep.com, and the rules engine is imported and verified. Nothing is playable yet. |
 | **Plan and progress** | [BUILD.md](BUILD.md), starting at **Now** |
 | **How work is done** | [AGENTS.md](AGENTS.md) |
-| **Home** | [feltprep.com](https://feltprep.com) shows the work in progress: every change to `main` that passes its checks goes live there within minutes. `feltprep.app` is registered and not yet served. |
+| **Home** | [feltprep.com](https://feltprep.com) shows the work in progress: every change to `main` that passes its checks goes live there within minutes. `feltprep.app` redirects to it. |
 
 ## Who it is for
 
