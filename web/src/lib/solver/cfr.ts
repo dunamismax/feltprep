@@ -260,12 +260,13 @@ export interface SolveResult {
  * Solve `game` with CFR+: regret matching on clipped regrets, alternating
  * updates, and an average strategy weighted by iteration number.
  * `onIteration` is called after each iteration with its number and the
- * current average, for convergence reports.
+ * current average, for convergence reports; returning true stops the solve
+ * there, so the result is the same as a solve with that many iterations.
  */
 export function solve(
 	game: Game,
 	settings: SolveSettings,
-	onIteration?: (iteration: number, average: () => Strategy) => void
+	onIteration?: (iteration: number, average: () => Strategy) => boolean | void
 ): SolveResult {
 	const ctx = ctxOf(game);
 	const arena = new Arena();
@@ -296,6 +297,7 @@ export function solve(
 	refresh(1);
 	const average = () => averageOf(game, sums);
 
+	let done = 0;
 	for (let it = 1; it <= settings.iterations; it++) {
 		for (const p of [0, 1] as const) {
 			const update: Update = (node, children, reach, out) => {
@@ -321,9 +323,10 @@ export function solve(
 			valuesFor(ctx, arena, p, game.root, current, r0, r1, null, update, out);
 			refresh(p);
 		}
-		onIteration?.(it, average);
+		done = it;
+		if (onIteration?.(it, average) === true) break;
 	}
-	return { average: average(), iterations: settings.iterations };
+	return { average: average(), iterations: done };
 }
 
 /**

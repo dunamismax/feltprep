@@ -140,7 +140,9 @@ web/                       the SvelteKit app (exists; the same place RiverMind k
   src/lib/solver/          hand classes, exact equities, the pre-flop class table, games with a public betting
                            tree and chance cards (game.ts), CFR+ and exact best response (cfr.ts), linear-time
                            folds and showdowns with card removal (removal.ts), post-flop spots built through the
-                           engine (postflop.ts), the jam-or-fold game, its
+                           engine (postflop.ts), range notation (ranges.ts), the reference river spots
+                           (river-spots.ts) and B-11's pairwise check of their values (river-direct.ts),
+                           the jam-or-fold game, its
                            location in a full hand (jam-or-fold-hand.ts), grading (grading.ts) and the plain-English
                            explanation of a verdict (explain.ts) exist.
                            fixtures/ holds imported reference data
@@ -152,13 +154,15 @@ web/                       the SvelteKit app (exists; the same place RiverMind k
                            explain.ts's facts (exist)
   scripts/                 Node scripts run by package.json: db-migrate.ts, engine-fuzz.ts, engine-bench.ts,
                            engine-parity.ts and its Node-only helper engine/parity.ts, equity-build.ts,
-                           solver-bench.ts, jam-or-fold-build.ts, jam-or-fold-compare.ts and postflop-measure.ts exist
+                           solver-bench.ts, jam-or-fold-build.ts, jam-or-fold-compare.ts, postflop-measure.ts
+                           and river-bench.ts exist
   drizzle/                 SQL migrations (never edit an applied one): 0000 adds app.guests and app.practice_hands
   e2e/                     Playwright tests, desktop and phone (exists)
 content/                   README.md states the lesson text's license (CC BY-SA 4.0, D-12) (exists)
 content/lessons/           lessons as Markdown, kept in Git, prerendered (exists)
 solutions/                 small artifacts kept in Git, each with a manifest: registry.json, equity/ (the pre-flop
-                           class equity table) and jam-or-fold/ exist
+                           class equity table), jam-or-fold/ and river-reference/ (the manifest of the reference
+                           river solves, whose solutions stay in artifacts/) exist
 deploy/                    the contract's deploy: prepare, cutover, provision and continuous-deploy scripts, the systemd
                            units, the Caddy fragment and the runbook, README.md (exists)
 docs/                      rules, grading, solver design, build history; rules.md and provenance.md exist
@@ -215,6 +219,7 @@ Rules for this section:
 | Jam-or-fold solution | `pnpm run jof:build` | Solves the jam-or-fold game at 2 to 15 big blinds from the equity table (P2.4), twice per depth for the margins (B-12), and writes `solutions/jam-or-fold/` and the registry entry’s manifest hash, keeping its gate record. About a minute on one core; fails if a depth is over the exploitability threshold or a verdict jumps between acceptable and mistake. `-- --check` rebuilds without writing and fails unless the solution’s bytes are unchanged. Commit code changes first and build on a clean tree, so the manifest names a commit that holds the code. |
 | Jam-or-fold chart comparison | `node scripts/jam-or-fold-compare.ts --chart <file>` | B-5’s comparison with the published chart. `<file>` is a hand-made copy of the chart kept outside the repository (Q-13); the script’s header gives the format. |
 | Post-flop measurements | `node scripts/postflop-measure.ts` | Builds P5.1’s reference spot through the engine (`--street river`, `turn` or `flop`; default river) and solves it with CFR+, printing exploitability as a share of the pot every `--every` iterations (default 25, up to `--iterations`, default 2,000), the time to 1%, 0.5% and 0.25%, and peak memory. `--bets`, `--raises` (comma-separated fractions of the pot; `--raises=` for none) and `--max-bets` replace the sizes; `--count` only sizes the tree. The river takes seconds, the turn about ten minutes for 1,000 iterations, a small flop over an hour and 8 GB; record the machine and its load. |
+| Reference river spots | `pnpm run river:bench` | B-6, B-11 and B-12 on the 20 reference river spots (P5.2): each solved to 0.5% of the pot, then on, doubling, until a doubling moves no verdict between acceptable and mistake; values checked against the pairwise calculation; invariants. Writes each solution to `artifacts/river-reference/` and their hashes to `solutions/river-reference/manifest.json`. `-- --check` rebuilds and fails unless every solution’s bytes match the manifest; `-- --only river-03` solves one spot without writing the manifest; `-- --list` prints every band change. About 4 minutes on one core (209 s on 2026-11-27); exits 1 if a benchmark fails. Commit code first, as for `jof:build`. |
 | Solver benchmarks | `pnpm run solver:bench` | B-1 (CFR+ on Kuhn poker), B-2 (best responses against hand-derived values) and B-3 (the polarized river game against its closed form); prints each measured number for `docs/benchmarks.md` and exits 1 if one fails. A second or two. The same checks run in the full gate (`src/lib/solver/cfr.spec.ts`). |
 | Build a release on the server | `deploy/prepare.sh [COMMIT]` | **On the server, as sawyer**, from `~/github/feltprep` (repository root, not `web/`). Exports `origin/main` into `~/web-work/feltprep.com-<commit>/`, runs install, check, lint, test and the build, assembles the release and smoke-tests it. Changes nothing live. |
 | Put a release live | `/usr/local/sbin/with-deploy-lock <candidate>/src/deploy/cutover.sh <candidate>` | **On the server, as root.** Stage, migrate, candidate check, switch, verify, Caddy, public check. An agent may run it for FeltPrep (D-13, section 3). |

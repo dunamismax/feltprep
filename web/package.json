@@ -32,6 +32,7 @@
 		"engine:parity": "node scripts/engine-parity.ts",
 		"equity:build": "node scripts/equity-build.ts",
 		"jof:build": "node scripts/jam-or-fold-build.ts",
+		"river:bench": "node scripts/river-bench.ts",
 		"solver:bench": "node scripts/solver-bench.ts"
 	},
 	"dependencies": {

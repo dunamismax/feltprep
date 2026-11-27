@@ -1,0 +1,662 @@
+{
+	"format": 1,
+	"kind": "river-reference",
+	"title": "Reference river spots for B-6, B-11 and B-12 (P5.2)",
+	"build": {
+		"command": "pnpm run river:bench",
+		"commit": "d11b38b963ba8a92a9d663e3e17c45d19dd3dbec-dirty",
+		"settings": {
+			"solver": "CFR+ (alternating, linear averaging)",
+			"stop": "exploitability at most 0.005 of the pot, checked every 25 iterations",
+			"margins": "the same solve carried on to twice the iterations",
+			"precision": 1e-10
+		},
+		"seed": null
+	},
+	"grading": {
+		"acceptableFrequency": 0.05,
+		"acceptableLoss": 0.005,
+		"inaccuracyLoss": 0.03,
+		"minReach": 0.01
+	},
+	"spots": [
+		{
+			"id": "river-01",
+			"board": "Ks 9d 5c 2h 7s",
+			"texture": "dry, king high (P5.1’s reference)",
+			"line": "Single-raised pot, 100 big blinds",
+			"pot": 5,
+			"stack": 97.5,
+			"ranges": {
+				"big-blind": "22-99, A9s-A2s, KTs-K2s, QTs-Q6s, JTs-J7s, T9s-T7s, 98s-96s, 87s-86s, 76s-75s, 65s-64s, 54s-53s, ATo-A2o, KJo-K8o, QJo-Q9o, JTo-J9o, T9o, 98o",
+				"button": "22+, A2s+, K5s+, Q8s+, J8s+, T8s+, 97s+, 86s+, 75s+, 65s, 54s, A7o+, A5o, KTo+, QTo+, JTo"
+			},
+			"sizes": {
+				"bets": [
+					0.33,
+					0.75
+				],
+				"raises": [
+					1
+				],
+				"maxBets": 3
+			},
+			"reached": 375,
+			"targetExploitability": 0.0049124,
+			"iterations": 24000,
+			"marginIterations": 48000,
+			"exploitability": 0.00001115,
+			"unit": "fraction of the pot",
+			"file": {
+				"path": "river-01.json",
+				"sha256": "6d570ec128c9b34d5e77dab265f71ea93033113bc3cea3b5097f93f9bacd18b0",
+				"bytes": 830494
+			}
+		},
+		{
+			"id": "river-02",
+			"board": "Qc Qd 8s 4h 2c",
+			"texture": "paired queens, dry",
+			"line": "Single-raised pot, 100 big blinds",
+			"pot": 5,
+			"stack": 97.5,
+			"ranges": {
+				"big-blind": "22-99, A9s-A2s, KTs-K2s, QTs-Q6s, JTs-J7s, T9s-T7s, 98s-96s, 87s-86s, 76s-75s, 65s-64s, 54s-53s, ATo-A2o, KJo-K8o, QJo-Q9o, JTo-J9o, T9o, 98o",
+				"button": "22+, A2s+, K5s+, Q8s+, J8s+, T8s+, 97s+, 86s+, 75s+, 65s, 54s, A7o+, A5o, KTo+, QTo+, JTo"
+			},
+			"sizes": {
+				"bets": [
+					0.5
+				],
+				"raises": [],
+				"maxBets": 2
+			},
+			"reached": 250,
+			"targetExploitability": 0.0044484,
+			"iterations": 2000,
+			"marginIterations": 4000,
+			"exploitability": 0.000349808,
+			"unit": "fraction of the pot",
+			"file": {
+				"path": "river-02.json",
+				"sha256": "e3e2a05153deb36ae5c15cc0864e30b55006b28c64a5c41545d0ea612642c69d",
+				"bytes": 257854
+			}
+		},
+		{
+			"id": "river-03",
+			"board": "Ah Th 6h 3c Jd",
+			"texture": "three hearts: a flush possible",
+			"line": "Single-raised pot, 100 big blinds",
+			"pot": 5,
+			"stack": 97.5,
+			"ranges": {
+				"big-blind": "22-99, A9s-A2s, KTs-K2s, QTs-Q6s, JTs-J7s, T9s-T7s, 98s-96s, 87s-86s, 76s-75s, 65s-64s, 54s-53s, ATo-A2o, KJo-K8o, QJo-Q9o, JTo-J9o, T9o, 98o",
+				"button": "22+, A2s+, K5s+, Q8s+, J8s+, T8s+, 97s+, 86s+, 75s+, 65s, 54s, A7o+, A5o, KTo+, QTo+, JTo"
+			},
+			"sizes": {
+				"bets": [
+					0.75,
+					1.5
+				],
+				"raises": [
+					0.75
+				],
+				"maxBets": 2
+			},
+			"reached": 350,
+			"targetExploitability": 0.00469412,
+			"iterations": 11200,
+			"marginIterations": 22400,
+			"exploitability": 0.0000309249,
+			"unit": "fraction of the pot",
+			"file": {
+				"path": "river-03.json",
+				"sha256": "f11caa8bec06a484b7b67e3c72f29a2ff782c044a80b7ecd1f6c8f7295e291a3",
+				"bytes": 506533
+			}
+		},
+		{
+			"id": "river-04",
+			"board": "9c 8d 7s 6h 2c",
+			"texture": "four to a straight",
+			"line": "Single-raised pot, 100 big blinds",
+			"pot": 5,
+			"stack": 97.5,
+			"ranges": {
+				"big-blind": "22-99, A9s-A2s, KTs-K2s, QTs-Q6s, JTs-J7s, T9s-T7s, 98s-96s, 87s-86s, 76s-75s, 65s-64s, 54s-53s, ATo-A2o, KJo-K8o, QJo-Q9o, JTo-J9o, T9o, 98o",
+				"button": "22+, A2s+, K5s+, Q8s+, J8s+, T8s+, 97s+, 86s+, 75s+, 65s, 54s, A7o+, A5o, KTo+, QTo+, JTo"
+			},
+			"sizes": {
+				"bets": [
+					0.66
+				],
+				"raises": [
+					1
+				],
+				"maxBets": 3
+			},
+			"reached": 350,
+			"targetExploitability": 0.00457486,
+			"iterations": 11200,
+			"marginIterations": 22400,
+			"exploitability": 0.0000143387,
+			"unit": "fraction of the pot",
+			"file": {
+				"path": "river-04.json",
+				"sha256": "7c60c7a724e122f6b62af3e253e6004ee3a653cc2667d9089904ea69610ec939",
+				"bytes": 474677
+			}
+		},
+		{
+			"id": "river-05",
+			"board": "6s 5d 4c 9h Kd",
+			"texture": "low and connected, a king on the river",
+			"line": "Single-raised pot, 100 big blinds",
+			"pot": 5,
+			"stack": 97.5,
+			"ranges": {
+				"big-blind": "22-99, A9s-A2s, KTs-K2s, QTs-Q6s, JTs-J7s, T9s-T7s, 98s-96s, 87s-86s, 76s-75s, 65s-64s, 54s-53s, ATo-A2o, KJo-K8o, QJo-Q9o, JTo-J9o, T9o, 98o",
+				"button": "22+, A2s+, K5s+, Q8s+, J8s+, T8s+, 97s+, 86s+, 75s+, 65s, 54s, A7o+, A5o, KTo+, QTo+, JTo"
+			},
+			"sizes": {
+				"bets": [
+					0.33,
+					0.75
+				],
+				"raises": [
+					1
+				],
+				"maxBets": 3
+			},
+			"reached": 375,
+			"targetExploitability": 0.00493038,
+			"iterations": 96000,
+			"marginIterations": 192000,
+			"exploitability": 0.00000138868,
+			"unit": "fraction of the pot",
+			"file": {
+				"path": "river-05.json",
+				"sha256": "5bd6f7ec13a9137662cc9cd197ac44debd2071c547f833603b521d1ce0f6a997",
+				"bytes": 814679
+			}
+		},
+		{
+			"id": "river-06",
+			"board": "Jc Jd 7c 7h 3s",
+			"texture": "two pairs on the board",
+			"line": "Single-raised pot, 100 big blinds",
+			"pot": 5,
+			"stack": 97.5,
+			"ranges": {
+				"big-blind": "22-99, A9s-A2s, KTs-K2s, QTs-Q6s, JTs-J7s, T9s-T7s, 98s-96s, 87s-86s, 76s-75s, 65s-64s, 54s-53s, ATo-A2o, KJo-K8o, QJo-Q9o, JTo-J9o, T9o, 98o",
+				"button": "22+, A2s+, K5s+, Q8s+, J8s+, T8s+, 97s+, 86s+, 75s+, 65s, 54s, A7o+, A5o, KTo+, QTo+, JTo"
+			},
+			"sizes": {
+				"bets": [
+					0.5
+				],
+				"raises": [],
+				"maxBets": 2
+			},
+			"reached": 300,
+			"targetExploitability": 0.00442295,
+			"iterations": 2400,
+			"marginIterations": 4800,
+			"exploitability": 0.000204158,
+			"unit": "fraction of the pot",
+			"file": {
+				"path": "river-06.json",
+				"sha256": "c035d8dd5f626636da49beaa224fa1404f879e022cc61add3f4a038b19c8c818",
+				"bytes": 252502
+			}
+		},
+		{
+			"id": "river-07",
+			"board": "Ac 8d 4s Kh 2d",
+			"texture": "ace and king high, dry",
+			"line": "Single-raised pot, 100 big blinds",
+			"pot": 5,
+			"stack": 97.5,
+			"ranges": {
+				"big-blind": "22-99, A9s-A2s, KTs-K2s, QTs-Q6s, JTs-J7s, T9s-T7s, 98s-96s, 87s-86s, 76s-75s, 65s-64s, 54s-53s, ATo-A2o, KJo-K8o, QJo-Q9o, JTo-J9o, T9o, 98o",
+				"button": "22+, A2s+, K5s+, Q8s+, J8s+, T8s+, 97s+, 86s+, 75s+, 65s, 54s, A7o+, A5o, KTo+, QTo+, JTo"
+			},
+			"sizes": {
+				"bets": [
+					0.75,
+					1.5
+				],
+				"raises": [
+					0.75
+				],
+				"maxBets": 2
+			},
+			"reached": 425,
+			"targetExploitability": 0.00488651,
+			"iterations": 6800,
+			"marginIterations": 13600,
+			"exploitability": 0.0000597631,
+			"unit": "fraction of the pot",
+			"file": {
+				"path": "river-07.json",
+				"sha256": "2651ef64905598284b026d4c0926e13f51f58a30f7d40567f6d0827f7c639f8a",
+				"bytes": 522102
+			}
+		},
+		{
+			"id": "river-08",
+			"board": "Kd Qs Jc Th 3d",
+			"texture": "broadway: any ace or nine makes a straight",
+			"line": "Single-raised pot, 100 big blinds",
+			"pot": 5,
+			"stack": 97.5,
+			"ranges": {
+				"big-blind": "22-99, A9s-A2s, KTs-K2s, QTs-Q6s, JTs-J7s, T9s-T7s, 98s-96s, 87s-86s, 76s-75s, 65s-64s, 54s-53s, ATo-A2o, KJo-K8o, QJo-Q9o, JTo-J9o, T9o, 98o",
+				"button": "22+, A2s+, K5s+, Q8s+, J8s+, T8s+, 97s+, 86s+, 75s+, 65s, 54s, A7o+, A5o, KTo+, QTo+, JTo"
+			},
+			"sizes": {
+				"bets": [
+					0.66
+				],
+				"raises": [
+					1
+				],
+				"maxBets": 3
+			},
+			"reached": 275,
+			"targetExploitability": 0.00424469,
+			"iterations": 2200,
+			"marginIterations": 4400,
+			"exploitability": 0.000276042,
+			"unit": "fraction of the pot",
+			"file": {
+				"path": "river-08.json",
+				"sha256": "c30829408087bc0c43721c85dd823942dacda47d8defb1add545e219aefdb036",
+				"bytes": 457369
+			}
+		},
+		{
+			"id": "river-09",
+			"board": "2h 7h 9h Jh 4c",
+			"texture": "four hearts",
+			"line": "Re-raised pot, 100 big blinds",
+			"pot": 22,
+			"stack": 89,
+			"ranges": {
+				"big-blind": "99+, AJs+, KQs, AQo+, A5s-A4s, KTs, T9s, 87s, 76s",
+				"button": "QQ-22, AQs-ATs, KJs-KTs, QJs-QTs, JTs, T9s, 98s, 87s, AQo-AJo, KQo"
+			},
+			"sizes": {
+				"bets": [
+					0.66
+				],
+				"raises": [
+					1
+				],
+				"maxBets": 3
+			},
+			"reached": 125,
+			"targetExploitability": 0.00411144,
+			"iterations": 2000,
+			"marginIterations": 4000,
+			"exploitability": 0.0000851736,
+			"unit": "fraction of the pot",
+			"file": {
+				"path": "river-09.json",
+				"sha256": "300e4a5708361281ad84fa2393accee1bf120b446ac417d25c9060105cd855eb",
+				"bytes": 122467
+			}
+		},
+		{
+			"id": "river-10",
+			"board": "Tc 9c 3d 3s Ah",
+			"texture": "paired threes, an ace on the river",
+			"line": "Re-raised pot, 100 big blinds",
+			"pot": 22,
+			"stack": 89,
+			"ranges": {
+				"big-blind": "99+, AJs+, KQs, AQo+, A5s-A4s, KTs, T9s, 87s, 76s",
+				"button": "QQ-22, AQs-ATs, KJs-KTs, QJs-QTs, JTs, T9s, 98s, 87s, AQo-AJo, KQo"
+			},
+			"sizes": {
+				"bets": [
+					0.5
+				],
+				"raises": [],
+				"maxBets": 2
+			},
+			"reached": 100,
+			"targetExploitability": 0.00425746,
+			"iterations": 1600,
+			"marginIterations": 3200,
+			"exploitability": 0.0000644609,
+			"unit": "fraction of the pot",
+			"file": {
+				"path": "river-10.json",
+				"sha256": "39e8049a19a0f461a805adaa713093ff488da358b32da1011ca66bbfdcd6e2a9",
+				"bytes": 72730
+			}
+		},
+		{
+			"id": "river-11",
+			"board": "8s 8d 8c 5h 2s",
+			"texture": "three eights on the board",
+			"line": "Re-raised pot, 100 big blinds",
+			"pot": 22,
+			"stack": 89,
+			"ranges": {
+				"big-blind": "99+, AJs+, KQs, AQo+, A5s-A4s, KTs, T9s, 87s, 76s",
+				"button": "QQ-22, AQs-ATs, KJs-KTs, QJs-QTs, JTs, T9s, 98s, 87s, AQo-AJo, KQo"
+			},
+			"sizes": {
+				"bets": [
+					0.33,
+					0.75
+				],
+				"raises": [
+					1
+				],
+				"maxBets": 3
+			},
+			"reached": 125,
+			"targetExploitability": 0.00435752,
+			"iterations": 4000,
+			"marginIterations": 8000,
+			"exploitability": 0.0000201085,
+			"unit": "fraction of the pot",
+			"file": {
+				"path": "river-11.json",
+				"sha256": "8fa5d5b7fbda5939094693a31ef54987eb2d8e9766e6f00ff72c9d22a76c379e",
+				"bytes": 228355
+			}
+		},
+		{
+			"id": "river-12",
+			"board": "As Ks Qd Jd 5c",
+			"texture": "four broadway cards",
+			"line": "Re-raised pot, 100 big blinds",
+			"pot": 22,
+			"stack": 89,
+			"ranges": {
+				"big-blind": "99+, AJs+, KQs, AQo+, A5s-A4s, KTs, T9s, 87s, 76s",
+				"button": "QQ-22, AQs-ATs, KJs-KTs, QJs-QTs, JTs, T9s, 98s, 87s, AQo-AJo, KQo"
+			},
+			"sizes": {
+				"bets": [
+					0.75,
+					1.5
+				],
+				"raises": [
+					0.75
+				],
+				"maxBets": 2
+			},
+			"reached": 125,
+			"targetExploitability": 0.00369873,
+			"iterations": 1000,
+			"marginIterations": 2000,
+			"exploitability": 0.000123122,
+			"unit": "fraction of the pot",
+			"file": {
+				"path": "river-12.json",
+				"sha256": "a5654dab4f51b6719a5f39237a2bfc6d1f8ffd4cada7643857fd1599f86fcf94",
+				"bytes": 121256
+			}
+		},
+		{
+			"id": "river-13",
+			"board": "5h 4h 3d 2c Ks",
+			"texture": "four to a wheel",
+			"line": "Re-raised pot, 100 big blinds",
+			"pot": 22,
+			"stack": 89,
+			"ranges": {
+				"big-blind": "99+, AJs+, KQs, AQo+, A5s-A4s, KTs, T9s, 87s, 76s",
+				"button": "QQ-22, AQs-ATs, KJs-KTs, QJs-QTs, JTs, T9s, 98s, 87s, AQo-AJo, KQo"
+			},
+			"sizes": {
+				"bets": [
+					0.5
+				],
+				"raises": [],
+				"maxBets": 2
+			},
+			"reached": 100,
+			"targetExploitability": 0.00405754,
+			"iterations": 100,
+			"marginIterations": 200,
+			"exploitability": 0.00405754,
+			"unit": "fraction of the pot",
+			"file": {
+				"path": "river-13.json",
+				"sha256": "776228782e321c3bd666b8870d1adcc5210251132969cb74cdd99d01c0ee07ff",
+				"bytes": 80194
+			}
+		},
+		{
+			"id": "river-14",
+			"board": "Td 7c 4s 2d 2h",
+			"texture": "dry and low, paired on the river",
+			"line": "Single-raised pot, 25 big blinds",
+			"pot": 5,
+			"stack": 22.5,
+			"ranges": {
+				"big-blind": "22-99, AJs-A2s, KQs-K7s, QJs-Q8s, JTs-J8s, T9s-T8s, 98s, 87s, 76s, AJo-A7o, KQo-KTo, QJo-QTo, JTo",
+				"button": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, 98s, A8o+, KJo+, QJo"
+			},
+			"sizes": {
+				"bets": [
+					0.5
+				],
+				"raises": [],
+				"maxBets": 2
+			},
+			"reached": 100,
+			"targetExploitability": 0.00404678,
+			"iterations": 400,
+			"marginIterations": 800,
+			"exploitability": 0.000666664,
+			"unit": "fraction of the pot",
+			"file": {
+				"path": "river-14.json",
+				"sha256": "b6567d21d9ccb05f421808cbcef636e004ed171b7e7fa9da80432e997fe432ca",
+				"bytes": 186101
+			}
+		},
+		{
+			"id": "river-15",
+			"board": "Qh Jh 9c 8d 3s",
+			"texture": "connected and high",
+			"line": "Single-raised pot, 25 big blinds",
+			"pot": 5,
+			"stack": 22.5,
+			"ranges": {
+				"big-blind": "22-99, AJs-A2s, KQs-K7s, QJs-Q8s, JTs-J8s, T9s-T8s, 98s, 87s, 76s, AJo-A7o, KQo-KTo, QJo-QTo, JTo",
+				"button": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, 98s, A8o+, KJo+, QJo"
+			},
+			"sizes": {
+				"bets": [
+					0.33,
+					0.75
+				],
+				"raises": [
+					1
+				],
+				"maxBets": 3
+			},
+			"reached": 125,
+			"targetExploitability": 0.00470783,
+			"iterations": 2000,
+			"marginIterations": 4000,
+			"exploitability": 0.0000992956,
+			"unit": "fraction of the pot",
+			"file": {
+				"path": "river-15.json",
+				"sha256": "8b6a35e559d9d32c58f2b1efe13d1f4b1384d73e55174abbd1e5a97502956706",
+				"bytes": 459427
+			}
+		},
+		{
+			"id": "river-16",
+			"board": "7d 6d 2c As Td",
+			"texture": "two diamonds, an ace on the turn",
+			"line": "Single-raised pot, 25 big blinds",
+			"pot": 5,
+			"stack": 22.5,
+			"ranges": {
+				"big-blind": "22-99, AJs-A2s, KQs-K7s, QJs-Q8s, JTs-J8s, T9s-T8s, 98s, 87s, 76s, AJo-A7o, KQo-KTo, QJo-QTo, JTo",
+				"button": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, 98s, A8o+, KJo+, QJo"
+			},
+			"sizes": {
+				"bets": [
+					0.66
+				],
+				"raises": [
+					1
+				],
+				"maxBets": 3
+			},
+			"reached": 100,
+			"targetExploitability": 0.00470787,
+			"iterations": 6400,
+			"marginIterations": 12800,
+			"exploitability": 0.0000131008,
+			"unit": "fraction of the pot",
+			"file": {
+				"path": "river-16.json",
+				"sha256": "417ec131849e225db186f5cfc1a031c596e7150ec44af803ad14e37db416f53d",
+				"bytes": 260681
+			}
+		},
+		{
+			"id": "river-17",
+			"board": "Kc Kh 5s 5d Ks",
+			"texture": "a full house on the board",
+			"line": "Single-raised pot, 25 big blinds",
+			"pot": 5,
+			"stack": 22.5,
+			"ranges": {
+				"big-blind": "22-99, AJs-A2s, KQs-K7s, QJs-Q8s, JTs-J8s, T9s-T8s, 98s, 87s, 76s, AJo-A7o, KQo-KTo, QJo-QTo, JTo",
+				"button": "22+, A2s+, K8s+, Q9s+, J9s+, T9s, 98s, A8o+, KJo+, QJo"
+			},
+			"sizes": {
+				"bets": [
+					0.75,
+					1.5
+				],
+				"raises": [
+					0.75
+				],
+				"maxBets": 2
+			},
+			"reached": 100,
+			"targetExploitability": 0.00465546,
+			"iterations": 800,
+			"marginIterations": 1600,
+			"exploitability": 0.0000997115,
+			"unit": "fraction of the pot",
+			"file": {
+				"path": "river-17.json",
+				"sha256": "0a6a9c398ccdb31675c6349ee6f66b93b3e4ba0663cf8765e03399c163173b0e",
+				"bytes": 313486
+			}
+		},
+		{
+			"id": "river-18",
+			"board": "Ah 9s 5d 5c 5h",
+			"texture": "three fives on the board",
+			"line": "Min-raised pot, wide ranges, 100 big blinds",
+			"pot": 4,
+			"stack": 98,
+			"ranges": {
+				"big-blind": "22+, A2s+, K2s+, Q2s+, J5s+, T6s+, 96s+, 85s+, 74s+, 63s+, 53s+, 43s, A2o+, K5o+, Q8o+, J8o+, T8o+, 98o, 87o, 76o:0.5",
+				"button": "22+, A2s+, K2s+, Q4s+, J6s+, T6s+, 96s+, 85s+, 75s+, 64s+, 54s, A2o+, K8o+, Q9o+, J9o+, T9o"
+			},
+			"sizes": {
+				"bets": [
+					0.33,
+					0.75
+				],
+				"raises": [
+					1
+				],
+				"maxBets": 3
+			},
+			"reached": 525,
+			"targetExploitability": 0.00484625,
+			"iterations": 16800,
+			"marginIterations": 33600,
+			"exploitability": 0.0000507161,
+			"unit": "fraction of the pot",
+			"file": {
+				"path": "river-18.json",
+				"sha256": "ad5ee8f97de59406c1728f129a2216ae8fa94684f09639da7889cbb0a4465a47",
+				"bytes": 1208006
+			}
+		},
+		{
+			"id": "river-19",
+			"board": "Js Ts 4h 3h 8c",
+			"texture": "connected, two pairs of suits",
+			"line": "Min-raised pot, wide ranges, 100 big blinds",
+			"pot": 4,
+			"stack": 98,
+			"ranges": {
+				"big-blind": "22+, A2s+, K2s+, Q2s+, J5s+, T6s+, 96s+, 85s+, 74s+, 63s+, 53s+, 43s, A2o+, K5o+, Q8o+, J8o+, T8o+, 98o, 87o, 76o:0.5",
+				"button": "22+, A2s+, K2s+, Q4s+, J6s+, T6s+, 96s+, 85s+, 75s+, 64s+, 54s, A2o+, K8o+, Q9o+, J9o+, T9o"
+			},
+			"sizes": {
+				"bets": [
+					0.75,
+					1.5
+				],
+				"raises": [
+					0.75
+				],
+				"maxBets": 2
+			},
+			"reached": 500,
+			"targetExploitability": 0.00485533,
+			"iterations": 16000,
+			"marginIterations": 32000,
+			"exploitability": 0.0000274734,
+			"unit": "fraction of the pot",
+			"file": {
+				"path": "river-19.json",
+				"sha256": "bc9fd2461af99614efa6d78728d3ae8e007c5be1741f1687a8d5ccfa3dd5da52",
+				"bytes": 787443
+			}
+		},
+		{
+			"id": "river-20",
+			"board": "4d 4s Kc 8h 8d",
+			"texture": "two low pairs on the board",
+			"line": "Min-raised pot, wide ranges, 100 big blinds",
+			"pot": 4,
+			"stack": 98,
+			"ranges": {
+				"big-blind": "22+, A2s+, K2s+, Q2s+, J5s+, T6s+, 96s+, 85s+, 74s+, 63s+, 53s+, 43s, A2o+, K5o+, Q8o+, J8o+, T8o+, 98o, 87o, 76o:0.5",
+				"button": "22+, A2s+, K2s+, Q4s+, J6s+, T6s+, 96s+, 85s+, 75s+, 64s+, 54s, A2o+, K8o+, Q9o+, J9o+, T9o"
+			},
+			"sizes": {
+				"bets": [
+					0.5
+				],
+				"raises": [],
+				"maxBets": 2
+			},
+			"reached": 500,
+			"targetExploitability": 0.00478411,
+			"iterations": 4000,
+			"marginIterations": 8000,
+			"exploitability": 0.000179181,
+			"unit": "fraction of the pot",
+			"file": {
+				"path": "river-20.json",
+				"sha256": "97fdd0b3efc43a9dd7a29d56e63c75d88b172f2a56734825db4b982545270db3",
+				"bytes": 367612
+			}
+		}
+	]
+}
