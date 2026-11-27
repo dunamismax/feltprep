@@ -108,6 +108,10 @@ export const JAM_OR_FOLD_CASES: readonly JamOrFoldCase[] = [
 	{
 		// The published chart (HoldemResources, docs/benchmarks.md B-5) jams 72o
 		// only at 1.6 big blinds or less, so folding it at 15 is the reference play.
+		// Re-derived under D-20 (P3.8): the bound is now D-20's acceptable loss,
+		// 0.5% of the 1.5 big blind pot, 0.0075 (it was 1%, 0.015). The verdict
+		// is unchanged. So are the others: every other loss above is either 0 or
+		// at least the whole pot, far from both boundaries under either bands.
 		game: 'jam-or-fold',
 		name: '15 bb button folds 72o: the published chart folds it',
 		stack: 15,
@@ -116,7 +120,7 @@ export const JAM_OR_FOLD_CASES: readonly JamOrFoldCase[] = [
 		action: 'fold',
 		band: 'acceptable',
 		lossAtLeast: () => 0,
-		lossAtMost: 0.015
+		lossAtMost: 0.0075
 	}
 ];
 

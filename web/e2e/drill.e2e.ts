@@ -83,7 +83,7 @@ test('the worse action is graded by what it gives up', async ({ page }) => {
 	for (let i = 0; i < 20; i++) {
 		const ref = await reference(page, 10);
 		const pot = 1.5;
-		const clear = ref.worstFrequency < 0.05 && (ref.loss - ref.margin) / pot > 0.05;
+		const clear = ref.worstFrequency < 0.05 && (ref.loss - ref.margin) / pot > 0.03;
 		if (clear) {
 			await place(page, PLACE[ref.worst]).click();
 			await expect(page.getByTestId('verdict')).toHaveText('Mistake');
@@ -97,6 +97,32 @@ test('the worse action is graded by what it gives up', async ({ page }) => {
 	}
 	throw new Error('no clear mistake was dealt in 20 hands');
 });
+
+// D-20's bands (P3.8): acceptable up to 0.5% of the pot, an inaccuracy up to
+// 3%, a mistake above. Seeds 9 and 23 deal Q7o and Q5o on the button at 10
+// big blinds as their first hand; folding Q7o and jamming Q5o lose between the
+// old and the new boundaries, so the stricter bands grade each one band lower
+// than the defaults the solution was first built with (1% and 5%).
+for (const { seed, hand, action, band, low, high } of [
+	{ seed: 9, hand: 'Q7o', action: 'fold', band: 'Inaccuracy', low: 0.005, high: 0.01 },
+	{ seed: 23, hand: 'Q5o', action: 'jam', band: 'Mistake', low: 0.03, high: 0.05 }
+]) {
+	test(`D-20’s bands: ${action === 'fold' ? 'folding' : 'jamming'} ${hand} at 10 bb is ${band.toLowerCase()}`, async ({
+		page
+	}) => {
+		await page.goto(`/drill/jam-or-fold/10?seed=${seed}&seat=button`);
+		const ref = await reference(page, 10);
+		expect(ref.hand).toBe(hand);
+		expect(ref.worst).toBe(action);
+		expect(ref.worstFrequency).toBeLessThan(0.05);
+		const ofPot = (ref.loss - ref.margin) / 1.5;
+		expect(ofPot).toBeGreaterThan(low);
+		expect(ofPot).toBeLessThan(high);
+		await place(page, PLACE[action]).click();
+		await expect(page.getByTestId('verdict')).toHaveText(band);
+		await expect(page.getByTestId('feedback')).toContainText(`giving up ${ref.loss.toFixed(2)} bb`);
+	});
+}
 
 test('a limp or a smaller raise is shown as not graded', async ({ page }) => {
 	await page.goto('/drill/jam-or-fold/10?seed=3&seat=button');

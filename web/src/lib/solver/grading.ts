@@ -1,14 +1,14 @@
-// Grading (docs/grading.md, "A verdict"): the bands of Q-7 applied to the
+// Grading (docs/grading.md, "A verdict"): the bands of D-20 applied to the
 // numbers a solution stores. Nothing here estimates anything; it compares.
 
 import type { LoadedSolution } from '../spots/reader.ts';
 import type { Band, GradingSettings, NotGradedReason, Verdict } from '../spots/types.ts';
 
-/** Q-7's default thresholds and the contract's minimum reach. */
+/** The owner's bands (D-20) and the contract's minimum reach. */
 export const DEFAULT_GRADING: GradingSettings = {
 	acceptableFrequency: 0.05,
-	acceptableLoss: 0.01,
-	inaccuracyLoss: 0.05,
+	acceptableLoss: 0.005,
+	inaccuracyLoss: 0.03,
 	minReach: 0.01
 };
 
