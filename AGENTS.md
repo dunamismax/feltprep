@@ -125,12 +125,14 @@ web/                       the SvelteKit app (exists; the same place RiverMind k
   src/routes/              pages and endpoints: the home page and /healthz exist
   src/lib/engine/          cards, hand evaluator, hand state machine, histories, seat views, fuzzer and fixtures:
                            pure, browser-safe TypeScript imported from RiverMind (exists)
-  src/lib/solver/          hand classes, exact equities and the pre-flop class table exist; game trees, CFR,
-                           best response and grading later. fixtures/ holds imported reference data
+  src/lib/solver/          hand classes, exact equities, the pre-flop class table, games with a public betting
+                           tree (game.ts), CFR+ and exact best response (cfr.ts) exist; grading later.
+                           fixtures/ holds imported reference data
   src/lib/spots/           the contract's types (docs/grading.md) and the reader that checks a solution's hashes (exists)
   src/lib/server/          server-only code: database client and health check exist; practice sessions and opponents later
   scripts/                 Node scripts run by package.json: db-migrate.ts, engine-fuzz.ts, engine-bench.ts,
-                           engine-parity.ts and its Node-only helper engine/parity.ts, equity-build.ts exist
+                           engine-parity.ts and its Node-only helper engine/parity.ts, equity-build.ts,
+                           solver-bench.ts exist
   drizzle/                 SQL migrations (never edit an applied one); only the empty journal exists
   e2e/                     Playwright tests, desktop and phone (exists)
 content/lessons/           lessons as Markdown, kept in Git, prerendered
@@ -188,7 +190,7 @@ Rules for this section:
 | Engine benchmark | `pnpm run engine:bench` | Random self-play speed on one core at 2, 6 and 9 seats (`-- --hands 20000 --repeats 5`). Needs a quiet machine. |
 | Engine parity with RiverMind | `pnpm run engine:parity -- --reference <dir>` | Replays hands from RiverMind's Python reference and compares every state byte for byte, plus evaluator digests (`--all-five` for every five-card hand). `<dir>` is a scratch export of RiverMind at the pinned commit (`git -C <rivermind> archive 233b9c6 \| tar -x -C <dir>`), never a live checkout, since `uv` writes a virtual environment there. Needs `uv`. Run once at import (done, `docs/provenance.md`) and again only if RiverMind's engine is re-imported. |
 | Pre-flop equity table | `pnpm run equity:build` | Rebuilds `solutions/equity/preflop-classes.json` and its manifest from the code (P2.2): 134,459 boards, about 40 seconds and 150 MB on one core. `-- --check` rebuilds without writing and fails unless the bytes equal the committed table and its manifest. Run it after any change to the evaluator or `preflop-table.ts`, with `nice -n 19`; the full gate checks the committed table against the published one (B-4). |
-| Solver benchmarks | *not yet defined (P2.3)* | |
+| Solver benchmarks | `pnpm run solver:bench` | B-1 (CFR+ on Kuhn poker), B-2 (best responses against hand-derived values) and B-3 (the polarized river game against its closed form); prints each measured number for `docs/benchmarks.md` and exits 1 if one fails. A second or two. The same checks run in the full gate (`src/lib/solver/cfr.spec.ts`). |
 | Build a release on the server | `deploy/prepare.sh [COMMIT]` | **On the server, as sawyer**, from `~/github/feltprep` (repository root, not `web/`). Exports `origin/main` into `~/web-work/feltprep.com-<commit>/`, runs install, check, lint, test and the build, assembles the release and smoke-tests it. Changes nothing live. |
 | Put a release live | `/usr/local/sbin/with-deploy-lock <candidate>/src/deploy/cutover.sh <candidate>` | **On the server, as root.** Stage, migrate, candidate check, switch, verify, Caddy, public check. A hand deploy is an owner gate (section 3). |
 | Provision the host | `/usr/local/sbin/with-deploy-lock ~sawyer/github/feltprep/deploy/provision.sh` | **On the server, as root.** Account, database, roles and credentials; idempotent. Done 2026-11-26. |

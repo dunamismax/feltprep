@@ -12,7 +12,7 @@
 	],
 	"build": {
 		"command": "pnpm run equity:build",
-		"commit": "9f46c7aa0c46dc2feaa6f387e6d7ebf96b3fa58d",
+		"commit": "87264598ed45c4045cfa7980e923ba3c895c2b8a",
 		"settings": {},
 		"seed": null
 	},

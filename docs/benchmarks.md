@@ -4,6 +4,33 @@ The record of every Gate B benchmark run ([BUILD.md](../BUILD.md#gate-b--trustwo
 
 **Machine** unless stated otherwise: the development Mac, Apple M5, 10 cores, 32 GB, Node 26.13.1.
 
+## B-1 · The solver finds equilibria (Kuhn poker)
+
+**Passed** at the commit that ticks P2.3 (2026-11-26): `pnpm run solver:bench`, and in the full gate (`web/src/lib/solver/cfr.spec.ts`).
+
+- 2,000 iterations of alternating CFR+ with linear averaging, in 10 ms: player 0’s value −0.055556 against the known −1/18 (Kuhn’s closed-form solution), and exploitability 4.4 × 10⁻⁵ antes, against thresholds of 0.001 for both. Two runs give identical strategies.
+
+## B-2 · The best-response evaluator is right
+
+**Passed** at the commit that ticks P2.3 (2026-11-26), same commands.
+
+- Six values derived by hand in `cfr.spec.ts`: Kuhn poker where both players only check and call (value 0; each best response gains 1/3), and a three-hand river game with fixed mixed strategies (value 0.3125; best responses 0.5 for the bettor and −0.25 for the caller). Every computed value equals its derivation to within 1e-12 (largest error printed: 0). The evaluator also returns exactly −1/18 and +1/18 at Kuhn’s published equilibrium with α = 0, so nobody gains by deviating from it.
+
+## B-3 · The solver handles ranges and bet sizes
+
+**Passed** at the commit that ticks P2.3 (2026-11-26), same commands.
+
+- A bettor with three nut hands and three air hands against two bluff-catchers, 4,000 CFR+ iterations each. Closed form: bluffs make up B / (P + 2B) of the bets and the caller continues P / (P + B) of the time.
+
+| Pot | Bet | Bluffs, solved | Closed form | Calls, solved | Closed form | Exploitability (of the pot) |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | 0.5 | 25.00% | 25.00% | 66.68% | 66.67% | 1.5 × 10⁻⁵ |
+| 1 | 1 | 33.35% | 33.33% | 50.02% | 50.00% | 1.5 × 10⁻⁴ |
+| 1 | 2 | 40.00% | 40.00% | 33.32% | 33.33% | 3.1 × 10⁻⁵ |
+| 3 | 1 | 20.00% | 20.00% | 75.01% | 75.00% | 1.4 × 10⁻⁵ |
+
+Every difference is under the 0.5-point threshold.
+
 ## B-4 · Equities are exact
 
 **Passed** at the commit that ticks P2.2 (2026-11-26), in the full gate (`pnpm run test`, `web/src/lib/solver/preflop-table.spec.ts` and `equity.spec.ts`).

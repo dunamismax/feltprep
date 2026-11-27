@@ -27,7 +27,8 @@ describe('solver and contract imports', () => {
 			for (const source of sources) {
 				expect(source).toMatch(/^\.\.?\/(?:(?:engine|solver|spots)\/)?[\w.-]+\.(ts|json)$/);
 			}
-			expect(text).not.toMatch(/\bnode:/);
+			// A Node module specifier, as in import or import(): 'node:fs'.
+			expect(text).not.toMatch(/['"`]node:/);
 			expect(text).not.toMatch(/\brequire\(/);
 		}
 	);

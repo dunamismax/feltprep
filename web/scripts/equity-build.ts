@@ -75,7 +75,11 @@ if (values.check) {
 		files: [{ path: 'preflop-classes.json', sha256, bytes: Buffer.byteLength(text) }],
 		build: {
 			command: 'pnpm run equity:build',
-			commit: git('rev-parse', 'HEAD'),
+			// A tree with uncommitted changes to tracked files is marked, so the
+			// record never names a commit that does not hold the code that ran.
+			commit:
+				git('rev-parse', 'HEAD') +
+				(git('status', '--porcelain', '--untracked-files=no') ? '-dirty' : ''),
 			settings: {},
 			seed: null
 		},

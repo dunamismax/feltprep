@@ -10,8 +10,8 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 
 | | |
 | --- | --- |
-| **Current phase** | [Phase 2 · Reference math](#phase-2--reference-math): P2.1 and P2.2 are done. |
-| **Next step** | **P2.3 · Solver core and best response**, then P2.4 (the jam-or-fold solution), which needs both. |
+| **Current phase** | [Phase 2 · Reference math](#phase-2--reference-math): P2.1 to P2.3 are done. |
+| **Next step** | **P2.4 · The jam-or-fold solution**; P2.5 (grading) follows it. |
 | **In progress** | Nothing. |
 | **Background run** | None. |
 | **Waiting on the owner** | Nothing blocks the next step. Q-12 is needed by P3.1 and P3.2. Two optional Cloudflare settings for `feltprep.app` (D-11): keep the path in the redirect, and add `www.feltprep.app`. |
@@ -388,10 +388,11 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
   - [x] B-4 passes.
   - Evidence: the commit that ticks this step. `web/src/lib/solver/` (`classes.ts`, `equity.ts`, `preflop-table.ts`); `solutions/equity/` holds the table and its manifest, built by `pnpm run equity:build` in 37 s and 150 MB on one core and rebuilt byte-identical with `-- --check`. B-4 passed ([`docs/benchmarks.md`](docs/benchmarks.md)): exact agreement with Irving and d’Eon’s published exact table on all 14,365 class pairs (imported as a fixture, BSD 3-Clause, `docs/provenance.md`) and with the direct enumerator on six class pairs. Full gate: 341 Vitest tests, 24 Playwright tests.
 
-- [ ] **P2.3 · Solver core and best response** · Depends on: P2.1 (its benchmark games need no imported code)
-  - [ ] A game-tree interface, a CFR solver and an exact best-response evaluator, in plain TypeScript that runs in Node and in Vitest, deterministic for a given seed and settings.
-  - [ ] B-1, B-2 and B-3 pass, and a command runs the benchmark suite and is in AGENTS.md section 7.
-  - [ ] `docs/benchmarks.md` exists and records the three results with their commit and command.
+- [x] **P2.3 · Solver core and best response** · Depends on: P2.1 (its benchmark games need no imported code)
+  - [x] A game-tree interface, a CFR solver and an exact best-response evaluator, in plain TypeScript that runs in Node and in Vitest, deterministic for a given seed and settings.
+  - [x] B-1, B-2 and B-3 pass, and a command runs the benchmark suite and is in AGENTS.md section 7.
+  - [x] `docs/benchmarks.md` exists and records the three results with their commit and command.
+  - Evidence: the commit that ticks this step. `web/src/lib/solver/game.ts` (private hands dealt once, then a public betting tree, which covers Kuhn, river games and jam-or-fold), `cfr.ts` (alternating CFR+ with linear averaging, exact best response, exploitability, exact per-type action values) and `benchmark-games.ts`; `pnpm run solver:bench`. B-1: value −0.055556, exploitability 4.4 × 10⁻⁵ antes after 2,000 iterations; B-2: six hand-derived values matched exactly; B-3: four pot and bet sizes within 0.02 points of the closed form ([`docs/benchmarks.md`](docs/benchmarks.md)). The solver draws no random numbers, so it has no seed; two runs give identical strategies (tested). The equity build now marks a dirty tree, and the table’s manifest names `8726459`, the commit holding the code that built it.
 
 - [ ] **P2.4 · The jam-or-fold solution** · Depends on: P2.2, P2.3
   - [ ] The game is stated in `docs/grading.md`: heads-up, blinds of half and one big blind, no ante; the button jams or folds; the big blind calls or folds; effective stacks from 2 to 15 big blinds in whole steps.

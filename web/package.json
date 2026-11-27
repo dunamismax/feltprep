@@ -30,7 +30,8 @@
 		"engine:fuzz": "node scripts/engine-fuzz.ts",
 		"engine:bench": "node scripts/engine-bench.ts",
 		"engine:parity": "node scripts/engine-parity.ts",
-		"equity:build": "node scripts/equity-build.ts"
+		"equity:build": "node scripts/equity-build.ts",
+		"solver:bench": "node scripts/solver-bench.ts"
 	},
 	"dependencies": {
 		"drizzle-orm": "0.45.4",
