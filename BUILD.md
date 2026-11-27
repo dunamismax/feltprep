@@ -10,13 +10,13 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 
 | | |
 | --- | --- |
-| **Current phase** | [Phase 2 · Reference math](#phase-2--reference-math): P2.1 to P2.4 are done. |
-| **Next step** | **P2.5 · Grading**, the last step of Phase 2: the verdict function, the jam-or-fold game test for full hands, and B-9. |
+| **Current phase** | [Phase 3 · The first loop](#phase-3--the-first-loop), not started. Phase 2 is complete: the jam-or-fold solution is graded and registered. |
+| **Next step** | **P3.1 · Design foundation**: theme tokens and cards drawn in code need no answer to Q-12; brand artwork does. |
 | **In progress** | Nothing. |
 | **Background run** | None. |
-| **Waiting on the owner** | Nothing blocks the next step. Q-12 is needed by P3.1 and P3.2. Two optional Cloudflare settings for `feltprep.app` (D-11): keep the path in the redirect, and add `www.feltprep.app`. |
-| **Live** | <https://feltprep.com> serves `main` as a preview, redeployed by every push whose CI passes (D-10); `/healthz` names the live commit. `feltprep.app` has no DNS records yet. |
-| **`main`** | Phase 1, plus the host deploy in `deploy/` and a strict Content Security Policy (P4.1, P4.2). `origin` pushes to GitHub and Codeberg. |
+| **Waiting on the owner** | Q-12 (lesson text and artwork terms) before P3.2 commits a lesson; Q-13 (the published push/fold chart’s terms) is optional. Two optional Cloudflare settings for `feltprep.app` (D-11). |
+| **Live** | <https://feltprep.com> serves `main` as a preview, redeployed by every push whose CI passes (D-10); `/healthz` names the live commit. `feltprep.app` redirects to it in Cloudflare (D-11). |
+| **`main`** | Phases 1 and 2, the host deploy and a strict CSP. `origin` pushes to GitHub and Codeberg. |
 | **Last updated** | 2026-11-26 |
 
 ## How to work this file
@@ -302,7 +302,7 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
 ## Phase overview
 
 - [x] **Phase 1 · Foundation.** A running app on the settled stack and a verified rules engine. *Outcome: a clean clone builds, tests and serves a page, and plays legal hands in a test.*
-- [ ] **Phase 2 · Reference math.** Exact equities, a verified solver core and the jam-or-fold solution. *Outcome: FeltPrep can grade one family of decisions, with the evidence recorded.*
+- [x] **Phase 2 · Reference math.** Exact equities, a verified solver core and the jam-or-fold solution. *Outcome: FeltPrep can grade one family of decisions, with the evidence recorded.*
 - [ ] **Phase 3 · The first loop (milestone M1).** One idea taken through lesson, study, drill, practice and review on a phone. *Outcome: a usable trainer for short-stack heads-up play.*
 - [ ] **Phase 4 · Production.** The app live on its domain with a repeatable deploy. *Outcome: M1 on `feltprep.com`, tried by a few players.* Host preparation (P4.1, P4.2) needs only P1.1 and the owner, so it may run beside Phases 2 and 3; the first public deploy (P4.3) waits for M1 to pass (P3.7).
 - [ ] **Phase 5 · Post-flop solver.** Heads-up subgame solving, a cross-checked spot library and on-demand river solves. *Outcome: study and drills for post-flop spots at 100 big blinds.*
@@ -373,8 +373,8 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
 
 **Exit criteria**
 
-- [ ] Benchmarks B-1 to B-5, B-9, B-11 and B-12 pass, and `docs/benchmarks.md` records them.
-- [ ] The jam-or-fold solution for 2 to 15 big blinds is in the solution registry with a manifest that meets all nine items of the grading gate.
+- [x] Benchmarks B-1 to B-5, B-9, B-11 and B-12 pass, and `docs/benchmarks.md` records them.
+- [x] The jam-or-fold solution for 2 to 15 big blinds is in the solution registry with a manifest that meets all nine items of the grading gate.
 
 - [x] **P2.1 · Spot, solution and grading contract** · Depends on: P1.1 (it imports nothing)
   - [x] `docs/grading.md` defines a spot (every field of grading-gate item 1), a solution artifact (per-hand action frequencies and values, versioned with a `"format"` field), its manifest, and the solution registry with its hash check.
@@ -404,11 +404,12 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
   - Evidence: the commits that tick this step. `web/src/lib/solver/jam-or-fold.ts`; `solutions/jam-or-fold/` (manifest and solution, 280 KB) and `solutions/registry.json`, built by `pnpm run jof:build` in 63 s and rebuilt byte-identical with `-- --check`. B-5: exploitability 1.0 to 7.2 × 10⁻⁸ bb a hand; against HoldemResources’ published chart, 4,712 pure decisions compared and 6 differ, each a fold by under 0.008 bb, and the chart’s own strategy measures within 8.6 × 10⁻⁵ bb of equilibrium with the same game values (Q-13 for the chart’s terms). B-11: 9,464 stored values equal a separate calculation to 1e-9. B-12: one band change, none between acceptable and mistake. All in [`docs/benchmarks.md`](docs/benchmarks.md). The registry entry is `unverified` until B-9 tests the grading path from both seats (P2.5).
   - **Caveat for P3.2** (also in `docs/grading.md` and every game statement): this is the equilibrium of a simplified game in which the button may only move all-in or fold and the big blind may only call or fold. Real players can also limp or make a smaller raise. Those options matter more the deeper the stacks, so the chart is a sound guide at the shortest stacks and a looser one towards 15 big blinds; how much they are worth is not measured here. A limp or a smaller raise leaves the game and is not graded.
 
-- [ ] **P2.5 · Grading** · Depends on: P2.4
-  - [ ] A pure function turns a spot, a hand and an action into a verdict under the Q-7 bands, and returns “not graded” with a reason when no registered reference covers the decision or the hand is outside the spot’s ranges.
-  - [ ] A loss within the hand’s margin of a band’s boundary gets the kinder band, and tests cover a hand just inside and just outside each boundary.
-  - [ ] A function decides whether a decision in a full hand falls inside the jam-or-fold game (stacks, position and prior action), tested from both seats, including hands that leave the game by limping or raising small.
-  - [ ] B-9 passes.
+- [x] **P2.5 · Grading** · Depends on: P2.4
+  - [x] A pure function turns a spot, a hand and an action into a verdict under the Q-7 bands, and returns “not graded” with a reason when no registered reference covers the decision or the hand is outside the spot’s ranges.
+  - [x] A loss within the hand’s margin of a band’s boundary gets the kinder band, and tests cover a hand just inside and just outside each boundary.
+  - [x] A function decides whether a decision in a full hand falls inside the jam-or-fold game (stacks, position and prior action), tested from both seats, including hands that leave the game by limping or raising small.
+  - [x] B-9 passes.
+  - Evidence: the commit that ticks this step. `gradeDecision` and `bandOf` in `web/src/lib/solver/grading.ts`, `locateJamOrFold` in `jam-or-fold-hand.ts`, documented in `docs/grading.md`. `grading.spec.ts` covers each boundary just inside and outside, the margin, the 5% rule and the exploitability floor. B-9 ([`docs/benchmarks.md`](docs/benchmarks.md)): 26 jam-or-fold decisions played as full hands with the button in seat 0 and in seat 1, and 6 river decisions from both seats, every verdict and loss as derived by hand in `b9-decisions.ts`; ten kinds of decision are not graded, with their reasons. With B-9 passed, `jam-or-fold-hu` meets all nine grading-gate items and is `graded` in the registry. Its manifest now names `ced11f4`, the commit whose code built it (the solution’s bytes did not change). Full gate: 455 Vitest tests, 24 Playwright tests.
 
 ## Phase 3 · The first loop
 
@@ -586,6 +587,13 @@ Every session ends by prepending one entry to the log below, in this shape and i
 
 ## Handoff log
 
+### 2026-11-26 · P2.1 to P2.5 · Reference math; Phase 2 complete
+
+- **Completed:** the grading contract and reader (`9f46c7a`); exact equities and the pre-flop class table (`8726459`); CFR+ and exact best response (`812e4c2`); the jam-or-fold solution (`ced11f4`); grading, the full-hand locator and B-9, with the solution now graded (the commit that ticks P2.5).
+- **Verified:** full gate before each commit (455 Vitest and 24 Playwright tests at P2.5); B-1 to B-5, B-9, B-11, B-12 in `docs/benchmarks.md`; both builds rebuilt byte-identical. Not verified: CI on the last commit at the time of writing; nothing is visible in the app yet. `ced11f4`’s message miscounts B-5 (“4,712 of 4,718”); the record is 4,706 of 4,712.
+- **Open decisions:** Q-13 raised (the published chart’s terms; default: keep it out of Git). Q-7’s bands and `minReach` 0.01 used as defaults.
+- **Next ready task:** P3.1: theme tokens and code-drawn cards on a `/style` page.
+
 ### 2026-11-26 · P4.1, P4.2 · feltprep.com live through the build
 
 - **Completed:** `deploy/` on the host contract with continuous deploy of `main` (D-10), a strict CSP, the contract’s migrator (`b61c1dc`); account, database and roles provisioned; site registered in `ubuntu-vm-backup` (`9766f4c`); DDNS covers both names (`xrayservice` `8bc2e05`); `feltprep.app` redirects in Cloudflare (D-11).
@@ -640,10 +648,3 @@ Every session ends by prepending one entry to the log below, in this shape and i
 - **Open decisions:** Q-12 raised: terms for lesson text, the name and artwork. No lesson or artwork is committed before the owner answers.
 - **Next ready task:** P1.1, starting with the current SvelteKit 3 documentation and `sv create` in `web/`.
 - **Plan changes:** “`package.json` names the license” moved from P1.3 to P1.1, because no `package.json` exists until the scaffold.
-
-### 2026-11-24 · Planning · Foundational documents
-
-- **Completed:** README.md, AGENTS.md and BUILD.md written and committed as the first commit on `main`. `origin` was given GitHub and Codeberg push URLs, as the owner’s other repositories have. No code exists.
-- **Verified:** read both reference repositories’ AGENTS.md, README.md and BUILD.md; RiverMind’s engine, bots, tests, licenses and evaluations at `233b9c6`. Ran its TypeScript engine benchmark and a 16,000-hand fuzz read-only from a scratch directory (results in the reuse assessment). Checked that the links between the three documents resolve and that every cited RiverMind path exists. Not run: RiverMind’s pytest, Vitest and parity suites.
-- **Open decisions:** Q-1 to Q-11 raised with defaults.
-- **Next ready task:** P1.1, starting with the current SvelteKit 3 documentation and `sv create` in `web/`.

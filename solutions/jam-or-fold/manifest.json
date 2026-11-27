@@ -780,7 +780,7 @@
 	],
 	"build": {
 		"command": "pnpm run jof:build",
-		"commit": "812e4c23c9d06320ded750f19984634b9c761892-dirty",
+		"commit": "ced11f456c57f9a9cf763affeb9a57b5602eeb87",
 		"settings": {
 			"solver": "CFR+ (alternating, linear averaging)",
 			"iterations": 10000,

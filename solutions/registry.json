@@ -5,8 +5,8 @@
 		{
 			"id": "jam-or-fold-hu",
 			"manifest": "jam-or-fold/manifest.json",
-			"sha256": "56bc68d041b72766c261697cb71c84bbe40cc53fe111200b4230d60ded5c43ef",
-			"status": "unverified",
+			"sha256": "3544d2e502d2a2a2f371cfbdd8f526c28dce4394207b6074feb2b292aef3febf",
+			"status": "graded",
 			"gate": {
 				"statedGame": true,
 				"noAbstraction": true,
@@ -15,7 +15,7 @@
 				"independentAgreement": true,
 				"invariants": true,
 				"reproducible": true,
-				"bothPositions": false,
+				"bothPositions": true,
 				"perHandValues": true
 			},
 			"benchmarks": [
@@ -23,6 +23,7 @@
 				"B-2",
 				"B-4",
 				"B-5",
+				"B-9",
 				"B-11",
 				"B-12"
 			]

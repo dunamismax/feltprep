@@ -4,7 +4,7 @@
 
 | | |
 | --- | --- |
-| **Status** | Early development. The foundation is done: the app builds, tests and serves a placeholder page at feltprep.com, and the rules engine is imported and verified. Nothing is playable yet. |
+| **Status** | Early development. The foundation and the reference math are done: the rules engine is verified, and the first solved game (jamming or folding heads-up at 2 to 15 big blinds) has passed every check FeltPrep requires before it may grade a decision ([benchmarks](docs/benchmarks.md)). The site at feltprep.com is still a placeholder; nothing is playable yet. |
 | **Plan and progress** | [BUILD.md](BUILD.md), starting at **Now** |
 | **How work is done** | [AGENTS.md](AGENTS.md) |
 | **Home** | [feltprep.com](https://feltprep.com) shows the work in progress: every change to `main` that passes its checks goes live there within minutes. `feltprep.app` redirects to it. |

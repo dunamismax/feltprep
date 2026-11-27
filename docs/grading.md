@@ -108,3 +108,9 @@ Grading turns a spot, a hand and the action taken into a `Verdict`.
 A mixed action is therefore never a mistake, and neither is a near-indifferent one.
 
 **Where a grade’s numbers come from.** Every number in a verdict is read from the solution file: the values computed exactly from the finished strategies, the margin measured by B-12, the reach and the frequencies. Grading computes only the loss and the band. **`minReach`** is 0.01 by default: a hand the range holds less than 1% as often as it is dealt is not graded at that decision. This is a proposal, recorded in every manifest so that a change is visible.
+
+## In code
+
+- `gradeDecision(solution, spot, hand, action)` in [`web/src/lib/solver/grading.ts`](../web/src/lib/solver/grading.ts) returns the verdict for a loaded solution (or `null` when none covers the decision), and `bandOf` applies the bands.
+- `locateJamOrFold(state, action)` in [`jam-or-fold-hand.ts`](../web/src/lib/solver/jam-or-fold-hand.ts) decides whether an action taken in a full hand on the engine is inside the jam-or-fold game: two players, no ante, blinds of half and one big blind, an effective stack of a whole number of big blinds from 2 to 15, before the flop, and either the button’s first action or the big blind facing an all-in with nothing else before it. A raise for at least the effective stack is a jam. It returns the spot, the action and the hand class, or `outside-game` (another game: other stacks, a third player, an ante, after a limp or a smaller raise, after the flop) or `action-outside-game` (a limp or a smaller raise by the button; anything but call or fold facing the jam), each with a sentence for the player.
+- B-9’s fixed decisions are [`b9-decisions.ts`](../web/src/lib/solver/b9-decisions.ts), each with its verdict and loss derived by hand.

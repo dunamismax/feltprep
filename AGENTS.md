@@ -126,8 +126,8 @@ web/                       the SvelteKit app (exists; the same place RiverMind k
   src/lib/engine/          cards, hand evaluator, hand state machine, histories, seat views, fuzzer and fixtures:
                            pure, browser-safe TypeScript imported from RiverMind (exists)
   src/lib/solver/          hand classes, exact equities, the pre-flop class table, games with a public betting
-                           tree (game.ts), CFR+ and exact best response (cfr.ts), the jam-or-fold game and
-                           the verdict bands (grading.ts) exist.
+                           tree (game.ts), CFR+ and exact best response (cfr.ts), the jam-or-fold game, its
+                           location in a full hand (jam-or-fold-hand.ts) and grading (grading.ts) exist.
                            fixtures/ holds imported reference data
   src/lib/spots/           the contract's types (docs/grading.md) and the reader that checks a solution's hashes (exists)
   src/lib/server/          server-only code: database client and health check exist; practice sessions and opponents later

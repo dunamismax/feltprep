@@ -65,6 +65,14 @@ Every difference is under the 0.5-point threshold.
 
   Each is a fold by less than 0.008 big blinds, 0.5% of the 1.5 big blind pot, so jamming there is *acceptable* under Q-7. They are gaps in FeltPrep’s solution: 84s jams at 7 and 10 big blinds and folds at 8 and 9; 43s jams at 5, 7 and 9 and folds at 8; 94s jams at 5 and folds from 6. The chart describes itself as simplified, with most mixed and gapped detail left out, which accounts for these. A second, independent check agrees: **the chart’s own strategy, measured by FeltPrep’s evaluator, is within 8.6 × 10⁻⁵ big blinds a hand of equilibrium at every depth** (0 at 2 and 12 big blinds), and its game values equal FeltPrep’s to within 10⁻⁴ (−0.04537 against −0.045371 at 10 big blinds). Two separately computed solutions of the same game therefore agree on its value and on every decision that matters by more than 0.008 big blinds.
 
+## B-9 · Grades do not drift
+
+**Passed** at the commit that ticks P2.5 (2026-11-26), in the full gate (`web/src/lib/solver/grading-b9.spec.ts`, decisions in `b9-decisions.ts`).
+
+- **Jam-or-fold, both seats, both seat numbers.** At 2, 10 and 15 big blinds: the button folding AA (a mistake, losing at least 1.5 big blinds, the whole pot) and jamming it (acceptable, no loss); the big blind folding AA to a jam (a mistake, losing at least 2Se − S + 1) and calling (acceptable, no loss); and the button folding 72o at 15 big blinds (acceptable; the published chart folds it). The bounds use e = 0.77501, AA’s lowest equity against any class (65s), read from the published exact table, not from FeltPrep’s. Each is played as a full hand on the engine with the button in seat 0 and again in seat 1, located by `locateJamOrFold` and graded against the registered solution as the reader loads it: 26 graded decisions, every verdict and loss as derived.
+- **The B-3 river game, both seats.** Pot 1, bet 1: the nuts checking is a mistake losing 0.5 (closed form 1.0 against 0.5), the nuts betting has no loss, and air betting or checking and the bluff-catcher calling or folding are acceptable with no loss, all within 0.005.
+- **Not graded.** A limp, a raise to 3 big blinds, the big blind after a limp or facing a small raise, a decision after the flop, stacks of 20 or 10.5 big blinds, three players and an ante are each outside the game, with the reason; so are a spot no solution covers, an unverified solution, an action the game lacks, an unknown hand and a hand below the minimum reach.
+
 ## B-11 · Each hand’s action values are right
 
 **Passed** at the commit that ticks P2.4 (2026-11-26), in the full gate (`jam-or-fold.spec.ts`).
