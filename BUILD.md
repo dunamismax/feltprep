@@ -10,8 +10,8 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 
 | | |
 | --- | --- |
-| **Current phase** | [Phase 3 · The first loop](#phase-3--the-first-loop): P3.1 and P3.3 done; the jam-or-fold study view is at `/study/jam-or-fold/10`. |
-| **Next step** | **P3.4 · Drill**: deal seeded hands for the jam-or-fold spot and grade each answer in the browser. P3.2 can build its pipeline but commits no lesson before Q-12. |
+| **Current phase** | [Phase 3 · The first loop](#phase-3--the-first-loop): P3.1 and P3.3 done, P3.4 done but for its lesson link; study and drill at `/study/jam-or-fold/10` and `/drill/jam-or-fold/10`. |
+| **Next step** | **P3.5 · Short-stack practice table**, reusing the drill’s `ActionPanel`. P3.2 can build its pipeline but commits no lesson before Q-12, which also holds P3.4’s lesson link. |
 | **In progress** | Nothing. |
 | **Background run** | None. |
 | **Waiting on the owner** | Q-12 (lesson text and artwork terms) before P3.2 commits a lesson; Q-13 (the published push/fold chart’s terms) is optional. Two optional Cloudflare settings for `feltprep.app` (D-11). |
@@ -440,10 +440,12 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
   - Evidence: the commit that ticks this step. `/study/jam-or-fold/[stack]`, prerendered at 2 to 15 big blinds from the solution bundled by `web/src/lib/server/solutions.ts`, whose reader checks every hash in the build (a changed byte in `solution.json` failed `pnpm run build` with `SolutionRefused`); `sliceSolution` grades every hand and action exactly as the whole solution does at all 14 depths (tested). Each cell fills from the bottom by frequency, so the strategy reads from height, not hue; arrow keys move with one tab stop; `#big-blind` links the other seat. `study.e2e.ts` checks the cells against `solution.json`, tap, keyboard, seat, depth links and a 404 outside the game, in six projects; looked at 360 × 640 in both themes. Full gate: 491 Vitest tests, 66 Playwright tests.
 
 - [ ] **P3.4 · Drill** · Depends on: P3.3, P2.5
-  - [ ] A drill deals hands for the spot and asks for the decision, with the practice table’s own action controls.
+  - [x] A drill deals hands for the spot and asks for the decision, with the practice table’s own action controls.
   - [ ] Feedback follows each answer at once: the verdict, the loss in big blinds, the reference’s frequencies, a one-sentence reason and a link to the lesson.
-  - [ ] A session ends with a summary, and progress is kept in the browser (Q-4) and survives a reload.
-  - [ ] Deals come from a seed in tests, so every browser test plays known hands.
+  - [x] A session ends with a summary, and progress is kept in the browser (Q-4) and survives a reload.
+  - [x] Deals come from a seed in tests, so every browser test plays known hands.
+  - Evidence: the commit that adds `/drill/jam-or-fold/[stack]`. Each deal is a real engine hand stopped at the decision (`web/src/lib/drill/jam-or-fold.ts`), from both engine seats, graded through `locateJamOrFold` and `gradeDecision` as a full hand will be; a limp or smaller raise is “not graded”. `ActionPanel.svelte` (shared with P3.5) shows only what `legalActions` allows, checked over 300 random hands. Session and per-depth progress in local storage (`session.ts`), restored after a reload to the same decision or its feedback; `?seed=` fixes the deals. `drill.e2e.ts` in six projects: a 20-decision session answered from `solution.json` is all acceptable, a clear mistake shows its loss, limp and small raise not graded, reload, and controls at least 44 px, 8 px apart, in the viewport and unmoved by feedback. Full gate: 518 Vitest tests, 96 Playwright tests.
+  - Remaining: the feedback links to the study view but not yet to a lesson, which waits for P3.2 and Q-12. Everything else in the criterion is shown.
 
 - [ ] **P3.5 · Short-stack practice table** · Depends on: P3.1, P2.5, P1.5
   - [ ] A heads-up table at a chosen depth from 10 to 15 big blinds plays complete hands on the engine against a labelled practice opponent: the reference strategy inside the jam-or-fold game, and the imported rule-based bot (with its provenance entry) elsewhere.

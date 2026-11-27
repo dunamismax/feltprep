@@ -122,10 +122,13 @@ web/                       the SvelteKit app (exists; the same place RiverMind k
   drizzle.config.ts        drizzle-kit settings (exists)
   src/app.css              Tailwind entry and the theme tokens, light and dark, at AA contrast (exists)
   src/env.ts               environment variables, validated at build and start (exists)
-  src/routes/              pages and endpoints: the home page, /style, /study/jam-or-fold/[stack] and /healthz exist
+  src/routes/              pages and endpoints: the home page, /style, /study/jam-or-fold/[stack],
+                           /drill/jam-or-fold/[stack] and /healthz exist
   src/lib/ui/              shared components and their helpers: code-drawn playing cards and the
                            contrast pairs the theme test measures (exists)
   src/lib/study/           the study view's strategy grid and its formatting helpers (exists)
+  src/lib/drill/           the jam-or-fold drill: seeded deals, judging, session and progress storage (exists)
+  src/lib/table/           the action panel, built only from the engine's legal actions (exists)
   src/lib/engine/          cards, hand evaluator, hand state machine, histories, seat views, fuzzer and fixtures:
                            pure, browser-safe TypeScript imported from RiverMind (exists)
   src/lib/solver/          hand classes, exact equities, the pre-flop class table, games with a public betting

@@ -67,6 +67,14 @@
 		<h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">
 			Jam or fold at {data.stack} big blinds
 		</h1>
+		<p>
+			<a
+				href={resolve('/drill/jam-or-fold/[stack]', { stack: String(data.stack) })}
+				class="font-semibold text-accent underline underline-offset-2"
+			>
+				Drill this spot
+			</a>
+		</p>
 		<p class="text-muted">
 			Heads-up, before the flop. The button moves all-in or folds; facing the all-in, the big blind
 			calls or folds.
@@ -99,6 +107,7 @@
 			{#each ['button', 'big-blind'] as const as s (s)}
 				<button
 					type="button"
+					id={s}
 					aria-pressed={seat === s}
 					class="flex min-h-target flex-col items-center justify-center rounded-md border px-3 py-1 {seat ===
 					s
