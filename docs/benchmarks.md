@@ -31,6 +31,8 @@ The record of every Gate B benchmark run ([BUILD.md](../BUILD.md#gate-b--trustwo
 
 Every difference is under the 0.5-point threshold.
 
+**Through the post-flop builder** (P5.2, at the commit that ticks P5.2, in the full gate: `web/src/lib/solver/river.spec.ts`). The same game played through the engine on a real board, K♠ 9♦ 5♣ 2♥ 7♠, by `buildRiver`: the big blind holds three sets of kings (the nuts) and the sixteen four-threes (air), the button the six queen pairs (bluff-catchers), no two groups sharing a card, so every pair is equally likely. Pot 1,000 chips; the one bet size equals the stack, so it merges with all-in and nobody can raise. The button may also bet after a check, which the abstract game lacks; against a checking range of air it gains nothing, so the closed form still holds. After 4,000 iterations, at bets of half the pot, the pot and twice the pot, the bluffs’ share of the bets and the queens’ calling frequency are each within 0.5 points of B / (P + 2B) and P / (P + B), with exploitability under 0.1% of the pot.
+
 ## B-4 · Equities are exact
 
 **Passed** at the commit that ticks P2.2 (2026-11-26), in the full gate (`pnpm run test`, `web/src/lib/solver/preflop-table.spec.ts` and `equity.spec.ts`).
@@ -65,6 +67,35 @@ Every difference is under the 0.5-point threshold.
 
   Each is a fold by less than 0.008 big blinds. Under Q-7’s first default (1% of the 1.5 big blind pot) jamming was *acceptable* in all six; under D-20’s 0.5% it is acceptable in five, and jamming 53s at 4 big blinds (0.0077 bb, 0.51% of the pot) is an *inaccuracy* by 0.01 points. They are gaps in FeltPrep’s solution: 84s jams at 7 and 10 big blinds and folds at 8 and 9; 43s jams at 5, 7 and 9 and folds at 8; 94s jams at 5 and folds from 6. The chart describes itself as simplified, with most mixed and gapped detail left out, which accounts for these. A second, independent check agrees: **the chart’s own strategy, measured by FeltPrep’s evaluator, is within 8.6 × 10⁻⁵ big blinds a hand of equilibrium at every depth** (0 at 2 and 12 big blinds), and its game values equal FeltPrep’s to within 10⁻⁴ (−0.04537 against −0.045371 at 10 big blinds). Two separately computed solutions of the same game therefore agree on its value and on every decision that matters by more than 0.008 big blinds.
 
+## B-6 · River solutions are near equilibrium
+
+**Passed** at the commit that ticks P5.2 (2026-11-27): `pnpm run river:bench` from `web/`, on one core under `nice -n 19` beside other work. The 20 reference river spots of [solver.md](solver.md#reference-river-spots), each solved with CFR+ until the exploitability of the stored, rounded strategy, measured by FeltPrep’s best-response evaluator (B-2), is at most 0.5% of the pot, checked every 25 iterations. The solve is then carried on, doubling, until a doubling moves no verdict between acceptable and mistake (B-12, below), and that longer solve is what is stored; it is never less exact than the B-6 solve.
+
+| Spot | Board | Line, sizes | Combinations | Decisions | B-6: iterations, exploitability | Stored: iterations, exploitability | Solving to the margin solve |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| river-01 | K♠ 9♦ 5♣ 2♥ 7♠ | single-raised, z1 | 365 × 331 | 24 | 375, 0.491% | 24,000, 0.001% | 27.8 s |
+| river-02 | Q♣ Q♦ 8♠ 4♥ 2♣ | single-raised, z2 | 382 × 330 | 8 | 250, 0.445% | 2,000, 0.035% | 0.7 s |
+| river-03 | A♥ T♥ 6♥ 3♣ J♦ | single-raised, z3 | 356 × 305 | 16 | 350, 0.469% | 11,200, 0.003% | 7.4 s |
+| river-04 | 9♣ 8♦ 7♠ 6♥ 2♣ | single-raised, z4 | 363 × 343 | 14 | 350, 0.457% | 11,200, 0.001% | 6.8 s |
+| river-05 | 6♠ 5♦ 4♣ 9♥ K♦ | single-raised, z1 | 364 × 334 | 24 | 375, 0.493% | 96,000, under 0.001% | 106.3 s |
+| river-06 | J♣ J♦ 7♣ 7♥ 3♠ | single-raised, z2 | 379 × 326 | 8 | 300, 0.442% | 2,400, 0.020% | 0.9 s |
+| river-07 | A♣ 8♦ 4♠ K♥ 2♦ | single-raised, z3 | 358 × 310 | 16 | 425, 0.489% | 6,800, 0.006% | 4.7 s |
+| river-08 | K♦ Q♠ J♣ T♥ 3♦ | single-raised, z4 | 373 × 309 | 14 | 275, 0.424% | 2,200, 0.028% | 1.3 s |
+| river-09 | 2♥ 7♥ 9♥ J♥ 4♣ | re-raised, z4 | 89 × 121 | 12 | 125, 0.411% | 2,000, 0.009% | 0.3 s |
+| river-10 | T♣ 9♣ 3♦ 3♠ A♥ | re-raised, z2 | 78 × 120 | 8 | 100, 0.426% | 1,600, 0.006% | 0.2 s |
+| river-11 | 8♠ 8♦ 8♣ 5♥ 2♠ | re-raised, z1 | 96 × 128 | 20 | 125, 0.436% | 4,000, 0.002% | 1.2 s |
+| river-12 | A♠ K♠ Q♦ J♦ 5♣ | re-raised, z3 | 66 × 111 | 14 | 125, 0.370% | 1,000, 0.012% | 0.2 s |
+| river-13 | 5♥ 4♥ 3♦ 2♣ K♠ | re-raised, z2 | 89 × 129 | 8 | 100, 0.406% | 100, 0.406% | 0.0 s |
+| river-14 | T♦ 7♣ 4♠ 2♦ 2♥ | 25 bb, z2 | 253 × 256 | 8 | 100, 0.405% | 400, 0.067% | 0.1 s |
+| river-15 | Q♥ J♥ 9♣ 8♦ 3♠ | 25 bb, z1 | 232 × 224 | 20 | 125, 0.471% | 2,000, 0.010% | 1.2 s |
+| river-16 | 7♦ 6♦ 2♣ A♠ T♦ | 25 bb, z4 | 233 × 227 | 12 | 100, 0.471% | 6,400, 0.001% | 2.3 s |
+| river-17 | K♣ K♥ 5♠ 5♦ K♠ | 25 bb, z3 | 240 × 224 | 14 | 100, 0.466% | 800, 0.010% | 0.3 s |
+| river-18 | A♥ 9♠ 5♦ 5♣ 5♥ | wide, z1 | 567 × 449 | 24 | 525, 0.485% | 16,800, 0.005% | 26.9 s |
+| river-19 | J♠ T♠ 4♥ 3♥ 8♣ | wide, z3 | 581 × 470 | 16 | 500, 0.486% | 16,000, 0.003% | 17.0 s |
+| river-20 | 4♦ 4♠ K♣ 8♥ 8♦ | wide, z2 | 564 × 471 | 8 | 500, 0.478% | 4,000, 0.018% | 1.8 s |
+
+Every spot is under the 0.5% threshold; the worst is river-01 at 0.491%. The whole run took 207 s of solving and 209 s in all, with a peak of 335 MB. Combinations are the big blind’s and the button’s that the board leaves possible. **Reproducibility:** each solution’s SHA-256 is in `solutions/river-reference/manifest.json`, and a rebuild on the clean tree at `76d2c35` and `pnpm run river:bench -- --check` gave every solution identical bytes.
+
 ## B-9 · Grades do not drift
 
 **Passed** at the commit that ticks P2.5 (2026-11-26), and again under D-20’s bands at the commit that ticks P3.8, in the full gate (`web/src/lib/solver/grading-b9.spec.ts`, decisions in `b9-decisions.ts`). Re-derived under D-20, every verdict stands: each loss is 0 or at least the whole pot, except the 72o fold, whose bound is now 0.5% of the pot (0.0075 bb).
@@ -79,6 +110,8 @@ Every difference is under the 0.5-point threshold.
 
 - At every depth and both seats, all 169 classes and both actions: the values stored in the solution (computed from the game tree by `actionValues`) equal a separately written calculation (`directValues` in `jam-or-fold.ts`, straight from the equity table and the other player’s frequencies, with no game tree) to within 1e-9. 2 × 14 × 169 × 2 = 9,464 values. The rarest hands are included, since every class is checked.
 
+- **The reference river spots** (P5.2, at the commit that ticks P5.2, `pnpm run river:bench`). At every decision of every spot, for a sample of the actor’s hands in range there (reach at least 1%): the four it holds least often, the four it holds most often and four spread between. Each action’s value from `actionValues` was compared with a separately written calculation (`DirectRiver` in [`river-direct.ts`](../web/src/lib/solver/river-direct.ts)) that sums over every opposing combination sharing no card with the hand, weighted by the opponent’s own reach on the path, follows each pair of hands through the tree with both strategies, decides showdowns with the engine’s evaluator on seven cards and reads every payoff from the engine’s chip counts. 3,236 hands; the largest difference is 1.1 × 10⁻⁹ of the pot, against a tolerance of 0.1%. In the full gate, `river.spec.ts` checks the same calculation against values worked out by hand on a one-hand-each spot, and against `actionValues` for every hand in range at every decision of river-10, to 1e-9 of the pot.
+
 ## B-12 · A verdict near a threshold is not an accident of one solve
 
 **Passed** at the commit that ticks P2.4 (2026-11-26): `pnpm run jof:build` solves every depth again with 20,000 iterations (the solver draws no random numbers, so there is no seed to vary).
@@ -86,6 +119,14 @@ Every difference is under the 0.5-point threshold.
 - **Under D-20’s bands** (0.5% and 3%; re-run at the commit that ticks P3.8, `jof:build` from `7686e28`): no hand’s verdict moves between acceptable and mistake. **One band changes:** at 3 big blinds, the big blind folding 62s to a jam is an inaccuracy after 10,000 iterations and a mistake after 20,000 (its loss sits at the 3% boundary). Its stored margin gives it the kinder band. The solution’s bytes did not change; only the manifest’s `grading` and its commit did.
 - Under Q-7’s first defaults (1% and 5%, at P2.4) the one band change was at 7 big blinds, the big blind calling with T4s (inaccuracy, then mistake at the 5% boundary).
 - Each hand’s margin (the largest change in its loss over its actions) is stored in the solution. The largest is 0.00175 big blinds, at 3 big blinds; at the other depths it is below 0.0001.
+
+**The reference river spots** (P5.2, at the commit that ticks P5.2, `pnpm run river:bench`). Each spot’s stored solve is compared with the same solve carried on to twice the iterations; the solver draws no random numbers, and a solve stopped at N iterations equals one run for N, bit for bit.
+
+- **Solved only to B-6’s 0.5%, B-12 fails badly:** at twice the iterations, between 0 (river-13) and 287 (river-05) verdicts per spot move between acceptable and mistake. Two causes, seen on river-01: an action the early iterations tried keeps a few percent of the average strategy, which makes it acceptable by frequency until more iterations dilute it (QsTs checking: 6.7% of the time at 1,500 iterations, 1.7% at 3,000); and the value of an action a hand does not take moves as the other player’s response drifts among strategies that are equally good for that player (A♠8♠ betting three quarters of the pot: −89.5 chips at 6,000 iterations, −62.8 at 12,000, with checking at −62).
+- **So the stored solve is carried on, doubling, until one doubling moves no verdict between acceptable and mistake.** The counts per doubling are in the build output, such as river-01’s 277, 70, 42, 14, 8, 4 and 0 from 750 to 48,000 iterations. This took from 1 times B-6’s iterations (river-13) to 256 times (river-05, 96,000 iterations); the median spot needed 16 times.
+- **Result:** no hand’s verdict moves between acceptable and mistake on any spot. 1,881 bands change between inaccuracy and another band, listed by `river:bench -- --list`. 965 hands at a decision are in range in the stored solve and below the 1% minimum reach in the longer one (A♥A♣ on river-16, facing an all-in after its own raise, is one); the longer solve would not grade them, which is counted separately and is not a move between bands.
+- **Margins** are stored per hand, as the contract defines them. They are large where a hand never takes an action: calling an all-in the other player almost never makes, whose value depends on which hands make it, and many shoving ranges are equally good for the shover. On river-02 and river-06, 90% of the actions whose loss moved by more than 3% of the pot were ones the hand took less than 1% of the time in both solves; the largest per-hand margin, on river-19, is 4.2 times the starting pot. Since a hand’s margin is the largest over its actions, such an action softens the hand’s other actions too; P5.4 stores margins per action for post-flop solutions before any of them grades.
+- **Invariants** (grading-gate item 6): every stored frequency row sums to one within 10⁻⁹; player 0’s value at the root plus player 1’s at its first decisions is zero within 10⁻⁹ of the pot; and at every decision with a fold, no hand in range that beats or ties every opposing hand there folds as much as 0.01% of the time (2,995 such hands; the most is 0.0094%, on river-13).
 
 ## B-13 · The explanation of a grade is true
 

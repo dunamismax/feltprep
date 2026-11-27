@@ -11,12 +11,12 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 | | |
 | --- | --- |
 | **Current phase** | [Phase 5 · Post-flop solver](#phase-5--post-flop-solver). Phase 3 (M1) is complete: Gate C passes, accessibility and the owner’s iPhone pass included. |
-| **Next step** | **P5.2 · River solver**: B-3 through the post-flop builder, then at least 20 reference river spots for B-6, with B-11 and B-12 on them. |
+| **Next step** | **P5.3 · Independent cross-check**: read an open-source river solver’s license (D-21), convert the reference river spots to it, and compare at least ten for B-7. |
 | **In progress** | None. |
 | **Background run** | None. |
-| **Waiting on the owner** | Nothing. P7.6 (the release) needs their word. |
+| **Waiting on the owner** | Nothing blocking. Q-15 (how an on-demand river solve qualifies its grades) has a default and is needed by P5.4; P7.6 (the release) needs their word. |
 | **Live** | <https://feltprep.com> serves `main` as a preview, redeployed by every push whose CI passes (D-10); `/healthz` names the live commit. `feltprep.app` redirects to it in Cloudflare (D-11). |
-| **`main`** | Phases 1 to 3 (M1), and the post-flop solver core: spots through the engine, chance cards, linear-time showdowns, measured to the flop (P5.1). `origin` pushes to GitHub and Codeberg. |
+| **`main`** | Phases 1 to 3 (M1), and the post-flop solver core measured to the flop (P5.1), with the river solver checked on 20 reference spots (P5.2). `origin` pushes to GitHub and Codeberg. |
 | **Last updated** | 2026-11-27 |
 
 ## How to work this file
@@ -123,7 +123,7 @@ These come from the owner’s brief of 2026-11-24 and the owner’s standing rul
 
 ## Open decisions
 
-Use each default until the owner decides otherwise. **Needed by** names the first step that relies on the answer. The owner answered Q-1 to Q-13 on 2026-11-26 and Q-14 on 2026-11-27; a new one is added here with a default.
+Use each default until the owner decides otherwise. **Needed by** names the first step that relies on the answer. The owner answered Q-1 to Q-13 on 2026-11-26 and Q-14 on 2026-11-27; Q-15 is open. A new one is added here with a default.
 
 | ID | Question | Default until decided | Needed by |
 | --- | --- | --- | --- |
@@ -141,6 +141,7 @@ Use each default until the owner decides otherwise. **Needed by** names the firs
 | Q-12 | **Terms for lesson text, and for the FeltPrep name and artwork.** D-9 covers the code. Are lessons and brand assets under the same license, a content license, or reserved? | **Decided** (D-12): lessons CC BY-SA 4.0; name and artwork reserved. | — |
 | Q-13 | **The published jam-or-fold chart.** B-5 compares FeltPrep’s solution with HoldemResources’ heads-up push/fold chart (<https://www.holdemresources.net/hune>), whose page names no license. May the chart, or the unsimplified equilibrium data the page offers for download, be kept in the repository or downloaded for the comparison? | **Decided** (D-22): the chart stays out, and its data is not downloaded. | — |
 | Q-14 | **An accessibility checker.** May axe-core and `@axe-core/playwright` (MPL-2.0) be added as test-only dependencies? | **Decided** (D-26): yes; agents choose imports and record them. | — |
+| Q-15 | **How an on-demand river solve qualifies its grades.** P5.2 measured that on the reference river spots per-hand verdicts stop moving between acceptable and mistake (B-12) only after 1 to 256 times the iterations that reach B-6’s 0.5% of the pot (16 times for the median spot): on `river-01`, 24,000 iterations, and 28 s on one core with the margin solve that checks them, well beyond B-10’s 5 s. Should an on-demand solve grade at all, and on what evidence? | An on-demand solve grades a decision only if its own doubling check (B-12) passes inside the budget; otherwise its answer is shown as study, labelled not graded. No threshold is lowered. | P5.4 |
 
 ## Architecture proposals
 
@@ -564,9 +565,17 @@ Results at P3.7 (`web/e2e/journey.e2e.ts`, with `mistake.e2e.ts`, `review.e2e.ts
   - Evidence (third part): the commit that ticks P5.1. The reference flop as stated was counted, not solved: 2.9 million decisions, 111 GB of solver state. The flop solved instead has one bet size and all-in, at most two a street (170,528 decisions, 6.2 GB): 1% of the pot after 400 iterations, 72 minutes on one core, 10 to 12 GB; 0.5% extrapolated from its own curve to about 710 iterations, 2.1 hours. Decisions in `docs/solver.md`: B-10’s budget stays at 5 s; no Rust core now (the flop is bound by memory, not by the language); a library of 12 flops of that shape, solved from the flop to the river. Full gate as in the second part; only documents changed.
 - [x] **P5.1b · The river on the host** · Depends on: P5.1, the owner’s Tailscale sign-in check for SSH — `node scripts/postflop-measure.ts` run on the host from a scratch export of `main`, with `nice -n 19`, and its times to 1% and 0.5% and peak memory recorded in `docs/solver.md` beside this Mac’s. Split from P5.1 on 2026-11-27 because SSH now asks for a check only the owner can pass; P5.4 measures B-10 on the host as well.
   - Evidence: the commit that ticks P5.1b. On the host (Ryzen 7 5800H VM, 8 cores, 15 GB, load 0.2), from a scratch export of `beec55c` under `/tmp`, removed afterwards: 1% of the pot in 0.4 s, 0.5% in 0.7 s, peak 111 MB, the same in two runs; about 1.6 times this Mac’s time, with identical exploitability at every check. Recorded in `docs/solver.md`.
-- [ ] **P5.2 · River solver** · Depends on: P5.1 — B-3 on the full solver, B-6, and B-11 and B-12 on the reference river spots.
+- [x] **P5.2 · River solver** · Depends on: P5.1 — B-3 on the full solver, B-6, and B-11 and B-12 on the reference river spots. Criteria written 2026-11-27, when the step was claimed:
+  - [x] **B-3 through the builder.** The polarized river game on a real board, built by `buildRiver` through the engine (one bet size equal to the stack, so all-in merges with it; nuts, air and bluff-catchers that share no card), matches the closed form within 0.5 points for at least three ratios of bet to pot, in the full gate.
+  - [x] **Ranges in notation.** A parser turns standard range notation (`TT+`, `A2s-A5s`, `KQo`, `QJs:0.5`) into weighted combinations, tested against counts worked out by hand; the reference spots’ ranges are written in it, so they can be shown to a player (D-18) and given to an independent tool (P5.3).
+  - [x] **At least 20 reference river spots** stated in code and in `docs/solver.md`: boards chosen to cover distinct textures, ranges written for FeltPrep with their reasoning, at least three sets of sizes and at least two ratios of stack to pot. Each builds through the engine.
+  - [x] **B-6.** Each spot is solved until FeltPrep’s best-response evaluator measures its exploitability at or under 0.5% of the pot, checked every 25 iterations; iterations, time and the measured value recorded in `docs/benchmarks.md` by `pnpm run river:bench`.
+  - [x] **B-11.** At every decision of every spot, for a sample of the actor’s hands in range there (the four it holds least often, the four it holds most often and four spread between), each action’s value from `actionValues` equals a separately written calculation that sums over every pair of hands with the engine’s evaluator, within 0.1% of the pot.
+  - [x] **B-12.** Each spot is solved again with twice the iterations (the stored solve is carried on, doubling, until this holds; added when the first run showed 0.5% was far from enough): no hand’s verdict under D-20 moves between acceptable and mistake, every band change is counted and listed, and each hand’s margin (the largest change in its loss over its actions) is stored in its solution.
+  - [x] **Invariants and reproducibility** (grading-gate items 6 and 7): every stored frequency row sums to one, the two players’ values sum to zero, a hand that cannot lose at a decision folds less than 0.1% of the time; solutions are written to the ignored `artifacts/river-reference/`, their SHA-256 recorded in a committed manifest, and `river:bench -- --check` rebuilds identical bytes.
+  - Evidence: `76d2c35` adds the code; the commit that ticks P5.2 adds the clean rebuild’s manifest and the record ([benchmarks](docs/benchmarks.md#b-6--river-solutions-are-near-equilibrium), [solver.md](docs/solver.md#reference-river-spots)). B-3 through `buildRiver` within 0.5 points at three ratios; 20 spots, each at most 0.5% of the pot (worst 0.491%) in 100 to 525 iterations; B-11 on 3,236 hands, worst 1.1 × 10⁻⁹ of the pot; B-12 with no acceptable↔mistake move once each solve is carried on, doubling, until a doubling moves none (1 to 256 times B-6’s iterations, median 16: raised as Q-15 for P5.4); invariants hold; a rebuild on the clean tree at `76d2c35` and `river:bench -- --check` gave identical solution hashes; `jof:build -- --check` unchanged. Full gate: 625 Vitest tests, 228 Playwright tests.
 - [ ] **P5.3 · Independent cross-check** · Depends on: P5.2, D-21 — the tool’s license read and recorded, a harness that converts a spot both ways, and B-7.
-- [ ] **P5.4 · On-demand river solving** · Depends on: P5.2 — a server endpoint with limits, cancellation and a cache keyed by the spot’s hash; B-10; and Gate C’s on-demand item, in a browser test at phone size.
+- [ ] **P5.4 · On-demand river solving** · Depends on: P5.2, Q-15 — a server endpoint with limits, cancellation and a cache keyed by the spot’s hash; B-10; and Gate C’s on-demand item, in a browser test at phone size. From P5.2’s measurements: how a solve qualifies its grades within the budget (Q-15), and margins stored per action rather than per hand for post-flop solutions, since an action no hand takes (an all-in with air) can move by more than the pot between solves and would soften the grade of the hand’s other actions (`docs/solver.md`, “Reference river spots”).
 - [ ] **P5.5 · Turn and flop solving and the spot library** · Depends on: P5.2, D-18 — offline solves for the library’s flops with manifests and registry entries; range assumptions recorded with their source; B-8, B-11 and B-12. The library’s size and choice of flops cite P5.1’s measurements; there is no pilot to cite (D-23).
 - [ ] **P5.6 · Study and drill for post-flop spots** · Depends on: P5.5 — the study view for a spot with a board and a range grid per action, drills that start on a library spot (including “Drill this spot” from a post-flop mistake, D-25), and the journey extended.
 
@@ -647,6 +656,14 @@ Every session ends by prepending one entry to the log below, in this shape and i
 
 ## Handoff log
 
+### 2026-11-27 · P5.2 · River solver on 20 reference spots
+
+- **Completed:** range notation (`ranges.ts`), 20 reference river spots (`river-spots.ts`), a separate pairwise value check (`river-direct.ts`), `pnpm run river:bench` and B-3 through the builder (`76d2c35`); results, manifest and ticks (the commit that ticks P5.2).
+- **Verified:** full gate; `river:bench` twice with identical solution hashes; B-6, B-11, B-12 and the invariants pass on every spot.
+- **Open decisions:** Q-15 raised (on-demand grading needs 1 to 256 times B-6’s iterations before verdicts settle), default: grade only when the solve’s own doubling check passes in budget.
+- **Next ready task:** P5.3: choose the open-source river solver, read its license file, and write the spot converter.
+- **Plan changes:** P5.2’s criteria written, B-12’s with the doubling rule; P5.4 gains Q-15 and per-action margins for post-flop solutions.
+
 ### 2026-11-27 · P5.1 · Chance cards, linear showdowns, river to flop measured
 
 - **Completed:** linear-time folds and showdowns (`removal.ts`), chance cards for turn and flop, a one-player CFR+ pass (`7c92f0c`); flop measured, decisions recorded, P5.1 ticked and P5.1b split off (the commit that ticks P5.1).
@@ -698,10 +715,3 @@ Every session ends by prepending one entry to the log below, in this shape and i
 - **Open decisions:** Q-4 default used, with an unsigned random token instead of a signed cookie (no secret needed). Q-12 still holds P3.2 and P3.4’s lesson link.
 - **Next ready task:** P3.6: a review page that replays a `FinishedHand` from local storage.
 - **Plan changes:** P3.5 split into P3.5a and P3.5b.
-
-### 2026-11-26 · P2.1 to P2.5 · Reference math; Phase 2 complete
-
-- **Completed:** the grading contract and reader (`9f46c7a`); exact equities and the pre-flop class table (`8726459`); CFR+ and exact best response (`812e4c2`); the jam-or-fold solution (`ced11f4`); grading, the full-hand locator and B-9, with the solution now graded (the commit that ticks P2.5).
-- **Verified:** full gate before each commit (455 Vitest and 24 Playwright tests at P2.5); B-1 to B-5, B-9, B-11, B-12 in `docs/benchmarks.md`; both builds rebuilt byte-identical. Not verified: CI on the last commit at the time of writing; nothing is visible in the app yet. `ced11f4`’s message miscounts B-5 (“4,712 of 4,718”); the record is 4,706 of 4,712.
-- **Open decisions:** Q-13 raised (the published chart’s terms; default: keep it out of Git). Q-7’s bands and `minReach` 0.01 used as defaults.
-- **Next ready task:** P3.1: theme tokens and code-drawn cards on a `/style` page.

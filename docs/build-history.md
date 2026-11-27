@@ -2,6 +2,13 @@
 
 Handoff entries moved out of [BUILD.md](../BUILD.md#handoff-log), which keeps the newest eight. Oldest last.
 
+### 2026-11-26 · P2.1 to P2.5 · Reference math; Phase 2 complete
+
+- **Completed:** the grading contract and reader (`9f46c7a`); exact equities and the pre-flop class table (`8726459`); CFR+ and exact best response (`812e4c2`); the jam-or-fold solution (`ced11f4`); grading, the full-hand locator and B-9, with the solution now graded (the commit that ticks P2.5).
+- **Verified:** full gate before each commit (455 Vitest and 24 Playwright tests at P2.5); B-1 to B-5, B-9, B-11, B-12 in `docs/benchmarks.md`; both builds rebuilt byte-identical. Not verified: CI on the last commit at the time of writing; nothing is visible in the app yet. `ced11f4`’s message miscounts B-5 (“4,712 of 4,718”); the record is 4,706 of 4,712.
+- **Open decisions:** Q-13 raised (the published chart’s terms; default: keep it out of Git). Q-7’s bands and `minReach` 0.01 used as defaults.
+- **Next ready task:** P3.1: theme tokens and code-drawn cards on a `/style` page.
+
 ### 2026-11-26 · P4.1, P4.2 · feltprep.com live through the build
 
 - **Completed:** `deploy/` on the host contract with continuous deploy of `main` (D-10), a strict CSP, the contract’s migrator (`b61c1dc`); account, database and roles provisioned; site registered in `ubuntu-vm-backup` (`9766f4c`); DDNS covers both names (`xrayservice` `8bc2e05`); `feltprep.app` redirects in Cloudflare (D-11).

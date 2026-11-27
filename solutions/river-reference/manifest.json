@@ -4,11 +4,12 @@
 	"title": "Reference river spots for B-6, B-11 and B-12 (P5.2)",
 	"build": {
 		"command": "pnpm run river:bench",
-		"commit": "d11b38b963ba8a92a9d663e3e17c45d19dd3dbec-dirty",
+		"commit": "76d2c354ca00e39e2f8e0e544dbde624fe5f998d",
 		"settings": {
 			"solver": "CFR+ (alternating, linear averaging)",
 			"stop": "exploitability at most 0.005 of the pot, checked every 25 iterations",
-			"margins": "the same solve carried on to twice the iterations",
+			"stored": "carried on, doubling, until a doubling moves no verdict between acceptable and mistake",
+			"margins": "the stored solve carried on to twice its iterations",
 			"precision": 1e-10
 		},
 		"seed": null
