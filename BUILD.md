@@ -347,7 +347,7 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
   - [x] The owner’s answer to Q-1 is recorded under Settled decisions, and `LICENSE` holds the chosen license’s unmodified text.
   - [x] `docs/provenance.md` exists with the record format from AGENTS.md section 10, and `licenses/` exists for upstream notices.
   - [x] The README names the license. (`package.json` does not exist yet, so naming it there moved to P1.1.)
-  - Evidence: the commit that ticks this step. `LICENSE` is gnu.org’s `agpl-3.0.txt`, 34,523 bytes, SHA-256 `0d96a4ff…079abcb0`, byte-identical to the copy in the owner’s `lorehallow` repository; the documents’ links were rechecked by script. There is no suite to run yet.
+  - Evidence: the commit that ticks this step. `LICENSE` is gnu.org’s `agpl-3.0.txt`, 34,523 bytes, SHA-256 `0d96a4ff…079abcb0` (rechecked against gnu.org on 2026-11-27); the documents’ links were rechecked by script. There is no suite to run yet.
 
 - [x] **P1.4 · Import the rules specification and the engine** · Depends on: P1.1, P1.3
   - [x] `docs/rules.md` is imported from RiverMind at a pinned commit, keeping every rule the engine implements and marking table-only rules (joining, button movement with empty seats, timeouts) as not used by FeltPrep.
@@ -630,7 +630,7 @@ Every session ends by prepending one entry to the log below, in this shape and i
 ### 2026-11-24 · P1.3 · License and provenance record
 
 - **Completed:** the owner chose AGPL-3.0-or-later (D-9, closing Q-1). Added `LICENSE`, `docs/provenance.md` with the record format and a table of which source licenses may be imported, and `licenses/`. The README and AGENTS.md name the license.
-- **Verified:** `LICENSE` is byte-identical to gnu.org’s `agpl-3.0.txt` and to the copy in the owner’s `lorehallow` repository (SHA-256 in the provenance record). Links rechecked by script. No suite exists to run.
+- **Verified:** `LICENSE` is byte-identical to gnu.org’s `agpl-3.0.txt` (SHA-256 in the provenance record). Links rechecked by script. No suite exists to run.
 - **Open decisions:** Q-12 raised: terms for lesson text, the name and artwork. No lesson or artwork is committed before the owner answers.
 - **Next ready task:** P1.1, starting with the current SvelteKit 3 documentation and `sv create` in `web/`.
 - **Plan changes:** “`package.json` names the license” moved from P1.3 to P1.1, because no `package.json` exists until the scaffold.

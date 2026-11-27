@@ -90,6 +90,6 @@ One entry per import, newest first, under [Imports](#imports):
 - **License:** the text itself may be copied and distributed verbatim, and may not be changed.
 - **Copyright:** Free Software Foundation, Inc.
 - **Changes:** none.
-- **Verified:** 34,523 bytes, SHA-256 `0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0`, byte-identical to the copy in the owner’s `lorehallow` repository.
+- **Verified:** 34,523 bytes, SHA-256 `0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0`, byte-identical to gnu.org’s `agpl-3.0.txt` when fetched again on 2026-11-27.
 
 No data table, model, font or artwork has been imported yet. Packages installed from the registry are listed with exact versions in `web/package.json` and `web/pnpm-lock.yaml`.
