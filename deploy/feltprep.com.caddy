@@ -8,7 +8,8 @@
 # Automatic HTTPS: both names are Cloudflare "DNS only" A records pointing at
 # the host, so Caddy obtains and renews the certificates itself.
 #
-# feltprep.app is not served yet: it has no DNS records (Q-2 in BUILD.md).
+# feltprep.app never reaches this host: Cloudflare redirects it to
+# https://feltprep.com/ (D-11 in BUILD.md).
 #
 # The Content Security Policy comes from SvelteKit (vite.config.ts), which
 # adds a fresh nonce to every rendered page; Caddy adds the other headers.

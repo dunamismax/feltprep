@@ -88,7 +88,7 @@ Needed only for a commit that changes `deploy/`, or to redeploy without waiting 
 
 `common.sh` holds the one smoke check used for the candidate, the live port and the public site: the home page renders with its title and a Content Security Policy, an unknown path is a 404, `/healthz` reports the commit and database, and through Caddy the security headers are present and `www` redirects to the apex. Extend it as pages are added.
 
-## Not yet done
+## DNS
 
-- **`feltprep.app`** has no DNS records, so it is not served (Q-2 in BUILD.md).
-- **Public-address changes.** The host’s Cloudflare DDNS job (in the `xrayservice` repository) does not yet manage the `feltprep.com` records, so if the home connection’s address changes the site goes dark until they are added there.
+- **`feltprep.com` and `www.feltprep.com`** are Cloudflare “DNS only” A records pointing at the host. The host’s Cloudflare DDNS job (`cloudflare-ddns/` in the `xrayservice` repository, X-6 there) keeps them on the home connection’s address. A new hostname served here must be added to that job too, or it goes dark when the address changes.
+- **`feltprep.app`** never reaches this host. The owner set it up in Cloudflare as a permanent redirect to `https://feltprep.com/`, with proxied records (D-11 in BUILD.md). It does not keep the path, and `www.feltprep.app` has no record; both are Cloudflare settings.
