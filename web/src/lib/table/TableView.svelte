@@ -48,7 +48,7 @@
 	</div>
 
 	<div class="flex flex-col items-center gap-1">
-		<div class="flex gap-1" data-testid="board" aria-label="Board">
+		<div class="flex gap-1" data-testid="board" role="group" aria-label="Board">
 			{#each [0, 1, 2, 3, 4] as i (i)}
 				{#if state.board[i] !== undefined}
 					<PlayingCard card={state.board[i]} size="sm" />

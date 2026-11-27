@@ -20,7 +20,8 @@ An import’s terms must allow its use in an AGPL-3.0-or-later work. Read the so
 | GPL-2.0-only | No | — |
 | GPL with added terms, such as the indemnification section on RiverMind’s `poker_ai/` | Not without the owner | — |
 | No license found, or terms you cannot read in full | No | — |
-| Anything else | Ask the owner | — |
+| MPL-2.0 | Yes (D-26). Test-only tools, such as axe-core, never ship; MPL-2.0 files that did ship would keep their license and notices | The license and notices |
+| Anything else | Yes if its terms, read in full, allow the use, and it is compatible with the AGPL if it ships (D-26) | Whatever the terms require |
 
 ## Record format
 
@@ -38,6 +39,15 @@ One entry per import, newest first, under [Imports](#imports):
 ```
 
 ## Imports
+
+### axe-core, the accessibility checker, for tests only · 2026-11-27
+
+- **Files here:** none copied. `@axe-core/playwright` 4.14.1 is a development dependency in `web/package.json` (exact version, in `pnpm-lock.yaml`), which brings `axe-core` 4.14.1; `web/e2e/a11y.e2e.ts` runs them. Neither is bundled into the app or served to a player.
+- **Source:** the npm packages `@axe-core/playwright` and `axe-core`, version 4.14.1 (<https://github.com/dequelabs/axe-core-npm>, <https://github.com/dequelabs/axe-core>).
+- **License:** `MPL-2.0`, read in each package’s `LICENSE` file after installing; axe-core’s `LICENSE-3RD-PARTY.txt` lists MIT-licensed code it bundles. Allowed by D-26 (2026-11-27, the owner’s answer to Q-14). The notices stay in the packages; nothing of theirs is redistributed.
+- **Copyright:** Deque Systems, Inc. (2015–2026, from the file headers).
+- **Changes:** none.
+- **Verified:** installed from the registry with pnpm’s integrity check (the lockfile’s hashes); `a11y.e2e.ts` reports the violations it finds, and it found three real ones that were fixed (P3.7).
 
 ### The rule-based practice opponent from RiverMind Poker · 2026-11-26
 

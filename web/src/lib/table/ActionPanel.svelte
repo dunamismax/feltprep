@@ -54,6 +54,17 @@
 		if (action && !disabled) onact(action);
 	}
 
+	let panel = $state<HTMLDivElement | null>(null);
+
+	$effect(() => {
+		// When the decision is taken the places are disabled. A focused place
+		// that is disabled can trap keyboard focus (WebKit), so let it go: the
+		// next Tab continues from here into the feedback or result.
+		if ((legal && !disabled) || !panel) return;
+		const focused = document.activeElement;
+		if (focused instanceof HTMLElement && panel.contains(focused)) focused.blur();
+	});
+
 	$effect(() => {
 		// A new decision closes any open sizing sheet.
 		void legal;
@@ -61,7 +72,13 @@
 	});
 </script>
 
-<div class="relative" data-testid="action-panel">
+<svelte:window
+	onkeydown={(e: KeyboardEvent) => {
+		if (sizing && e.key === 'Escape') sizing = false;
+	}}
+/>
+
+<div class="relative" data-testid="action-panel" bind:this={panel}>
 	{#if sizing && legal && legal.raiseKind}
 		<div
 			class="absolute inset-x-0 bottom-full mb-2 flex flex-col gap-3 rounded-panel border border-line-strong bg-raised p-3 shadow-lg"

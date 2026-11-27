@@ -83,7 +83,7 @@ Four rules settle most design questions:
 
 - changing anything the host’s sites share (the web platform contract’s scripts, the main Caddy configuration, other repositories such as `ubuntu-vm-backup`), another site, DNS or Cloudflare. What FeltPrep itself owns on the host is not an owner gate: by the owner’s decision D-13 an agent may run hand deploys (including a `deploy/` commit that `feltprep-autodeploy` held, [`deploy/README.md`](deploy/README.md)) and change FeltPrep’s account, database, roles, credentials, units, timer and Caddy fragment, recording each change in the evidence line. Pushing to `main` deploys itself once CI passes (D-10);
 - creating accounts, OAuth apps or anything that costs money, and adding or changing a git remote;
-- changing the project’s license (D-9), importing anything whose terms `docs/provenance.md` does not clear, and publishing lesson text or artwork under terms other than D-12’s (lessons CC BY-SA 4.0; the name and artwork reserved);
+- changing the project’s license (D-9), and publishing lesson text or artwork under terms other than D-12’s (lessons CC BY-SA 4.0; the name and artwork reserved);
 - changing a settled decision, deleting an unfinished step, lowering an acceptance criterion or a threshold in a verification gate, or reordering phases. Raise these as an open decision instead;
 - telling players something about accuracy or strength that no benchmark in BUILD.md supports.
 
@@ -105,7 +105,7 @@ The owner often runs several sessions in one checkout.
 - Claim one step per session and stay out of the files another claimed step owns. Shared files (BUILD.md, AGENTS.md, `package.json`, the lockfile) take small edits made right before committing.
 - Never revert, reformat, stage or “tidy” a change you did not make. Commit only your own paths (`git commit -- <paths>`), never `git add -A` when someone else’s work is in the tree.
 - If another session’s half-finished change breaks the suite, verify yours in a scratch copy of `main` with your changes applied, and say so in the evidence line.
-- Ask before heavy local work. A long solve or equity build takes every core for minutes to hours. Run it at low priority (`nice -n 19`) and name it under **Background run** in **Now**, with the command that resumes it.
+- Heavy local work needs no asking (D-27): a long solve or equity build may take every core for minutes to hours. Name it under **Background run** in **Now**, with the command that resumes it, and prefer `nice -n 19` while another session is working here.
 
 ## 6. Stack and layout
 
@@ -256,7 +256,7 @@ Before importing anything:
 1. **Find the source.** The exact repository, path and commit, or the publication and page.
 2. **Find the license,** in the source’s own license file and file headers, not in memory or a summary. If you cannot find one, treat the thing as not importable.
 3. **Trace it one step further.** Check whether the source itself copied the thing from somewhere else with its own terms. In RiverMind, `rivermind/engine/evaluator.py` is adapted from Deuces and carries an MIT notice; everything under `poker_ai/` came from the upstream Poker AI project and carries that project’s additional indemnification terms (`licenses/Poker-AI-additional-terms.txt`); and the playing-card sprites have no recorded source or license at all (Q-8 in RiverMind’s BUILD.md), so they must not be copied.
-4. **Check that the terms fit FeltPrep’s license.** The code is AGPL-3.0-or-later (D-9 in BUILD.md), and [`docs/provenance.md`](docs/provenance.md) lists which source licenses may be imported. GPL-3.0 code, RiverMind’s included, may be combined with it and stays under the GPL. For terms the table does not name, ask the owner.
+4. **Check that the terms fit FeltPrep’s license.** The code is AGPL-3.0-or-later (D-9 in BUILD.md), and [`docs/provenance.md`](docs/provenance.md) lists which source licenses may be imported. GPL-3.0 code, RiverMind’s included, may be combined with it and stays under the GPL. For terms the table does not name, decide yourself (D-26): read them in full, and import only if they allow the use you need; anything that ships must be compatible with distributing FeltPrep under the AGPL.
 5. **Record it** in `docs/provenance.md` in the same commit: what was imported, from where (repository, path, commit), under which license, who holds the copyright, what was changed, and how the copy was verified. Keep any required notice in `licenses/` and in the file’s header.
 6. **Verify the copy.** Imported code keeps its tests and passes them here. Imported data or models are checked against a published hash; for a RiverMind model that is its entry in RiverMind’s `docs/models.json`.
 

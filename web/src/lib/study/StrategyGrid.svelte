@@ -68,7 +68,6 @@
 						bind:this={buttons[i]}
 						type="button"
 						tabindex={i === active ? 0 : -1}
-						aria-label="{h.name}: {action} {percent(f)}"
 						aria-pressed={selected === h.name}
 						data-hand={h.name}
 						data-frequency={f}
@@ -78,6 +77,7 @@
 						onclick={() => choose(i)}
 						onkeydown={(e) => move(e, i)}
 					>
+						<span class="sr-only">{h.name}: {action} {percent(f)}</span>
 						<svg viewBox="0 0 100 100" class="absolute inset-0 size-full" aria-hidden="true">
 							<clipPath id="{uid}-{i}">
 								<rect x="0" y={100 * (1 - f)} width="100" height={100 * f} />

@@ -2,6 +2,14 @@
 
 Handoff entries moved out of [BUILD.md](../BUILD.md#handoff-log), which keeps the newest eight. Oldest last.
 
+### 2026-11-24 · P1.5 · Heads-up fixtures and the rules trace; Phase 1 complete
+
+- **Completed:** 15 hand-worked fixtures in `web/src/lib/engine/fixtures.ts`, with a runner that also asserts legal actions; the odd-chip checks; `rules-trace.spec.ts`. Phase 1’s exit criteria are ticked.
+- **Verified:** every fixture matched its derivation on the first run; a wrong expectation and a removed rule each failed as they should; full gate from a clean clone and in CI.
+- **Open decisions:** none touched.
+- **Next ready task:** P2.1: write `docs/grading.md` defining a spot, a solution artifact, its manifest and the registry.
+- **Plan changes:** none.
+
 ### 2026-11-24 · P1.4 · Rules and engine imported from RiverMind
 
 - **Completed:** `docs/rules.md` and the engine from RiverMind `233b9c6`, now in `web/src/lib/engine/`; Web Crypto `cryptoRandom`; `engine:fuzz`, `engine:bench`, `engine:parity`; a property test applying every offered action; provenance with per-file hashes, GPL and Deuces notices.
