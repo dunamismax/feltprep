@@ -94,7 +94,7 @@ export interface DecisionTable {
 	readonly margins: readonly number[];
 }
 
-/** The verdict bands of Q-7 and the minimum reach, recorded with each solution. */
+/** The verdict bands of D-20 and the minimum reach, recorded with each solution. */
 export interface GradingSettings {
 	/** An action the reference takes at least this often with the hand is acceptable. */
 	readonly acceptableFrequency: number;
@@ -196,7 +196,7 @@ export interface Registry {
 	readonly solutions: readonly RegistryEntry[];
 }
 
-/** A verdict's band (Q-7). */
+/** A verdict's band (D-20). */
 export type Band = 'acceptable' | 'inaccuracy' | 'mistake';
 
 /** Why a decision is not graded. */

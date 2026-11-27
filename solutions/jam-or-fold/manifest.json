@@ -780,7 +780,7 @@
 	],
 	"build": {
 		"command": "pnpm run jof:build",
-		"commit": "ced11f456c57f9a9cf763affeb9a57b5602eeb87",
+		"commit": "7686e28c206334a7a03c93aa54167a5bc84ad4ee",
 		"settings": {
 			"solver": "CFR+ (alternating, linear averaging)",
 			"iterations": 10000,
@@ -877,8 +877,8 @@
 	],
 	"grading": {
 		"acceptableFrequency": 0.05,
-		"acceptableLoss": 0.01,
-		"inaccuracyLoss": 0.05,
+		"acceptableLoss": 0.005,
+		"inaccuracyLoss": 0.03,
 		"minReach": 0.01
 	}
 }

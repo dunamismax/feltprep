@@ -5,7 +5,7 @@
 		{
 			"id": "jam-or-fold-hu",
 			"manifest": "jam-or-fold/manifest.json",
-			"sha256": "3544d2e502d2a2a2f371cfbdd8f526c28dce4394207b6074feb2b292aef3febf",
+			"sha256": "51b65c74999108ce1456f763754d62ab9d5433e264b016395d24bec0281b258a",
 			"status": "graded",
 			"gate": {
 				"statedGame": true,

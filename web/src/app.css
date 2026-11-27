@@ -43,7 +43,7 @@
 	--color-suit-heart: #b4231b;
 	--color-suit-spade: #1a1d22;
 
-	/* Verdicts (Q-7 bands), each with a soft background for its panel. */
+	/* Verdicts (D-20 bands), each with a soft background for its panel. */
 	--color-good: #1c6b40;
 	--color-good-soft: #e3f1e7;
 	--color-warn: #865400;

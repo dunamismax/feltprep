@@ -99,10 +99,10 @@ Grading turns a spot, a hand and the action taken into a `Verdict`.
 
 **What a graded verdict holds.** The action taken; the reference’s frequencies and values for that hand; the best action; the **loss**, the best action’s value minus the taken action’s value (never negative); the loss as a fraction of the pot at the decision; the hand’s margin; and the band.
 
-**The band** (Q-7’s default, recorded in each manifest’s `grading`):
+**The band** (the owner’s bands, D-20, recorded in each manifest’s `grading`):
 
 1. **Acceptable** if the reference takes the action at least `acceptableFrequency` (5%) of the time with that hand.
-2. Otherwise the loss is first reduced by the hand’s margin, so a loss within the margin of a boundary gets the kinder band. Then it is **acceptable** up to `acceptableLoss` (1%) of the pot, an **inaccuracy** up to `inaccuracyLoss` (5%), and a **mistake** above.
+2. Otherwise the loss is first reduced by the hand’s margin, so a loss within the margin of a boundary gets the kinder band. Then it is **acceptable** up to `acceptableLoss` (0.5%) of the pot, an **inaccuracy** up to `inaccuracyLoss` (3%), and a **mistake** above. (Until P3.8 the defaults were 1% and 5%.)
 3. A loss smaller than the solution’s measured exploitability for that game is never a mistake: it is shown as an inaccuracy at worst.
 
 A mixed action is therefore never a mistake, and neither is a near-indifferent one.
