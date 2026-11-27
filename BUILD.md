@@ -10,8 +10,8 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 
 | | |
 | --- | --- |
-| **Current phase** | [Phase 3 · The first loop](#phase-3--the-first-loop), not started. Phase 2 is complete: the jam-or-fold solution is graded and registered. |
-| **Next step** | **P3.1 · Design foundation**: theme tokens and cards drawn in code need no answer to Q-12; brand artwork does. |
+| **Current phase** | [Phase 3 · The first loop](#phase-3--the-first-loop): P3.1 done, so theme tokens and code-drawn cards are on `/style`. |
+| **Next step** | **P3.3 · Study view**: the 13 × 13 grid for the jam-or-fold solution. P3.2 can build its pipeline but commits no lesson before Q-12. |
 | **In progress** | Nothing. |
 | **Background run** | None. |
 | **Waiting on the owner** | Q-12 (lesson text and artwork terms) before P3.2 commits a lesson; Q-13 (the published push/fold chart’s terms) is optional. Two optional Cloudflare settings for `feltprep.app` (D-11). |
@@ -421,11 +421,12 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
 - [ ] Gate A’s interface and server items pass.
 - [ ] Every grade shown in the journey comes from the P2.4 solution, and a decision outside it is shown as “not graded”.
 
-- [ ] **P3.1 · Design foundation** · Depends on: P1.1, Q-12 (for brand artwork; tokens and code-drawn cards are code)
-  - [ ] An original identity: colour, type and spacing tokens in the Tailwind theme, light and dark, with text at WCAG AA contrast in both.
-  - [ ] Original playing cards drawn in code (SVG or CSS), legible at phone size and distinguishable without relying on red and black alone.
-  - [ ] A `/style` page shows the tokens, the cards and each component as it is added.
-  - [ ] Nothing is taken from RiverMind’s art, palette, fonts or layouts (D-4); fonts are recorded in `docs/provenance.md`.
+- [x] **P3.1 · Design foundation** · Depends on: P1.1, Q-12 (for brand artwork; tokens and code-drawn cards are code)
+  - [x] An original identity: colour, type and spacing tokens in the Tailwind theme, light and dark, with text at WCAG AA contrast in both.
+  - [x] Original playing cards drawn in code (SVG or CSS), legible at phone size and distinguishable without relying on red and black alone.
+  - [x] A `/style` page shows the tokens, the cards and each component as it is added.
+  - [x] Nothing is taken from RiverMind’s art, palette, fonts or layouts (D-4); fonts are recorded in `docs/provenance.md`.
+  - Evidence: the commit that ticks this step. Tokens in `web/src/app.css`; `theme.spec.ts` measures 37 foreground/background pairs (`contrast.ts`) at 4.5:1 for text and 3:1 for graphics in both themes, and fails on a raw colour in any component. `PlayingCard.svelte` draws a four-colour deck with FeltPrep’s own suit shapes and a back; `/style` shows tokens, contrast measured live, type, spacing and all 52 cards, checked at 375 × 812 in both themes in the browser and by `style.e2e.ts` in six projects (no overflow, no CSP violation, no page error). No font file: system faces, recorded in provenance. No brand artwork (Q-12). Full gate: 467 Vitest tests, 36 Playwright tests.
 
 - [ ] **P3.2 · Lesson pipeline and the first lesson** · Depends on: P3.1, P2.4, Q-12 (before the lesson is committed)
   - [ ] Lessons are Markdown files in `content/lessons/`, prerendered, each with a title, a summary and the IDs of the spots it teaches. A build fails on a lesson that names an unknown spot.

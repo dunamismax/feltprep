@@ -120,9 +120,11 @@ web/                       the SvelteKit app (exists; the same place RiverMind k
   vite.config.ts           SvelteKit, Tailwind and Vitest configuration; the build's revision for /healthz (exists)
   playwright.config.ts     six browser projects against the production build on port 4391 (exists)
   drizzle.config.ts        drizzle-kit settings (exists)
-  src/app.css              Tailwind entry and the provisional theme tokens, light and dark (exists)
+  src/app.css              Tailwind entry and the theme tokens, light and dark, at AA contrast (exists)
   src/env.ts               environment variables, validated at build and start (exists)
-  src/routes/              pages and endpoints: the home page and /healthz exist
+  src/routes/              pages and endpoints: the home page, /style and /healthz exist
+  src/lib/ui/              shared components and their helpers: code-drawn playing cards and the
+                           contrast pairs the theme test measures (exists)
   src/lib/engine/          cards, hand evaluator, hand state machine, histories, seat views, fuzzer and fixtures:
                            pure, browser-safe TypeScript imported from RiverMind (exists)
   src/lib/solver/          hand classes, exact equities, the pre-flop class table, games with a public betting

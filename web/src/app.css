@@ -1,30 +1,117 @@
 @import 'tailwindcss';
 
 /*
- * FeltPrep's provisional theme tokens: neutral and original (D-4). P3.1
- * replaces them with the full identity. Components use these tokens, never raw
- * colours. Dark values apply when the system asks for a dark scheme.
+ * FeltPrep's identity (P3.1): original tokens (D-4), light and dark. Paper
+ * surfaces, a deep felt green for the table and an ink-dark text colour, with
+ * a four-colour deck so suits never rely on red and black alone.
+ *
+ * Components use these tokens, never raw colours. The dark values apply when
+ * the system asks for a dark scheme. Every text pairing listed in
+ * src/lib/ui/theme.spec.ts meets WCAG AA contrast in both themes; change a
+ * colour here and that test measures it again.
  */
 @theme {
-	--color-surface: #f7f6f2;
+	/* Surfaces, from the page to a raised panel and a sunken well. */
+	--color-surface: #f6f4ee;
 	--color-raised: #ffffff;
-	--color-ink: #1b1f1d;
-	--color-muted: #55605a;
-	--color-line: #d9dcd6;
-	--color-accent: #1f6b4a;
+	--color-sunken: #ebe8df;
+	--color-line: #d3cfc3;
+	--color-line-strong: #8f8a7c;
 
+	/* Text. */
+	--color-ink: #16201b;
+	--color-muted: #4d5952;
+
+	/* The accent and the text drawn on it. */
+	--color-accent: #13644a;
+	--color-accent-strong: #0d4c38;
+	--color-on-accent: #ffffff;
+	--color-focus: #1d5fc4;
+
+	/* The practice table. */
+	--color-felt: #1c5a46;
+	--color-felt-edge: #123c2f;
+	--color-on-felt: #f3f1e8;
+
+	/* Playing cards: the face, its edge, the back, and one colour per suit. */
+	--color-card: #fffdf7;
+	--color-card-edge: #bdb7a6;
+	--color-card-back: #7a2f3a;
+	--color-card-back-mark: #e8c9a0;
+	--color-suit-club: #19703a;
+	--color-suit-diamond: #1a58ad;
+	--color-suit-heart: #b4231b;
+	--color-suit-spade: #1a1d22;
+
+	/* Verdicts (Q-7 bands), each with a soft background for its panel. */
+	--color-good: #1c6b40;
+	--color-good-soft: #e3f1e7;
+	--color-warn: #865400;
+	--color-warn-soft: #f8edd6;
+	--color-bad: #ae2219;
+	--color-bad-soft: #f9e3e0;
+	--color-neutral-soft: #e9e7e0;
+
+	/* Strategy grid: jam (or call) and fold. */
+	--color-act: #13644a;
+	--color-act-soft: #cfe6da;
+	--color-fold: #d9d5c9;
+
+	/* Type: the system's own faces, so no font file is shipped. */
 	--font-sans:
 		system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+	--font-mono:
+		ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+
+	/* Spacing and shape. Tailwind multiplies --spacing for p-4, gap-2 and so on. */
+	--spacing: 0.25rem;
+	--radius-card: 0.45rem;
+	--radius-panel: 0.75rem;
+
+	/* The smallest touch target for an action (Gate C proposal: 44 CSS pixels). */
+	--spacing-target: 2.75rem;
 }
 
 @media (prefers-color-scheme: dark) {
 	:root {
-		--color-surface: #111513;
-		--color-raised: #1a201d;
-		--color-ink: #e9ece9;
-		--color-muted: #a3ada7;
-		--color-line: #2e3632;
-		--color-accent: #6fcf9f;
+		--color-surface: #0f1412;
+		--color-raised: #18201c;
+		--color-sunken: #0a0e0c;
+		--color-line: #2d3732;
+		--color-line-strong: #6b7670;
+
+		--color-ink: #e8ece8;
+		--color-muted: #a3aea8;
+
+		--color-accent: #62d1a1;
+		--color-accent-strong: #8fe0bd;
+		--color-on-accent: #07170f;
+		--color-focus: #8cb8ff;
+
+		--color-felt: #174a3a;
+		--color-felt-edge: #0d2d23;
+		--color-on-felt: #eef0ea;
+
+		--color-card: #ece8dc;
+		--color-card-edge: #8a8576;
+		--color-card-back: #6e2a34;
+		--color-card-back-mark: #e2c39a;
+		--color-suit-club: #17663a;
+		--color-suit-diamond: #1a52a0;
+		--color-suit-heart: #a5221a;
+		--color-suit-spade: #17191d;
+
+		--color-good: #74d69e;
+		--color-good-soft: #15291e;
+		--color-warn: #f0b64e;
+		--color-warn-soft: #2d2412;
+		--color-bad: #ff8d84;
+		--color-bad-soft: #321816;
+		--color-neutral-soft: #222a26;
+
+		--color-act: #62d1a1;
+		--color-act-soft: #1d4536;
+		--color-fold: #2a322e;
 	}
 }
 
@@ -35,5 +122,15 @@
 
 	body {
 		@apply bg-surface font-sans text-ink antialiased;
+	}
+
+	:focus-visible {
+		outline: 3px solid var(--color-focus);
+		outline-offset: 2px;
+	}
+
+	/* On the table the ring is drawn in the felt's text colour, which shows there. */
+	.felt :focus-visible {
+		outline-color: var(--color-on-felt);
 	}
 }

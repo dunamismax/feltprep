@@ -101,4 +101,4 @@ One entry per import, newest first, under [Imports](#imports):
 - **Changes:** none.
 - **Verified:** 34,523 bytes, SHA-256 `0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0`, byte-identical to gnu.org’s `agpl-3.0.txt` when fetched again on 2026-11-27.
 
-No data table, model, font or artwork has been imported yet. Packages installed from the registry are listed with exact versions in `web/package.json` and `web/pnpm-lock.yaml`.
+No model, font or artwork has been imported. The interface draws its text in the system’s own faces (`system-ui` and `ui-monospace` stacks in `web/src/app.css`), so no font file is shipped; the playing cards and suit shapes in `web/src/lib/ui/` are drawn in code written for FeltPrep (P3.1). Packages installed from the registry are listed with exact versions in `web/package.json` and `web/pnpm-lock.yaml`.
