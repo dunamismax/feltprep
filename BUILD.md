@@ -10,13 +10,13 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 
 | | |
 | --- | --- |
-| **Current phase** | [Phase 3 · The first loop](#phase-3--the-first-loop): every step but P3.6 (review) and P3.7 (the M1 journey) is done. The first lesson is at `/learn/jam-or-fold-10bb`. |
-| **Next step** | **P3.6 · Hand review**: a page that steps through a finished practice hand from local storage, calling `explain` and offering “Drill this spot”; then P3.7, the M1 journey test. |
+| **Current phase** | [Phase 3 · The first loop](#phase-3--the-first-loop): every step but P3.7 (the M1 journey) is done; review is at `/practice/10/review` after a hand. |
+| **Next step** | **P3.7 · M1 journey**: one Playwright test through lesson, study, drill, practice, a mistake drilled from the table, review and back to the lesson, at 375 × 812, 360 × 640 and desktop, with Gate C’s M1 items. |
 | **In progress** | Nothing. |
 | **Background run** | None. |
 | **Waiting on the owner** | Nothing: every open decision was answered on 2026-11-26 (D-12 to D-24). P7.2 will need the owner’s iPhone, and P4.3 and P7.6 their word. |
 | **Live** | <https://feltprep.com> serves `main` as a preview, redeployed by every push whose CI passes (D-10); `/healthz` names the live commit. `feltprep.app` redirects to it in Cloudflare (D-11). |
-| **`main`** | Phases 1 and 2; theme, study view, drill, practice table with stored hands, D-20’s bands, the mistake-to-drill path and the first lesson. `origin` pushes to GitHub and Codeberg. |
+| **`main`** | Phases 1 and 2; theme, study view, drill, practice table with stored hands, D-20’s bands, the mistake-to-drill path, the first lesson and hand review. `origin` pushes to GitHub and Codeberg. |
 | **Last updated** | 2026-11-26 |
 
 ## How to work this file
@@ -478,9 +478,10 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
     - [x] The endpoint that stores a hand replays it on the engine and rejects any action the engine does not offer, and a test proves it (Gate A’s server item).
     - Evidence: the commit that ticks this step. `POST /api/hands` checks each upload with `checkUpload` (`web/src/lib/practice/upload.ts`), which replays the history on the engine: an illegal action, an unfinished hand or a deal the table does not make gets 422, a malformed one 400, an oversized one 413, all before any database is touched. `web/drizzle/0000_guests_and_practice_hands.sql` adds `app.guests` and `app.practice_hands` (UUID keys, no sequences); `web/src/lib/server/hands.ts` stores each hand once per guest and key. The guest identity is a random 32-byte token in an HTTP-only, SameSite=Lax cookie, Secure over https, stored only as its SHA-256: Q-4’s default asked for a signed cookie, and an unguessable token needs no signing secret, so no server change was needed. Checked: `upload.spec.ts`; `hands.spec.ts` against a scratch PostgreSQL 18 with `TEST_DATABASE_URL` (stored once, duplicates ignored, guests apart, no raw token kept; skipped in CI); the migration applied twice; `practice.e2e.ts` posts tampered hands to the built server in six projects; and the production build with a database stored hands played in the browser (201, cookie set, rows replay). Not verified: storage on the host, which needs the deploy’s migration. Full gate: 535 Vitest tests, 120 Playwright tests.
 
-- [ ] **P3.6 · Hand review** · Depends on: P3.5, P3.9
-  - [ ] A finished hand can be stepped through from the table, showing only what the player could see until the showdown.
-  - [ ] Each of the player’s decisions is marked graded or not graded. A graded one shows its verdict, its cost and P3.9’s explanation, with P3.9’s “Drill this spot” for that decision and a link to the lesson for its spot.
+- [x] **P3.6 · Hand review** · Depends on: P3.5, P3.9
+  - [x] A finished hand can be stepped through from the table, showing only what the player could see until the showdown.
+  - [x] Each of the player’s decisions is marked graded or not graded. A graded one shows its verdict, its cost and P3.9’s explanation, with P3.9’s “Drill this spot” for that decision and a link to the lesson for its spot.
+  - Evidence: the commit that ticks this step. `/practice/[stack]/review?hand=N`, prerendered at 10 to 15 big blinds, reads the practice session from local storage; `reviewSteps` (`web/src/lib/practice/review.ts`) replays the stored history and grades each of the player’s actions again through `gradeAction`, so the verdicts equal the table’s (tested over 80 hands from both seats). “Review this hand” at the end of a hand closes it and opens the review, which starts on the first inaccuracy or mistake; the opponent’s cards stay face down until the last step of a showdown. `review.e2e.ts` in six projects: review from the table, the mistake’s band, cost, reason, drill and lesson in view, hidden cards until the showdown with five board cards, the drill opening on the same cards, the table at the next hand, an empty review and a 404. Looked at 375 × 812 in both themes. Full gate: 565 Vitest tests, 198 Playwright tests.
 
 - [x] **P3.8 · The owner’s grading bands** · Depends on: P2.5, D-20. Added 2026-11-26: the owner set stricter bands than the default the solution was built with.
   - [x] The grading settings in `web/src/lib/solver/grading.ts` are D-20’s (acceptable loss 0.5% of the pot, inaccuracy up to 3%; the 5% frequency and `minReach` unchanged), and `grading.spec.ts` checks a hand just inside and just outside each new boundary.

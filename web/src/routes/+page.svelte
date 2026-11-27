@@ -17,8 +17,8 @@
 		it in realistic spots, then apply it in full practice hands.
 	</p>
 	<p class="rounded-panel border border-line bg-raised px-4 py-3 text-muted">
-		FeltPrep is in development. The first solved spot has a lesson, and can be studied, drilled and
-		played in full hands now; hand review comes next.
+		FeltPrep is in development. The first solved spot has a lesson, and can be studied, drilled,
+		played in full hands and reviewed now.
 	</p>
 	<a
 		href={resolve('/learn/[lesson]', { lesson: 'jam-or-fold-10bb' })}

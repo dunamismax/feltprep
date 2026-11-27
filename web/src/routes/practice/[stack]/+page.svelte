@@ -170,6 +170,17 @@
 		return lines.map((l) => ({ detail: l.detail, whats: l.whats.join('; ') }));
 	});
 
+	/** "Review this hand": close it, so the table resumes at the next one, then review it. */
+	function review(event: MouseEvent) {
+		event.preventDefault();
+		if (!session || !over) return;
+		const n = session.hand;
+		session = nextHand(data.solution, session);
+		persist();
+		upload(session);
+		void goto(resolve(`practice/${data.stack}/review?hand=${n}`));
+	}
+
 	/** "Drill this spot": close this hand, so the table resumes at the next one, then drill. */
 	function drill(event: MouseEvent, query: string) {
 		event.preventDefault();
@@ -317,6 +328,14 @@
 						{/if}
 					</div>
 				{/each}
+				<a
+					href={resolve('/practice/[stack]/review', { stack: String(data.stack) })}
+					onclick={review}
+					class="self-start text-sm font-semibold text-accent underline"
+					data-testid="review-hand"
+				>
+					Review this hand
+				</a>
 				{#each ungraded as u (u.detail)}
 					<p class="text-sm text-muted" data-testid="not-graded">
 						Not graded ({u.whats}): {u.detail}

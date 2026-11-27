@@ -123,8 +123,8 @@ web/                       the SvelteKit app (exists; the same place RiverMind k
   src/app.css              Tailwind entry and the theme tokens, light and dark, at AA contrast (exists)
   src/env.ts               environment variables, validated at build and start (exists)
   src/routes/              pages and endpoints: the home page, /style, /learn, /learn/[lesson],
-                           /study/jam-or-fold/[stack], /drill/jam-or-fold/[stack], /practice/[stack], /api/hands
-                           and /healthz exist
+                           /study/jam-or-fold/[stack], /drill/jam-or-fold/[stack], /practice/[stack],
+                           /practice/[stack]/review, /api/hands and /healthz exist
   src/lib/lessons/         the lesson reader: a strict Markdown subset, the lesson header and its checks, and the
                            component that renders a lesson as elements (exists)
   src/lib/ui/              shared components and their helpers: code-drawn playing cards and the
@@ -133,8 +133,8 @@ web/                       the SvelteKit app (exists; the same place RiverMind k
   src/lib/drill/           the jam-or-fold drill: seeded deals, drills of one spot started from a mistake,
                            judging, session and progress storage (exists)
   src/lib/table/           the action panel, built only from the engine's legal actions, and the table view (exists)
-  src/lib/practice/        the short-stack practice session, its opponent and the heuristic bot imported from
-                           RiverMind (exists)
+  src/lib/practice/        the short-stack practice session, its review, its opponent and the heuristic bot
+                           imported from RiverMind (exists)
   src/lib/engine/          cards, hand evaluator, hand state machine, histories, seat views, fuzzer and fixtures:
                            pure, browser-safe TypeScript imported from RiverMind (exists)
   src/lib/solver/          hand classes, exact equities, the pre-flop class table, games with a public betting
