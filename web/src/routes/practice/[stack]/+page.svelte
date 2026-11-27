@@ -20,6 +20,7 @@
 		type PracticeSession
 	} from '#lib/practice/table.ts';
 	import { loadPractice, savePractice } from '#lib/practice/storage.ts';
+	import { uploadOf } from '#lib/practice/upload.ts';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -72,6 +73,19 @@
 		if (!session || !over) return;
 		session = nextHand(data.solution, session);
 		persist();
+		upload(session);
+	}
+
+	/** Send the hand just finished to be stored; it stays in this browser either way. */
+	function upload(s: PracticeSession) {
+		const hand = s.finished[s.finished.length - 1];
+		if (!hand) return;
+		void fetch(resolve('/api/hands'), {
+			method: 'POST',
+			headers: { 'content-type': 'application/json' },
+			body: JSON.stringify(uploadOf(s, hand)),
+			keepalive: true
+		}).catch(() => {});
 	}
 
 	const signed = (x: number) => `${x > 0 ? '+' : x < 0 ? '−' : ''}${Math.abs(x).toFixed(1)} bb`;
@@ -107,6 +121,11 @@
 					Your practice opponent plays the solved jam-or-fold strategy when a hand is inside that
 					game, and a simple rule-based style everywhere else. It is something to play against, not
 					a source of right answers.
+				</p>
+				<p>
+					Each finished hand is kept in this browser and saved on FeltPrep’s own server under a
+					random guest cookie, so it can be reviewed later. There is no sign-in, and nothing is
+					shared with anyone else.
 				</p>
 				<ul class="flex flex-wrap gap-1.5">
 					{#each data.stacks as s (s)}

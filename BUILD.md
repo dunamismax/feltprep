@@ -10,13 +10,13 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 
 | | |
 | --- | --- |
-| **Current phase** | [Phase 3 · The first loop](#phase-3--the-first-loop): P3.1, P3.3 and P3.5a done; P3.4 lacks only its lesson link. Study, drill and practice are at `/study/jam-or-fold/10`, `/drill/jam-or-fold/10` and `/practice/12`. |
-| **Next step** | **P3.5b · Stored hands**: a guest identity, a Drizzle migration and an endpoint that replays each hand on the engine. P3.2 can build its pipeline but commits no lesson before Q-12, which also holds P3.4’s lesson link. |
+| **Current phase** | [Phase 3 · The first loop](#phase-3--the-first-loop): P3.1, P3.3 and P3.5 done; P3.4 lacks only its lesson link. Study, drill and practice are at `/study/jam-or-fold/10`, `/drill/jam-or-fold/10` and `/practice/12`. |
+| **Next step** | **P3.6 · Hand review**: step through a finished hand from the table, using the grades each `FinishedHand` already stores. P3.2 and P3.4’s lesson link wait for Q-12. |
 | **In progress** | Nothing. |
 | **Background run** | None. |
-| **Waiting on the owner** | Q-12 (lesson text and artwork terms) before P3.2 commits a lesson; Q-13 (the published push/fold chart’s terms) is optional. Two optional Cloudflare settings for `feltprep.app` (D-11). |
+| **Waiting on the owner** | Q-12 (lesson text and artwork terms) before P3.2 commits a lesson and P3.4 links it; Q-13 (the published push/fold chart’s terms) is optional. Two optional Cloudflare settings for `feltprep.app` (D-11). |
 | **Live** | <https://feltprep.com> serves `main` as a preview, redeployed by every push whose CI passes (D-10); `/healthz` names the live commit. `feltprep.app` redirects to it in Cloudflare (D-11). |
-| **`main`** | Phases 1 and 2, the host deploy and a strict CSP. `origin` pushes to GitHub and Codeberg. |
+| **`main`** | Phases 1 and 2; theme, study view, drill and practice table with stored hands. `origin` pushes to GitHub and Codeberg. |
 | **Last updated** | 2026-11-26 |
 
 ## How to work this file
@@ -252,7 +252,7 @@ No player can take an illegal action, and every legal one is offered with the ri
 - [x] **Parity at import.** One run of RiverMind’s differential check at the pinned commit shows the imported TypeScript files byte-identical in behaviour to its Python reference. Recorded once in `docs/provenance.md`; after that FeltPrep’s own tests carry the engine.
 - [x] **Replay.** Every fixture and a sample of fuzzed hands round-trip through the history format to an identical state.
 - [x] **Interface.** A browser test plays seeded hands and asserts that the action panel offers exactly the engine’s legal actions, with the engine’s minimum and maximum raise, including an all-in for less than a full raise and a spot where raising is not allowed. Passed at P3.5a: `practice.e2e.ts` in six browser projects, seeded practice hands checked against the engine at every decision, and the engine-built examples on `/style`.
-- [ ] **Server.** Any endpoint that accepts an action rejects one the engine does not offer, and a test proves it.
+- [x] **Server.** Any endpoint that accepts an action rejects one the engine does not offer, and a test proves it. Passed at P3.5b: `POST /api/hands` is the only such endpoint; `upload.spec.ts` and `practice.e2e.ts` send a raise past the stack, a check facing a bet and an action after the end, each refused with 422.
 
 ### Gate B · Trustworthy feedback on reference spots
 
@@ -418,7 +418,7 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
 **Exit criteria**
 
 - [ ] Gate C’s M1 items pass on the M1 journey: every item except on-demand solving (P5.4) and the real-phone pass (P7.2).
-- [ ] Gate A’s interface and server items pass.
+- [x] Gate A’s interface and server items pass.
 - [ ] Every grade shown in the journey comes from the P2.4 solution, and a decision outside it is shown as “not graded”.
 
 - [x] **P3.1 · Design foundation** · Depends on: P1.1, Q-12 (for brand artwork; tokens and code-drawn cards are code)
@@ -447,15 +447,16 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
   - Evidence: the commit that adds `/drill/jam-or-fold/[stack]`. Each deal is a real engine hand stopped at the decision (`web/src/lib/drill/jam-or-fold.ts`), from both engine seats, graded through `locateJamOrFold` and `gradeDecision` as a full hand will be; a limp or smaller raise is “not graded”. `ActionPanel.svelte` (shared with P3.5) shows only what `legalActions` allows, checked over 300 random hands. Session and per-depth progress in local storage (`session.ts`), restored after a reload to the same decision or its feedback; `?seed=` fixes the deals. `drill.e2e.ts` in six projects: a 20-decision session answered from `solution.json` is all acceptable, a clear mistake shows its loss, limp and small raise not graded, reload, and controls at least 44 px, 8 px apart, in the viewport and unmoved by feedback. Full gate: 518 Vitest tests, 96 Playwright tests.
   - Remaining: the feedback links to the study view but not yet to a lesson, which waits for P3.2 and Q-12. Everything else in the criterion is shown.
 
-- [ ] **P3.5 · Short-stack practice table** · Depends on: P3.1, P2.5, P1.5. Split on 2026-11-26 into P3.5a (the table in the browser) and P3.5b (stored hands and the server’s check), because the table and its opponent can be built and verified with no database while storage needs a migration and a guest identity. P3.5 is ticked when both are.
+- [x] **P3.5 · Short-stack practice table** · Depends on: P3.1, P2.5, P1.5. Split on 2026-11-26 into P3.5a (the table in the browser) and P3.5b (stored hands and the server’s check), because the table and its opponent can be built and verified with no database while storage needs a migration and a guest identity. P3.5 is ticked when both are.
   - [x] **P3.5a · The table in the browser**
     - [x] A heads-up table at a chosen depth from 10 to 15 big blinds plays complete hands on the engine against a labelled practice opponent: the reference strategy inside the jam-or-fold game, and the imported rule-based bot (with its provenance entry) elsewhere.
     - [x] The action panel offers exactly the engine’s legal actions and amounts (Gate A’s interface item).
     - [x] The button alternates, a finished hand shows who won and why, and a reload returns to the same decision.
     - Evidence: the commit that adds `/practice/[stack]`. `web/src/lib/practice/`: `table.ts` replays each hand from the session’s seed and the player’s actions, grading each decision through the drill’s `gradeAction`; `opponent.ts` draws the reference’s frequencies inside the game (within 0.015 of a mixed hand’s frequency over 20,000 draws) and hands over to `heuristic.ts`, imported from RiverMind `233b9c6` (`docs/provenance.md`), elsewhere. Unit tests play 300 hands from both seats with chips conserved and every stored history replaying to the same result. `practice.e2e.ts` in six projects replays the seeded session in Node and checks the panel against `legalActions` at every decision (enabled places, call and all-in amounts, the raise sheet’s minimum and maximum), and the three engine-built examples on `/style` (opening, raising not allowed, all-in for less than a full raise); also the outcome sentence, hidden cards without a showdown, the alternating button and a reload mid-hand. Looked at 375 × 812 in the browser through a limped hand to showdown. Full gate: 529 Vitest tests, 114 Playwright tests.
-  - [ ] **P3.5b · Stored hands** · Depends on: P3.5a, Q-4
-    - [ ] Finished hands are stored as versioned hand histories under the guest identity (Q-4), with a Drizzle migration.
-    - [ ] The endpoint that stores a hand replays it on the engine and rejects any action the engine does not offer, and a test proves it (Gate A’s server item).
+  - [x] **P3.5b · Stored hands** · Depends on: P3.5a, Q-4
+    - [x] Finished hands are stored as versioned hand histories under the guest identity (Q-4), with a Drizzle migration.
+    - [x] The endpoint that stores a hand replays it on the engine and rejects any action the engine does not offer, and a test proves it (Gate A’s server item).
+    - Evidence: the commit that ticks this step. `POST /api/hands` checks each upload with `checkUpload` (`web/src/lib/practice/upload.ts`), which replays the history on the engine: an illegal action, an unfinished hand or a deal the table does not make gets 422, a malformed one 400, an oversized one 413, all before any database is touched. `web/drizzle/0000_guests_and_practice_hands.sql` adds `app.guests` and `app.practice_hands` (UUID keys, no sequences); `web/src/lib/server/hands.ts` stores each hand once per guest and key. The guest identity is a random 32-byte token in an HTTP-only, SameSite=Lax cookie, Secure over https, stored only as its SHA-256: Q-4’s default asked for a signed cookie, and an unguessable token needs no signing secret, so no server change was needed. Checked: `upload.spec.ts`; `hands.spec.ts` against a scratch PostgreSQL 18 with `TEST_DATABASE_URL` (stored once, duplicates ignored, guests apart, no raw token kept; skipped in CI); the migration applied twice; `practice.e2e.ts` posts tampered hands to the built server in six projects; and the production build with a database stored hands played in the browser (201, cookie set, rows replay). Not verified: storage on the host, which needs the deploy’s migration. Full gate: 535 Vitest tests, 120 Playwright tests.
 
 - [ ] **P3.6 · Hand review** · Depends on: P3.5
   - [ ] A finished hand can be stepped through from the table, showing only what the player could see until the showdown.
@@ -595,6 +596,14 @@ Every session ends by prepending one entry to the log below, in this shape and i
 
 ## Handoff log
 
+### 2026-11-26 · P3.1, P3.3, P3.4, P3.5 · Study, drill and practice on a phone
+
+- **Completed:** theme and cards (`cd8293a`), study view (`7f5e000`), drill (`c0b1394`), practice table with RiverMind’s heuristic imported (`4e59ed9`), stored hands (the commit that ticks P3.5b). Gate A complete.
+- **Verified:** full gate before each commit (535 Vitest, 120 Playwright at the end); every page looked at on a phone size in both themes; DB tests against a scratch PostgreSQL 18; a damaged solution fails the build. Not verified: storage on the host until the migration deploys.
+- **Open decisions:** Q-4 default used, with an unsigned random token instead of a signed cookie (no secret needed). Q-12 still holds P3.2 and P3.4’s lesson link.
+- **Next ready task:** P3.6: a review page that replays a `FinishedHand` from local storage.
+- **Plan changes:** P3.5 split into P3.5a and P3.5b.
+
 ### 2026-11-26 · P2.1 to P2.5 · Reference math; Phase 2 complete
 
 - **Completed:** the grading contract and reader (`9f46c7a`); exact equities and the pre-flop class table (`8726459`); CFR+ and exact best response (`812e4c2`); the jam-or-fold solution (`ced11f4`); grading, the full-hand locator and B-9, with the solution now graded (the commit that ticks P2.5).
@@ -648,11 +657,3 @@ Every session ends by prepending one entry to the log below, in this shape and i
 - **Open decisions:** none raised. Q-7’s default gained a per-hand margin.
 - **Next ready task:** P1.1, unchanged.
 - **Plan changes:** (1) Gate C’s on-demand item moved to P5.4, since M1 has no on-demand solving; P4.3 now waits for P3.7. (2) P1.5 tests an ordinary heads-up tie: two players cannot produce an odd chip. (3) Grading-gate item 9 with B-11 and B-12: exploitability qualifies a strategy, not each hand’s values. (4) P4.5, a pilot of M1 with a few players, feeding P5.5 and P6.4.
-
-### 2026-11-24 · P1.3 · License and provenance record
-
-- **Completed:** the owner chose AGPL-3.0-or-later (D-9, closing Q-1). Added `LICENSE`, `docs/provenance.md` with the record format and a table of which source licenses may be imported, and `licenses/`. The README and AGENTS.md name the license.
-- **Verified:** `LICENSE` is byte-identical to gnu.org’s `agpl-3.0.txt` (SHA-256 in the provenance record). Links rechecked by script. No suite exists to run.
-- **Open decisions:** Q-12 raised: terms for lesson text, the name and artwork. No lesson or artwork is committed before the owner answers.
-- **Next ready task:** P1.1, starting with the current SvelteKit 3 documentation and `sv create` in `web/`.
-- **Plan changes:** “`package.json` names the license” moved from P1.3 to P1.1, because no `package.json` exists until the scaffold.

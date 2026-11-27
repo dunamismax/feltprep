@@ -19,6 +19,7 @@ import {
 	takeAction,
 	type PracticeSession
 } from '../src/lib/practice/table.ts';
+import { uploadOf } from '../src/lib/practice/upload.ts';
 
 const root = new URL('../../solutions/', import.meta.url);
 const registry = JSON.parse(readFileSync(new URL('registry.json', root), 'utf8')) as Registry;
@@ -157,10 +158,52 @@ test('the button alternates and a reload returns to the same decision', async ({
 			session = takeAction(solution, session, legal.canCheck ? Action.check() : Action.call());
 		}
 	}
+	const sent = page.waitForRequest((r) => r.url().endsWith('/api/hands') && r.method() === 'POST');
 	await page.getByRole('button', { name: 'Next hand' }).click();
+	const body = (await sent).postDataJSON() as { key: string; stack: number; player: number };
+	expect(body).toMatchObject({ key: `${seed}:0`, stack: 12, player: session.player });
 	await expect(page.getByText('You · Big blind')).toBeVisible();
 	const overflow = await page.evaluate(
 		() => document.documentElement.scrollWidth - document.documentElement.clientWidth
 	);
 	expect(overflow).toBe(0);
+});
+
+test('the hands endpoint replays each hand and refuses an action the engine does not offer', async ({
+	request
+}) => {
+	const solution = sliceSolution(whole, 'jof-10bb');
+	let session = newPracticeSession(10, 0);
+	session = nextHand(solution, takeAction(solution, session, Action.raiseTo(1000)));
+	const upload = uploadOf(session, session.finished[0]);
+	const post = (data: unknown) => request.post('/api/hands', { data });
+
+	// A hand the table played passes the check; the test server has no database.
+	const valid = await post(upload);
+	expect(valid.status()).toBe(503);
+	expect(await valid.json()).toMatchObject({ stored: false });
+
+	// A raise past the stack, a check facing the big blind, an action after the end.
+	const actions = upload.history.actions as object[];
+	for (const tampered of [
+		[{ action: 'raise', amount: 1500 }, { action: 'call' }],
+		[{ action: 'check' }],
+		[...actions, { action: 'fold' }]
+	]) {
+		const response = await post({ ...upload, history: { ...upload.history, actions: tampered } });
+		expect(response.status()).toBe(422);
+	}
+	expect((await post({ ...upload, history: { ...upload.history, actions: [] } })).status()).toBe(
+		422
+	);
+	expect((await post({ ...upload, stack: 9 })).status()).toBe(400);
+	expect(
+		(
+			await request.post('/api/hands', {
+				data: 'not json',
+				headers: { 'content-type': 'application/json' }
+			})
+		).status()
+	).toBe(400);
+	expect((await post({ ...upload, key: 'x'.repeat(40_000) })).status()).toBe(413);
 });

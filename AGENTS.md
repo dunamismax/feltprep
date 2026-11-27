@@ -123,7 +123,7 @@ web/                       the SvelteKit app (exists; the same place RiverMind k
   src/app.css              Tailwind entry and the theme tokens, light and dark, at AA contrast (exists)
   src/env.ts               environment variables, validated at build and start (exists)
   src/routes/              pages and endpoints: the home page, /style, /study/jam-or-fold/[stack],
-                           /drill/jam-or-fold/[stack], /practice/[stack] and /healthz exist
+                           /drill/jam-or-fold/[stack], /practice/[stack], /api/hands and /healthz exist
   src/lib/ui/              shared components and their helpers: code-drawn playing cards and the
                            contrast pairs the theme test measures (exists)
   src/lib/study/           the study view's strategy grid and its formatting helpers (exists)
@@ -139,12 +139,13 @@ web/                       the SvelteKit app (exists; the same place RiverMind k
                            fixtures/ holds imported reference data
   src/lib/spots/           the contract's types (docs/grading.md), the reader that checks a solution's hashes and
                            sliceSolution, one game's share of a solution (exists)
-  src/lib/server/          server-only code: database client, health check and solutions.ts, which bundles
-                           solutions/ and checks it in the build (exist); practice sessions and opponents later
+  src/lib/server/          server-only code: database client and schema, health check, hands.ts (guest tokens
+                           and stored practice hands) and solutions.ts, which bundles solutions/ and checks it
+                           in the build (exist)
   scripts/                 Node scripts run by package.json: db-migrate.ts, engine-fuzz.ts, engine-bench.ts,
                            engine-parity.ts and its Node-only helper engine/parity.ts, equity-build.ts,
                            solver-bench.ts, jam-or-fold-build.ts and jam-or-fold-compare.ts exist
-  drizzle/                 SQL migrations (never edit an applied one); only the empty journal exists
+  drizzle/                 SQL migrations (never edit an applied one): 0000 adds app.guests and app.practice_hands
   e2e/                     Playwright tests, desktop and phone (exists)
 content/lessons/           lessons as Markdown, kept in Git, prerendered
 solutions/                 small artifacts kept in Git, each with a manifest: registry.json, equity/ (the pre-flop
@@ -176,7 +177,7 @@ Every command runs from `web/` with the pinned Node 26.13.1 and pnpm 12.18.0. A 
 pnpm install --frozen-lockfile && pnpm run check && pnpm run lint && pnpm run test && pnpm run build && pnpm run e2e
 ```
 
-GitHub Actions runs the same gate on every push (`.github/workflows/test.yml`); check that the run for your commit is green: a green run is what lets the server deploy it (D-10). It needs no database and no `.env`. It does not cover: the database commands (no table exists yet), the deployed site, real phones, or anything in `docs/`.
+GitHub Actions runs the same gate on every push (`.github/workflows/test.yml`); check that the run for your commit is green: a green run is what lets the server deploy it (D-10). It needs no database and no `.env`. It does not cover: the database (CI has none, so `hands.spec.ts` is skipped there and the endpoint answers 503 after its checks), the deployed site, real phones, or anything in `docs/`.
 
 Rules for this section:
 
@@ -196,6 +197,7 @@ Rules for this section:
 | Browser tests, desktop and phone | `pnpm run e2e` | Playwright builds the app and serves it with `node build` on 127.0.0.1:4391, then runs `e2e/*.e2e.ts` in Chromium, Firefox and WebKit at 1440 × 900 and at 375 × 812 with touch. Port 4391 must be free. |
 | Generate a migration | `pnpm run db:generate` | `drizzle-kit generate` from `src/lib/server/db/schema.ts` into `drizzle/`. Needs `DATABASE_URL`. Review the SQL before committing it. |
 | Apply migrations | `pnpm run db:migrate` | `scripts/db-migrate.ts` applies `drizzle/` to `DATABASE_URL` (a PostgreSQL 18 database). |
+| Database tests | `TEST_DATABASE_URL=postgres://… pnpm exec vitest --run --project server src/lib/server/hands.spec.ts` | Migrates the named scratch PostgreSQL 18 database and stores, reads and deletes test hands there. Never point it at a database you care about. Without the variable these tests are skipped, as in the full gate and CI. |
 | Engine rules and fixtures | `pnpm run test` | The engine's specs in `src/lib/engine/` run in the full gate: the 33 hand-worked fixtures imported in `rules.json` and FeltPrep's own in `fixtures.ts` (each derived in a comment; a script token like `S1:?f,c900` asserts the exact legal actions), the rules trace (`rules-trace.spec.ts`: every kept rule in `docs/rules.md` needs a fixture), rule tests, histories, seat views, a short fuzz, every offered action applied (`properties.spec.ts`), a guard that no engine file imports a Node module (`imports.spec.ts`), and `engine.browser.spec.ts` in Chromium. `rules.json` is an imported fixture: never reformat it (`.prettierignore`). |
 | Long engine fuzz | `pnpm run engine:fuzz` | 100,000 random hands at each seat count from 2 to 9 (`-- --hands N --seats 2,6 --seed S`), every invariant checked after every action, illegal actions near the legal set rejected; prints counts of showdowns, side pots, all-ins and odd chips. About 5 minutes on one core (274 seconds on 2026-11-24): run it with `nice -n 19` after any engine change and record the result. |
 | Engine benchmark | `pnpm run engine:bench` | Random self-play speed on one core at 2, 6 and 9 seats (`-- --hands 20000 --repeats 5`). Needs a quiet machine. |

@@ -4,7 +4,7 @@
 
 | | |
 | --- | --- |
-| **Status** | Early development. The foundation and the reference math are done: the rules engine is verified, and the first solved game (jamming or folding heads-up at 2 to 15 big blinds) has passed every check FeltPrep requires before it may grade a decision ([benchmarks](docs/benchmarks.md)). The site at feltprep.com is still a placeholder; nothing is playable yet. |
+| **Status** | Early development. The foundation and the reference math are done: the rules engine is verified, and the first solved game (jamming or folding heads-up at 2 to 15 big blinds) has passed every check FeltPrep requires before it may grade a decision ([benchmarks](docs/benchmarks.md)). On feltprep.com a player can now study that solved game hand by hand, drill it with graded feedback, and play complete short-stack hands against a practice opponent. Lessons and hand review are next. |
 | **Plan and progress** | [BUILD.md](BUILD.md), starting at **Now** |
 | **How work is done** | [AGENTS.md](AGENTS.md) |
 | **Home** | [feltprep.com](https://feltprep.com) shows the work in progress: every change to `main` that passes its checks goes live there within minutes. `feltprep.app` redirects to it. |
