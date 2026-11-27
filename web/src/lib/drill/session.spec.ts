@@ -9,6 +9,8 @@ import {
 	loadProgress,
 	loadSession,
 	newSession,
+	newTargetedSession,
+	dealOf,
 	record,
 	saveSession,
 	summarize,
@@ -65,6 +67,27 @@ describe('a drill session', () => {
 		const s = record(newSession(12, 'big-blind', 99), answer(0, { seat: 'big-blind' }));
 		saveSession(store, s);
 		expect(loadSession(store)).toEqual(s);
+	});
+
+	it('keeps a drill of one spot, its plan and where it came from', () => {
+		const store = memory();
+		const plan: (readonly [number, number] | null)[] = [[45, 12], null, [40, 3], null];
+		const s = newTargetedSession(12, 'big-blind', 5, plan, 'practice');
+		expect(s).toMatchObject({ length: 4, mode: 'big-blind', from: 'practice' });
+		saveSession(store, s);
+		expect(loadSession(store)).toEqual(s);
+		expect([...dealOf(s, 0).state.holeCards[dealOf(s, 0).player]!].sort()).toEqual([12, 45]);
+		expect(dealOf(s, 1).seat).toBe('big-blind');
+		for (const bad of [
+			{ ...s, plan: plan.slice(1) },
+			{ ...s, mode: 'both' },
+			{ ...s, plan: [[45, 45], null, null, null] },
+			{ ...s, plan: [[45, 52], null, null, null] },
+			{ ...s, from: 'elsewhere' }
+		]) {
+			store.data.set(SESSION_KEY, JSON.stringify(bad));
+			expect(loadSession(store)).toBeNull();
+		}
 	});
 
 	it('ignores stored data it cannot trust', () => {

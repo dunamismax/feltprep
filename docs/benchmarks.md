@@ -86,3 +86,12 @@ Every difference is under the 0.5-point threshold.
 - **Under D-20’s bands** (0.5% and 3%; re-run at the commit that ticks P3.8, `jof:build` from `7686e28`): no hand’s verdict moves between acceptable and mistake. **One band changes:** at 3 big blinds, the big blind folding 62s to a jam is an inaccuracy after 10,000 iterations and a mistake after 20,000 (its loss sits at the 3% boundary). Its stored margin gives it the kinder band. The solution’s bytes did not change; only the manifest’s `grading` and its commit did.
 - Under Q-7’s first defaults (1% and 5%, at P2.4) the one band change was at 7 big blinds, the big blind calling with T4s (inaccuracy, then mistake at the 5% boundary).
 - Each hand’s margin (the largest change in its loss over its actions) is stored in the solution. The largest is 0.00175 big blinds, at 3 big blinds; at the other depths it is below 0.0001.
+
+## B-13 · The explanation of a grade is true
+
+**Passed** at the commit that ticks P3.9 (2026-11-26), in the full gate (`web/src/lib/solver/explain.spec.ts`).
+
+- **Every class, depth, seat and action.** 169 classes × 14 depths × 2 seats × 2 actions = 9,464 explanations, each graded through `gradeDecision` against the registered solution and explained by `explain`.
+- **Each printed number** equals, to the precision printed, one of the quantities a separate calculation in the test derives: the opponent’s calling chance and the hand’s equity when called (for the button), its equity against the jamming range and the equity a call needs (for the big blind), each action’s value, the pot and price figures, and the reference’s frequencies. The test weights the opponent’s hands by enumerating every pair of two-card combinations that share no card, instead of the equity table’s pair counts the app uses, and rebuilds each value from those chances. It also requires the deciding facts to be stated: how often the button is called (or folded to) and its equity then, or the big blind’s equity against the jams and the equity a call needs, and the value of jamming or calling.
+- **The wording agrees with the verdict:** a mistake is never “the play”, “either is fine” or “almost the same”; nothing but an acceptable answer is “fine”; a mixed hand is acceptable, says the reference mixes, and is never called a mistake; the best action, unmixed, is “the play”; at most two sentences.
+- **The check can fail:** printing each button hand’s equity one point high failed 15 of its 18 tests.

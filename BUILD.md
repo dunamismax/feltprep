@@ -10,13 +10,13 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 
 | | |
 | --- | --- |
-| **Current phase** | [Phase 3 · The first loop](#phase-3--the-first-loop): P3.1, P3.3 and P3.5 done; P3.4 lacks only its lesson link. Study, drill and practice are at `/study/jam-or-fold/10`, `/drill/jam-or-fold/10` and `/practice/12`. |
-| **Next step** | **P3.8 · The owner’s grading bands** (D-20): set the stricter bands, rebuild the jam-or-fold solution and re-derive B-9 and B-12. Then P3.9 (from a mistake straight to its drill, the product’s spine under D-25), P3.6 (hand review) and P3.2 (the first lesson, unblocked by D-12). |
-| **In progress** | P3.8 · D-20’s bands applied and the solution rebuilt; only the live check after the deploy is left (2026-11-26). |
+| **Current phase** | [Phase 3 · The first loop](#phase-3--the-first-loop): P3.1, P3.3, P3.5, P3.8 and P3.9 done; P3.4 lacks only its lesson link. A mistake at `/practice/12` now shows its cost and reason and drills in one tap. |
+| **Next step** | **P3.2 · Lesson pipeline and the first lesson** (D-12 unblocks it), then P3.6 (hand review, calling `explain` and offering “Drill this spot”) and P3.7 (the M1 journey). |
+| **In progress** | Nothing. |
 | **Background run** | None. |
 | **Waiting on the owner** | Nothing: every open decision was answered on 2026-11-26 (D-12 to D-24). P7.2 will need the owner’s iPhone, and P4.3 and P7.6 their word. |
 | **Live** | <https://feltprep.com> serves `main` as a preview, redeployed by every push whose CI passes (D-10); `/healthz` names the live commit. `feltprep.app` redirects to it in Cloudflare (D-11). |
-| **`main`** | Phases 1 and 2; theme, study view, drill and practice table with stored hands. `origin` pushes to GitHub and Codeberg. |
+| **`main`** | Phases 1 and 2; theme, study view, drill, practice table with stored hands, D-20’s bands, and the mistake-to-drill path. `origin` pushes to GitHub and Codeberg. |
 | **Last updated** | 2026-11-26 |
 
 ## How to work this file
@@ -464,7 +464,7 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
   - [x] A session ends with a summary, and progress is kept in the browser (Q-4) and survives a reload.
   - [x] Deals come from a seed in tests, so every browser test plays known hands.
   - Evidence: the commit that adds `/drill/jam-or-fold/[stack]`. Each deal is a real engine hand stopped at the decision (`web/src/lib/drill/jam-or-fold.ts`), from both engine seats, graded through `locateJamOrFold` and `gradeDecision` as a full hand will be; a limp or smaller raise is “not graded”. `ActionPanel.svelte` (shared with P3.5) shows only what `legalActions` allows, checked over 300 random hands. Session and per-depth progress in local storage (`session.ts`), restored after a reload to the same decision or its feedback; `?seed=` fixes the deals. `drill.e2e.ts` in six projects: a 20-decision session answered from `solution.json` is all acceptable, a clear mistake shows its loss, limp and small raise not graded, reload, and controls at least 44 px, 8 px apart, in the viewport and unmoved by feedback. Full gate: 518 Vitest tests, 96 Playwright tests.
-  - Remaining: the feedback links to the study view but not yet to a lesson, which waits for P3.2. Everything else in the criterion is shown. Its one-sentence reason states the actions’ values but not why one wins; P3.9 replaces it with the explanation that B-13 checks.
+  - Remaining: the feedback links to the study view but not yet to a lesson, which waits for P3.2. Everything else in the criterion is shown; since P3.9 the reason is `explain`’s, checked by B-13.
 
 - [x] **P3.5 · Short-stack practice table** · Depends on: P3.1, P2.5, P1.5. Split on 2026-11-26 into P3.5a (the table in the browser) and P3.5b (stored hands and the server’s check), because the table and its opponent can be built and verified with no database while storage needs a migration and a guest identity. P3.5 is ticked when both are.
   - [x] **P3.5a · The table in the browser**
@@ -481,21 +481,22 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
   - [ ] A finished hand can be stepped through from the table, showing only what the player could see until the showdown.
   - [ ] Each of the player’s decisions is marked graded or not graded. A graded one shows its verdict, its cost and P3.9’s explanation, with P3.9’s “Drill this spot” for that decision and a link to the lesson for its spot.
 
-- [ ] **P3.8 · The owner’s grading bands** · Depends on: P2.5, D-20. Added 2026-11-26: the owner set stricter bands than the default the solution was built with.
+- [x] **P3.8 · The owner’s grading bands** · Depends on: P2.5, D-20. Added 2026-11-26: the owner set stricter bands than the default the solution was built with.
   - [x] The grading settings in `web/src/lib/solver/grading.ts` are D-20’s (acceptable loss 0.5% of the pot, inaccuracy up to 3%; the 5% frequency and `minReach` unchanged), and `grading.spec.ts` checks a hand just inside and just outside each new boundary.
   - [x] The jam-or-fold solution is rebuilt with `pnpm run jof:build`, so its manifest records the new bands and its registry hash changes; B-12’s list of hands whose band moves between solves and their margins are re-recorded, and no hand moves between acceptable and mistake.
   - [x] B-9’s fixture verdicts are re-derived by hand under the new bands, with each changed verdict’s derivation in its comment, and pass.
-  - [ ] `docs/grading.md` and `docs/benchmarks.md` describe the new bands, and the drill and practice table show them: a decision that is now an inaccuracy or a mistake is checked in a browser test and on the live site after the deploy.
+  - [x] `docs/grading.md` and `docs/benchmarks.md` describe the new bands, and the drill and practice table show them: a decision that is now an inaccuracy or a mistake is checked in a browser test and on the live site after the deploy.
   - Evidence: `7686e28` (the grader and its tests) and the commit that records this, whose manifest names `7686e28`. `jof:build` on a clean tree: the solution’s bytes are unchanged (SHA-256 `95db8be4…`), the manifest records 0.005 and 0.03, the registry hash is now `51b65c74…`; B-12 under D-20 has one band change (3 bb, big blind folding 62s: inaccuracy then mistake at the 3% boundary) and none between acceptable and mistake. Under the new bands 68 decisions move from acceptable to inaccuracy and 299 from inaccuracy to mistake. B-9: every verdict stands; the 72o bound is now 0.0075 bb. `drill.e2e.ts` grades folding Q7o (Inaccuracy) and jamming Q5o (Mistake) at 10 bb, each between the old and new boundaries, in six projects. Full gate: 535 Vitest tests, 132 Playwright tests.
-  - Remaining: the check on the live site once this commit deploys.
+  Live: `1042709` deployed itself once CI passed; on feltprep.com, `/drill/jam-or-fold/10?seed=9&seat=button` deals Q7o, and folding it shows “Inaccuracy” (it was acceptable under the old bands).
 
-- [ ] **P3.9 · From a mistake straight to its drill** · Depends on: P3.4, P3.5, P3.8. Added 2026-11-26 for D-25: the path after a mistake is the product’s spine, and today it stops short (the table defers grades to review, the drill’s reason gives values without saying why, and a drill cannot start on a chosen decision).
-  - [ ] **Why, in plain English.** One function, plain TypeScript beside `grading.ts`, turns a verdict and its spot into at most two short sentences a newcomer can follow, every number in them taken from the reference: for a jam, how often the opponent calls, the hand’s equity when called and what the jam wins when they fold; for a fold, what folding keeps against what jamming would have won; for a call or fold facing a jam, the equity the call needs against the hand’s equity against the jamming range. A mixed hand says the reference mixes and why that is fine; a hand not graded says why. Terms such as equity are explained the first time they appear in a session. B-13 passes and is recorded in `docs/benchmarks.md`.
-  - [ ] **One wording everywhere.** Drill feedback, the end of a practice hand and review (P3.6) show the same explanation from the same function, and nothing else invents a reason.
-  - [ ] **The cost at the table.** When a practice hand ends, each of the player’s graded decisions shows its verdict and its cost in big blinds in the result panel at once, not only in review; a mistake or an inaccuracy also shows its explanation and a “Drill this spot” control. An ungraded decision says “not graded” and why.
-  - [ ] **Drill this spot.** The control opens the drill at that depth and seat with that exact decision (same hole cards) as its first deal, then a short targeted set (proposal: 10 deals, half from hand classes next to it in the grid whose best action differs, half at random), seeded so a test plays known deals. The link carries only the spot, the seat and the cards, never anything about the player.
-  - [ ] **Back to the table.** The targeted drill’s summary says whether the player now gets that spot right and returns to the practice table at their next hand in one tap; its answers count in that depth’s progress.
-  - [ ] Gate C’s two mistake-to-drill items pass in all six browser projects, and the path is looked at on a phone size in both themes.
+- [x] **P3.9 · From a mistake straight to its drill** · Depends on: P3.4, P3.5, P3.8. Added 2026-11-26 for D-25: the path after a mistake is the product’s spine, and today it stops short (the table defers grades to review, the drill’s reason gives values without saying why, and a drill cannot start on a chosen decision).
+  - [x] **Why, in plain English.** One function, plain TypeScript beside `grading.ts`, turns a verdict and its spot into at most two short sentences a newcomer can follow, every number in them taken from the reference: for a jam, how often the opponent calls, the hand’s equity when called and what the jam wins when they fold; for a fold, what folding keeps against what jamming would have won; for a call or fold facing a jam, the equity the call needs against the hand’s equity against the jamming range. A mixed hand says the reference mixes and why that is fine; a hand not graded says why. Terms such as equity are explained the first time they appear in a session. B-13 passes and is recorded in `docs/benchmarks.md`.
+  - [x] **One wording everywhere.** Drill feedback, the end of a practice hand and review (P3.6) show the same explanation from the same function, and nothing else invents a reason.
+  - [x] **The cost at the table.** When a practice hand ends, each of the player’s graded decisions shows its verdict and its cost in big blinds in the result panel at once, not only in review; a mistake or an inaccuracy also shows its explanation and a “Drill this spot” control. An ungraded decision says “not graded” and why.
+  - [x] **Drill this spot.** The control opens the drill at that depth and seat with that exact decision (same hole cards) as its first deal, then a short targeted set (proposal: 10 deals, half from hand classes next to it in the grid whose best action differs, half at random), seeded so a test plays known deals. The link carries only the spot, the seat and the cards, never anything about the player.
+  - [x] **Back to the table.** The targeted drill’s summary says whether the player now gets that spot right and returns to the practice table at their next hand in one tap; its answers count in that depth’s progress.
+  - [x] Gate C’s two mistake-to-drill items pass in all six browser projects, and the path is looked at on a phone size in both themes.
+  - Evidence: the commit that ticks this step. `explain` in `web/src/lib/solver/explain.ts` writes every reason, from the verdict and three facts per class computed from the equity table (checked against the hash the solution’s manifest records) and the solution’s frequencies; the drill’s old `reason` is gone. B-13 passed on all 9,464 explanations (`explain.spec.ts`, [`docs/benchmarks.md`](docs/benchmarks.md)), and a planted error failed it. The practice table’s result shows each graded decision’s band and cost, and for an inaccuracy or mistake the explanation and “Drill this spot”, which closes the hand and opens `/drill/jam-or-fold/<stack>?seat=…&cards=…&from=practice`: deal 0 is that decision, then nearest classes whose best action differs alternating with random hands (`targetedPlan`), 10 in all; the summary says whether the spot is now right and leads back to the table at the next hand. The drill offers the same from its own feedback. `mistake.e2e.ts` in six projects: cost and reason at once, the button in view and 44 px tall, one tap to the same cards, 99 ms to an enabled first deal in Chromium at 4× throttling (budget 1 s), back to hand 2 in one tap, reloads, and “not graded” with its reason after a limp. Looked at 375 × 812 in both themes. Full gate: 555 Vitest tests, 150 Playwright tests. Review (P3.6) is still to call `explain` and offer the drill; Gate C’s two items are ticked with the journey at P3.7.
 
 - [ ] **P3.7 · M1 journey** · Depends on: P3.2 to P3.6, P3.8, P3.9
   - [ ] The Gate C journey test exists and passes in all six browser projects and at 360 × 640.
@@ -624,6 +625,13 @@ Every session ends by prepending one entry to the log below, in this shape and i
 
 ## Handoff log
 
+### 2026-11-26 · P3.8, P3.9 · The owner’s bands; from a mistake straight to its drill
+
+- **Completed:** D-20’s bands in the grader (`7686e28`) and the rebuilt manifest (`1042709`); `explain` with B-13, grades with cost and reason at the end of a practice hand, and “Drill this spot” into a 10-deal drill of that decision with a way back (the commit that ticks P3.9).
+- **Verified:** full gate before each push (555 Vitest, 150 Playwright at the end); `jof:build` on a clean tree, bytes unchanged; B-9, B-12, B-13 recorded; P3.8 checked on feltprep.com; the path looked at on a phone in both themes, 99 ms from tap to deal at 4× throttling. Not verified: review, which does not exist yet.
+- **Open decisions:** none.
+- **Next ready task:** P3.2: create `content/lessons/` with its CC BY-SA notice and a Markdown loader that fails the build on an unknown spot.
+
 ### 2026-11-26 · Decisions · Every open question answered; the mistake-to-drill path made the spine
 
 - **Completed:** Q-3 to Q-13 settled as D-12 to D-22, plus D-23 (no M1 pilot; P4.5 dropped) and D-24 (iPhone for P7.2; the `feltprep.app` redirect stays). AGENTS.md, the README and `docs/provenance.md` follow.
@@ -677,11 +685,3 @@ Every session ends by prepending one entry to the log below, in this shape and i
 - **Verified:** the first run on `main`, Test #45454058647, passed every step in 1 minute 34 seconds.
 - **Open decisions:** none touched.
 - **Next ready task:** P1.4: export RiverMind at its pinned commit into a scratch directory and copy the engine files into `web/src/lib/engine/`.
-
-### 2026-11-24 · P1.1 · Scaffold the app
-
-- **Completed:** `web/` from `sv create` 1.7.0, pinned to the host baseline, `pg` driver, optional database, `/healthz` with the build’s commit, a neutral home page with light and dark tokens, six Playwright projects against `node build`, root `.gitignore`. Docs, provenance and the sv notice updated.
-- **Verified:** full gate from a clean copy (check, lint, 5 unit and component tests, build, 18 e2e tests); home page at 375 × 812 in both themes; `/healthz` with no, a working and an unreachable database; database commands on a scratch database. Not verified: CI (P1.2), the host.
-- **Open decisions:** none touched. Q-12 still blocks brand artwork, so there is no favicon.
-- **Next ready task:** P1.2: add a GitHub Actions workflow running the gate in `web/`.
-- **Plan changes:** none. AGENTS.md section 8 said `docs/rules.md` comes at P1.3; corrected to P1.4.

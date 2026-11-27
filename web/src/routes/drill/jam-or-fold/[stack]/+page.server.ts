@@ -2,7 +2,7 @@
 // every solved depth, so the solution's hash checks run in the build; the
 // drill itself, its deals and its grades, run in the browser (A-3).
 import { error } from '@sveltejs/kit';
-import { jamOrFoldAt } from '#lib/server/solutions.ts';
+import { jamOrFoldAt, jamOrFoldFactsAt } from '#lib/server/solutions.ts';
 import { JAM_OR_FOLD_STACKS } from '#lib/solver/jam-or-fold.ts';
 import type { EntryGenerator, PageServerLoad } from './$types';
 
@@ -16,5 +16,10 @@ export const load: PageServerLoad = async ({ params }) => {
 	if (!/^\d+$/.test(params.stack) || !JAM_OR_FOLD_STACKS.includes(stack)) {
 		error(404, 'No jam-or-fold solution at that depth');
 	}
-	return { stack, stacks: JAM_OR_FOLD_STACKS, solution: await jamOrFoldAt(stack) };
+	return {
+		stack,
+		stacks: JAM_OR_FOLD_STACKS,
+		solution: await jamOrFoldAt(stack),
+		facts: await jamOrFoldFactsAt(stack)
+	};
 };

@@ -4,24 +4,29 @@
 	// same decision, and `?seed=` fixes the deals for tests.
 	import { onMount } from 'svelte';
 	import { resolve } from '$app/paths';
+	import { replaceState } from '$app/navigation';
 	import PlayingCard from '#lib/ui/PlayingCard.svelte';
 	import ActionPanel from '#lib/table/ActionPanel.svelte';
 	import {
 		BIG_BLIND,
 		SEAT_MODES,
-		dealDrill,
 		judge,
-		reason,
+		parseHoles,
+		targetQuery,
+		targetedPlan,
+		type Holes,
 		type SeatMode
 	} from '#lib/drill/jam-or-fold.ts';
 	import {
 		addToProgress,
 		advance,
 		current,
+		dealOf,
 		isFinished,
 		loadProgress,
 		loadSession,
 		newSession,
+		newTargetedSession,
 		record,
 		saveSession,
 		summarize,
@@ -33,7 +38,8 @@
 	import { legalActions, potTotal, type Action } from '#lib/engine/state.ts';
 	import { describeAction, inBigBlinds } from '#lib/table/actions.ts';
 	import { percent } from '#lib/study/strategy.ts';
-	import type { Band } from '#lib/spots/types.ts';
+	import { explain } from '#lib/solver/explain.ts';
+	import type { Band, Seat } from '#lib/spots/types.ts';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
@@ -74,6 +80,39 @@
 		persist();
 	}
 
+	/** A session the player starts drops the link's spot, so a reload keeps the new one. */
+	function startByHand(mode: SeatMode) {
+		start(mode, null);
+		if (location.search) {
+			void replaceState(resolve('/drill/jam-or-fold/[stack]', { stack: String(data.stack) }), {});
+		}
+	}
+
+	/** Start a drill of one spot whose first deal is `holes` at `seat` (P3.9). */
+	function startTargeted(
+		seat: Seat,
+		holes: Holes,
+		seed: number | null,
+		from: 'practice' | null = session?.from ?? null
+	) {
+		const s = seed ?? cryptoRandom.below(2 ** 32);
+		const plan = targetedPlan(data.solution, data.stack, seat, holes, s);
+		session = newTargetedSession(data.stack, seat, s, plan, from);
+		persist();
+	}
+
+	/** "Drill this spot" inside the drill: the link now names the spot, so a reload resumes it. */
+	function drillSpot(seat: Seat, holes: Holes) {
+		startTargeted(seat, holes, null);
+		void replaceState(
+			resolve(`drill/jam-or-fold/${data.stack}${targetQuery(seat, holes, session?.from ?? null)}`),
+			{}
+		);
+	}
+
+	const sameHoles = (a: Holes | null | undefined, b: Holes) =>
+		!!a && ((a[0] === b[0] && a[1] === b[1]) || (a[0] === b[1] && a[1] === b[0]));
+
 	onMount(() => {
 		try {
 			store = window.localStorage;
@@ -86,6 +125,28 @@
 		const seatText = params.get('seat');
 		const wantMode = SEAT_MODES.find((m) => m === seatText) ?? null;
 		const saved = store ? loadSession(store) : null;
+		const holes = parseHoles(params.get('cards'));
+		if (holes && (wantMode === 'button' || wantMode === 'big-blind')) {
+			// A drill of one spot, opened from a mistake: resume it after a reload.
+			if (
+				saved?.plan &&
+				saved.stack === data.stack &&
+				saved.mode === wantMode &&
+				sameHoles(saved.plan[0], holes) &&
+				(wantSeed === null || saved.seed === wantSeed)
+			) {
+				session = saved;
+			} else {
+				startTargeted(
+					wantMode,
+					holes,
+					wantSeed,
+					params.get('from') === 'practice' ? 'practice' : null
+				);
+			}
+			progress = store ? loadProgress(store) : null;
+			return;
+		}
 		if (
 			saved &&
 			saved.stack === data.stack &&
@@ -101,14 +162,27 @@
 
 	const finished = $derived(session !== null && isFinished(session));
 	const index = $derived(session ? current(session) : 0);
-	const deal = $derived(
-		session && !finished ? dealDrill(session.seed, index, session.stack, session.mode) : null
-	);
+	const deal = $derived(session && !finished ? dealOf(session, index) : null);
 	const legal = $derived(deal ? legalActions(deal.state) : null);
 	const answered = $derived(
 		session?.reviewing ? session.answers[session.answers.length - 1] : null
 	);
 	const verdict = $derived(answered && deal ? judge(data.solution, deal, answered.action) : null);
+	// Equity is defined in the first explanation of a session.
+	const explanation = $derived(
+		verdict && session
+			? explain(verdict, data.facts, !session.answers.slice(0, index).some((a) => a.graded))
+			: null
+	);
+	const holesOf = (d: { state: { holeCards: readonly (Holes | null)[] }; player: number }) =>
+		d.state.holeCards[d.player] as Holes;
+	const targeted = $derived(session?.plan ? session.answers[0] : null);
+	/** The spot a drill of one spot is about, such as "AQs on the button". */
+	const spotName = $derived.by(() => {
+		if (!session?.plan) return null;
+		const first = dealOf(session, 0);
+		return `${first.hand} ${first.seat === 'button' ? 'on the button' : 'in the big blind'}`;
+	});
 	const band = $derived<Band | 'none'>(verdict?.graded ? verdict.band : 'none');
 	const summary = $derived(session ? summarize(session.answers) : null);
 	const totals = $derived(progress?.byStack[String(data.stack)] ?? null);
@@ -188,7 +262,7 @@
 					class="min-h-target rounded-md border px-2 text-sm font-semibold {session?.mode === mode
 						? 'border-accent bg-accent text-on-accent'
 						: 'border-line-strong bg-raised text-ink'}"
-					onclick={() => start(mode, null)}
+					onclick={() => startByHand(mode)}
 				>
 					{MODE_NAME[mode]}
 				</button>
@@ -220,6 +294,35 @@
 	{#if session && finished && summary}
 		<section aria-labelledby="summary" class="flex flex-col gap-4 px-1 pb-8" data-testid="summary">
 			<h2 id="summary" class="text-xl font-semibold">Session complete</h2>
+			{#if targeted}
+				<p data-testid="spot-result">
+					{#if targeted.graded && targeted.band === 'acceptable'}
+						You got the spot right this time: <strong>{targeted.hand}</strong>
+						{targeted.seat === 'button' ? 'on the button' : 'in the big blind'}, you {past(
+							targeted.taken
+						)}.
+					{:else if targeted.graded}
+						<strong>{targeted.hand}</strong>
+						{targeted.seat === 'button' ? 'on the button' : 'in the big blind'} is still one to work on:
+						the reference {targeted.best}s.
+					{:else}
+						The spot itself was not graded this time.
+					{/if}
+					Around it you got {session.answers
+						.slice(1)
+						.filter((a) => a.graded && a.band === 'acceptable').length} of {session.answers.length -
+						1} right.
+				</p>
+				{#if session.from === 'practice'}
+					<a
+						href={resolve('/practice/[stack]', { stack: String(data.stack) })}
+						class="flex min-h-target items-center justify-center rounded-md bg-accent px-4 font-semibold text-on-accent"
+						data-testid="back-to-table"
+					>
+						Back to the table
+					</a>
+				{/if}
+			{/if}
 			<dl class="grid grid-cols-2 gap-2 text-center sm:grid-cols-4">
 				<div class="rounded-panel border border-good bg-good-soft p-3">
 					<dt class="text-sm text-good">Acceptable</dt>
@@ -261,7 +364,16 @@
 									{a.seat === 'button' ? 'on the button' : 'in the big blind'}: you {past(a.taken)},
 									the reference {a.best}s (−{a.loss.toFixed(2)} bb)
 								</span>
-								<a href={studyLink(a.seat)} class="shrink-0 text-accent underline">Study</a>
+								<span class="flex shrink-0 items-center gap-3">
+									<button
+										type="button"
+										class="min-h-target font-semibold text-accent underline"
+										onclick={() => session && drillSpot(a.seat, holesOf(dealOf(session, a.index)))}
+									>
+										Drill
+									</button>
+									<a href={studyLink(a.seat)} class="text-accent underline">Study</a>
+								</span>
 							</li>
 						{/each}
 					</ul>
@@ -276,8 +388,10 @@
 			{/if}
 			<button
 				type="button"
-				class="min-h-target rounded-md bg-accent px-4 font-semibold text-on-accent"
-				onclick={() => start(session?.mode ?? 'both', null)}
+				class="min-h-target rounded-md px-4 font-semibold {session.from === 'practice'
+					? 'border border-accent text-accent'
+					: 'bg-accent text-on-accent'}"
+				onclick={() => startByHand(session?.plan ? 'both' : (session?.mode ?? 'both'))}
 			>
 				Start a new session
 			</button>
@@ -330,8 +444,10 @@
 
 		<section aria-label="Feedback" aria-live="polite" class="flex min-h-56 flex-col gap-2 px-1">
 			{#if session && deal}
-				<p class="text-sm text-muted" data-testid="progress-line">
-					Decision {index + 1} of {session.length}
+				<p class="text-sm text-muted">
+					<span data-testid="progress-line">
+						Decision {index + 1} of {session.length}
+					</span>{#if spotName}<span data-testid="spot-line"> · drilling {spotName}</span>{/if}
 				</p>
 			{/if}
 			{#if verdict && answered}
@@ -361,12 +477,24 @@
 								.join(' and ')}.
 						</p>
 					{/if}
-					<p class="text-sm" data-testid="reason">{reason(verdict)}</p>
-					<p class="text-sm">
+					<p class="text-sm" data-testid="reason">{explanation?.text}</p>
+					<p class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+						{#if verdict.graded && verdict.band !== 'acceptable' && deal}
+							<button
+								type="button"
+								class="min-h-target rounded-md border border-accent px-3 font-semibold text-accent"
+								onclick={() => drillSpot(deal.seat, holesOf(deal))}
+							>
+								Drill this spot
+							</button>
+						{/if}
 						<a href={studyLink(answered.seat)} class="font-semibold text-accent underline">
 							Study this spot
 						</a>
 					</p>
+					{#if explanation?.gloss}
+						<p class="text-sm text-muted" data-testid="gloss">{explanation.gloss}</p>
+					{/if}
 				</div>
 			{:else if deal}
 				<p class="text-lg" data-testid="prompt">

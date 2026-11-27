@@ -5,10 +5,15 @@
 	// the deals and the opponent's draws for tests.
 	import { onMount } from 'svelte';
 	import { resolve } from '$app/paths';
+	import { goto } from '$app/navigation';
 	import ActionPanel from '#lib/table/ActionPanel.svelte';
 	import TableView from '#lib/table/TableView.svelte';
 	import { cryptoRandom } from '#lib/engine/random.ts';
-	import { legalActions, type Action } from '#lib/engine/state.ts';
+	import { legalActions, type Action, type Street } from '#lib/engine/state.ts';
+	import { targetQuery, type Holes } from '#lib/drill/jam-or-fold.ts';
+	import { explain } from '#lib/solver/explain.ts';
+	import { describeAction } from '#lib/table/actions.ts';
+	import type { Band, Seat } from '#lib/spots/types.ts';
 	import type { KeyValueStore } from '#lib/drill/session.ts';
 	import {
 		BIG_BLIND,
@@ -86,6 +91,92 @@
 			body: JSON.stringify(uploadOf(s, hand)),
 			keepalive: true
 		}).catch(() => {});
+	}
+
+	const BAND_NAME: Record<Band, string> = {
+		acceptable: 'Acceptable',
+		inaccuracy: 'Inaccuracy',
+		mistake: 'Mistake'
+	};
+	const BAND_CLASS: Record<Band, string> = {
+		acceptable: 'border-good bg-good-soft',
+		inaccuracy: 'border-warn bg-warn-soft',
+		mistake: 'border-bad bg-bad-soft'
+	};
+	const BAND_TEXT: Record<Band, string> = {
+		acceptable: 'text-good',
+		inaccuracy: 'text-warn',
+		mistake: 'text-bad'
+	};
+	const STREET: Record<Street, string> = { 0: 'Before the flop', 1: 'Flop', 2: 'Turn', 3: 'River' };
+	const PAST: Record<string, string> = { fold: 'folded', jam: 'jammed', call: 'called' };
+
+	interface GradedLine {
+		readonly key: number;
+		readonly band: Band;
+		readonly street: string;
+		readonly taken: string;
+		readonly loss: number;
+		readonly text: string | null;
+		readonly gloss: string | null;
+		readonly drill: string | null;
+	}
+
+	// The finished hand's decisions (P3.9): every graded one with its verdict
+	// and cost; an inaccuracy or a mistake also with its explanation and a link
+	// that drills that decision. Built here, not inline in {#each} (AGENTS.md 13).
+	const graded = $derived.by((): GradedLine[] => {
+		if (!session || !played || !over) return [];
+		const holes = played.state.holeCards[session.player] as Holes;
+		// Equity is defined in the first explanation the session shows.
+		let define = !session.finished.some((h) =>
+			h.decisions.some((d) => d.verdict.graded && d.verdict.band !== 'acceptable')
+		);
+		return played.decisions.flatMap((d, key) => {
+			const v = d.verdict;
+			if (!v.graded) return [];
+			const explained = v.band !== 'acceptable';
+			const e = explained ? explain(v, data.facts, define) : null;
+			if (explained) define = false;
+			const seat: Seat = v.spot.endsWith('-button') ? 'button' : 'big-blind';
+			return [
+				{
+					key,
+					band: v.band,
+					street: STREET[d.street] ?? '',
+					taken: PAST[v.action] ?? v.action,
+					loss: v.loss,
+					text: e?.text ?? null,
+					gloss: e?.gloss ?? null,
+					drill: explained ? targetQuery(seat, holes, 'practice') : null
+				}
+			];
+		});
+	});
+
+	/** The player's decisions that were not graded, one line per reason. */
+	const ungraded = $derived.by(() => {
+		if (!played || !over) return [];
+		const lines: { detail: string; whats: string[] }[] = [];
+		for (const d of played.decisions) {
+			if (d.verdict.graded) continue;
+			const what = `${STREET[d.street] ?? ''}, ${describeAction(d.action, BIG_BLIND)}`;
+			const line = lines.find((l) => d.verdict.graded === false && l.detail === d.verdict.detail);
+			if (line) line.whats.push(what);
+			else lines.push({ detail: d.verdict.detail, whats: [what] });
+		}
+		return lines.map((l) => ({ detail: l.detail, whats: l.whats.join('; ') }));
+	});
+
+	/** "Drill this spot": close this hand, so the table resumes at the next one, then drill. */
+	function drill(event: MouseEvent, query: string) {
+		event.preventDefault();
+		if (session && over) {
+			session = nextHand(data.solution, session);
+			persist();
+			upload(session);
+		}
+		void goto(resolve(`drill/jam-or-fold/${data.stack}${query}`));
 	}
 
 	const signed = (x: number) => `${x > 0 ? '+' : x < 0 ? '−' : ''}${Math.abs(x).toFixed(1)} bb`;
@@ -181,11 +272,45 @@
 						Next hand
 					</button>
 				</div>
-				{#if played.decisions.some((d) => d.verdict.graded)}
-					<p class="text-sm text-muted">
-						Your first decision was inside the jam-or-fold game, so it is graded in review.
+				{#each graded as g (g.key)}
+					<div
+						class="flex flex-col gap-1.5 rounded-panel border p-2.5 {BAND_CLASS[g.band]}"
+						data-testid="graded-decision"
+					>
+						<div class="flex items-start justify-between gap-3">
+							<p class="text-sm">
+								<span class="font-semibold {BAND_TEXT[g.band]}" data-testid="decision-verdict">
+									{BAND_NAME[g.band]}
+								</span>
+								· {g.street}, you {g.taken}{#if g.loss > 0.005}, giving up
+									<strong class="font-mono" data-testid="decision-cost">
+										{g.loss.toFixed(2)} bb
+									</strong>{:else}, at no cost{/if}.
+							</p>
+							{#if g.drill}
+								<a
+									href={resolve(`drill/jam-or-fold/${data.stack}${g.drill}`)}
+									onclick={(e) => g.drill && drill(e, g.drill)}
+									class="flex min-h-target shrink-0 items-center justify-center rounded-md bg-accent px-3 text-sm font-semibold text-on-accent"
+									data-testid="drill-this-spot"
+								>
+									Drill this spot
+								</a>
+							{/if}
+						</div>
+						{#if g.text}
+							<p class="text-sm" data-testid="decision-reason">{g.text}</p>
+						{/if}
+						{#if g.gloss}
+							<p class="text-sm text-muted">{g.gloss}</p>
+						{/if}
+					</div>
+				{/each}
+				{#each ungraded as u (u.detail)}
+					<p class="text-sm text-muted" data-testid="not-graded">
+						Not graded ({u.whats}): {u.detail}
 					</p>
-				{/if}
+				{/each}
 			</div>
 		{:else if played?.waiting}
 			<p class="text-sm text-muted" data-testid="your-turn">Your turn.</p>

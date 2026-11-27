@@ -109,6 +109,17 @@ A mixed action is therefore never a mistake, and neither is a near-indifferent o
 
 **Where a grade’s numbers come from.** Every number in a verdict is read from the solution file: the values computed exactly from the finished strategies, the margin measured by B-12, the reach and the frequencies. Grading computes only the loss and the band. **`minReach`** is 0.01 by default: a hand the range holds less than 1% as often as it is dealt is not graded at that decision. This is a proposal, recorded in every manifest so that a change is visible.
 
+## Explaining a verdict
+
+A graded verdict comes with at most two sentences that say why, written by `explain` in [`web/src/lib/solver/explain.ts`](../web/src/lib/solver/explain.ts). The drill, the end of a practice hand and review all call it, so a decision is explained the same way wherever it is shown, and nothing else writes a reason (P3.9, D-25).
+
+Every number it states comes from the reference: the verdict’s stored frequencies and values, and three facts per hand class computed from the pre-flop equity table the solution was built from (its manifest’s `inputs`, whose SHA-256 the server checks before using it) and the solution’s own frequencies at that depth:
+
+- for the button, how often the big blind calls its jam, and its equity when called; a jam is worth (1 − c) × 1 + c × (2S × e − S), which is the stored value;
+- for the big blind, its equity against the hands that jam; a call needs (S − 1) / 2S, the price of calling S − 1 more for a pot of 2S.
+
+Percentages are printed whole, with one decimal where whole numbers would hide the difference between the equity a hand has and the equity a call needs; values in big blinds to two decimals. A mixed hand says the reference mixes and that either action is fine; an acceptable action that is not the best says the two are worth almost the same; only the best action is called “the play”. The first explanation a player sees in a session also defines equity. A decision that is not graded is explained by the verdict’s own reason. B-13 checks every explanation of the jam-or-fold solution ([benchmarks](benchmarks.md#b-13--the-explanation-of-a-grade-is-true)).
+
 ## In code
 
 - `gradeDecision(solution, spot, hand, action)` in [`web/src/lib/solver/grading.ts`](../web/src/lib/solver/grading.ts) returns the verdict for a loaded solution (or `null` when none covers the decision), and `bandOf` applies the bands.

@@ -127,7 +127,8 @@ web/                       the SvelteKit app (exists; the same place RiverMind k
   src/lib/ui/              shared components and their helpers: code-drawn playing cards and the
                            contrast pairs the theme test measures (exists)
   src/lib/study/           the study view's strategy grid and its formatting helpers (exists)
-  src/lib/drill/           the jam-or-fold drill: seeded deals, judging, session and progress storage (exists)
+  src/lib/drill/           the jam-or-fold drill: seeded deals, drills of one spot started from a mistake,
+                           judging, session and progress storage (exists)
   src/lib/table/           the action panel, built only from the engine's legal actions, and the table view (exists)
   src/lib/practice/        the short-stack practice session, its opponent and the heuristic bot imported from
                            RiverMind (exists)
@@ -135,13 +136,14 @@ web/                       the SvelteKit app (exists; the same place RiverMind k
                            pure, browser-safe TypeScript imported from RiverMind (exists)
   src/lib/solver/          hand classes, exact equities, the pre-flop class table, games with a public betting
                            tree (game.ts), CFR+ and exact best response (cfr.ts), the jam-or-fold game, its
-                           location in a full hand (jam-or-fold-hand.ts) and grading (grading.ts) exist.
+                           location in a full hand (jam-or-fold-hand.ts), grading (grading.ts) and the plain-English
+                           explanation of a verdict (explain.ts) exist.
                            fixtures/ holds imported reference data
   src/lib/spots/           the contract's types (docs/grading.md), the reader that checks a solution's hashes and
                            sliceSolution, one game's share of a solution (exists)
   src/lib/server/          server-only code: database client and schema, health check, hands.ts (guest tokens
-                           and stored practice hands) and solutions.ts, which bundles solutions/ and checks it
-                           in the build (exist)
+                           and stored practice hands) and solutions.ts, which bundles solutions/ and the equity
+                           table, checks them in the build and computes explain.ts's facts (exist)
   scripts/                 Node scripts run by package.json: db-migrate.ts, engine-fuzz.ts, engine-bench.ts,
                            engine-parity.ts and its Node-only helper engine/parity.ts, equity-build.ts,
                            solver-bench.ts, jam-or-fold-build.ts and jam-or-fold-compare.ts exist

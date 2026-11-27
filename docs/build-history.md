@@ -2,6 +2,14 @@
 
 Handoff entries moved out of [BUILD.md](../BUILD.md#handoff-log), which keeps the newest eight. Oldest last.
 
+### 2026-11-24 · P1.1 · Scaffold the app
+
+- **Completed:** `web/` from `sv create` 1.7.0, pinned to the host baseline, `pg` driver, optional database, `/healthz` with the build’s commit, a neutral home page with light and dark tokens, six Playwright projects against `node build`, root `.gitignore`. Docs, provenance and the sv notice updated.
+- **Verified:** full gate from a clean copy (check, lint, 5 unit and component tests, build, 18 e2e tests); home page at 375 × 812 in both themes; `/healthz` with no, a working and an unreachable database; database commands on a scratch database. Not verified: CI (P1.2), the host.
+- **Open decisions:** none touched. Q-12 still blocks brand artwork, so there is no favicon.
+- **Next ready task:** P1.2: add a GitHub Actions workflow running the gate in `web/`.
+- **Plan changes:** none. AGENTS.md section 8 said `docs/rules.md` comes at P1.3; corrected to P1.4.
+
 ### 2026-11-24 · Planning · Changes from a review of the plan
 
 - **Completed:** four plan corrections from a review the owner passed on; no code and no step ticked.

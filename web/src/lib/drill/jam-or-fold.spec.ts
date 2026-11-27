@@ -1,7 +1,19 @@
 import { describe, expect, it } from 'vitest';
 import { Action, legalActions, options } from '../engine/state.ts';
 import { jamOrFoldAt } from '../server/solutions.ts';
-import { BIG_BLIND, dealDrill, judge, reason, type DrillDeal } from './jam-or-fold.ts';
+import { CLASSES, classIndex } from '../solver/classes.ts';
+import { cards } from '../engine/cards.ts';
+import {
+	BIG_BLIND,
+	TARGETED_LENGTH,
+	dealDrill,
+	holesText,
+	judge,
+	parseHoles,
+	targetQuery,
+	targetedPlan,
+	type DrillDeal
+} from './jam-or-fold.ts';
 
 const solution = await jamOrFoldAt(10);
 
@@ -110,21 +122,65 @@ describe('judge', () => {
 	});
 });
 
-describe('reason', () => {
-	it('names the better action and the cost', () => {
-		const text = reason(judge(solution, find('AA', 'button'), Action.fold()));
-		expect(text).toMatch(
-			/^With AA, folding −0\.50 bb and jamming \+\d+\.\d\d bb: folding gives up/
+describe('a drill of one spot', () => {
+	const kd5c = cards('Kd5c') as [number, number];
+
+	it('deals exactly the chosen cards, from both seats and both buttons', () => {
+		const buttons = new Set<number>();
+		for (const seat of ['button', 'big-blind'] as const) {
+			for (let i = 0; i < 20; i++) {
+				const deal = dealDrill(31, i, 12, seat, kd5c);
+				expect(deal.seat).toBe(seat);
+				expect([...deal.state.holeCards[deal.player]!].sort()).toEqual([...kd5c].sort());
+				expect(deal.hand).toBe('K5o');
+				expect(new Set(deal.state.deck).size).toBe(52);
+				buttons.add(deal.state.button);
+				if (seat === 'big-blind') expect(deal.state.actions[0]).toMatchObject({ allIn: true });
+			}
+		}
+		expect(buttons).toEqual(new Set([0, 1]));
+		expect(dealDrill(31, 4, 12, 'button', kd5c).state).toEqual(
+			dealDrill(31, 4, 12, 'button', kd5c).state
 		);
 	});
 
-	it('says why a right answer is right', () => {
-		const deal = find('AA', 'button');
-		const text = reason(judge(solution, deal, Action.raiseTo(1000)));
-		expect(text).toMatch(/so jamming is the play\.$/);
+	it('plans the decision first, then neighbours whose best action differs, then random hands', async () => {
+		const at12 = await jamOrFoldAt(12);
+		const plan = targetedPlan(at12, 12, 'big-blind', kd5c, 77);
+		expect(plan).toHaveLength(TARGETED_LENGTH);
+		expect(plan[0]).toEqual(kd5c);
+		const table = at12.solution.decisions.find((d) => d.spot === 'jof-12bb-big-blind')!;
+		const best = (name: string) => {
+			const v = table.values[table.hands.indexOf(name)];
+			return v.indexOf(Math.max(...v));
+		};
+		const target = CLASSES[classIndex(kd5c[0], kd5c[1])];
+		for (let i = 1; i < TARGETED_LENGTH; i++) {
+			const h = plan[i];
+			if (i % 2 === 0) {
+				expect(h).toBeNull();
+				continue;
+			}
+			expect(h).not.toBeNull();
+			const c = CLASSES[classIndex(h![0], h![1])];
+			expect(c.name).not.toBe('K5o');
+			expect(best(c.name)).not.toBe(best('K5o'));
+			expect(
+				Math.max(Math.abs(c.row - target.row), Math.abs(c.col - target.col))
+			).toBeLessThanOrEqual(3);
+		}
+		expect(targetedPlan(at12, 12, 'big-blind', kd5c, 77)).toEqual(plan);
 	});
 
-	it('passes on the reason a decision is not graded', () => {
-		expect(reason(judge(solution, find('KQs', 'button'), Action.call()))).toMatch(/limp/);
+	it('reads and writes the cards in a link, and nothing else', () => {
+		expect(holesText(kd5c)).toBe('Kd5c');
+		expect(parseHoles('Kd5c')).toEqual(kd5c);
+		for (const bad of [null, '', 'KdKd', 'Kd5', 'Kd5cAs', 'Xd5c', '10d5c']) {
+			expect(parseHoles(bad)).toBeNull();
+		}
+		expect(targetQuery('big-blind', kd5c, 'practice')).toBe(
+			'?seat=big-blind&cards=Kd5c&from=practice'
+		);
+		expect(targetQuery('button', kd5c, null)).toBe('?seat=button&cards=Kd5c');
 	});
 });

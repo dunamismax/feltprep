@@ -5,7 +5,14 @@
 
 import type { ActionKind } from '../engine/state.ts';
 import type { Band, NotGradedReason, Seat } from '../spots/types.ts';
-import { SEAT_MODES, SESSION_LENGTH, type SeatMode } from './jam-or-fold.ts';
+import {
+	SEAT_MODES,
+	SESSION_LENGTH,
+	dealDrill,
+	type DrillDeal,
+	type Holes,
+	type SeatMode
+} from './jam-or-fold.ts';
 
 export interface KeyValueStore {
 	getItem(key: string): string | null;
@@ -40,6 +47,13 @@ export interface DrillSession {
 	readonly answers: readonly Answer[];
 	/** True while the last answer's feedback is on screen. */
 	readonly reviewing: boolean;
+	/**
+	 * A drill of one spot (P3.9): the player's cards for each deal, or null for
+	 * a random hand. Deal 0 is the decision the drill was started from.
+	 */
+	readonly plan?: readonly (Holes | null)[];
+	/** Where the drill was opened from, so its summary can lead back. */
+	readonly from?: 'practice';
 }
 
 export const SESSION_KEY = 'feltprep.drill.jam-or-fold.session.v1';
@@ -48,6 +62,34 @@ export const PROGRESS_KEY = 'feltprep.drill.jam-or-fold.progress.v1';
 export function newSession(stack: number, mode: SeatMode, seed: number): DrillSession {
 	return { version: 1, stack, mode, seed, length: SESSION_LENGTH, answers: [], reviewing: false };
 }
+
+/** A drill of one spot at `seat`, dealt as `plan` says (targetedPlan). */
+export function newTargetedSession(
+	stack: number,
+	seat: Seat,
+	seed: number,
+	plan: readonly (Holes | null)[],
+	from: 'practice' | null
+): DrillSession {
+	return {
+		version: 1,
+		stack,
+		mode: seat,
+		seed,
+		length: plan.length,
+		answers: [],
+		reviewing: false,
+		plan,
+		...(from ? { from } : {})
+	};
+}
+
+/** Deal `index` of `session`, following its plan when it has one. */
+export function dealOf(session: DrillSession, index: number): DrillDeal {
+	return dealDrill(session.seed, index, session.stack, session.mode, session.plan?.[index] ?? null);
+}
+
+const isCard = (c: unknown) => Number.isInteger(c) && (c as number) >= 0 && (c as number) < 52;
 
 /** The index of the decision on screen. */
 export function current(session: DrillSession): number {
@@ -97,7 +139,17 @@ export function loadSession(store: KeyValueStore): DrillSession | null {
 		!SEAT_MODES.includes(s.mode as SeatMode) ||
 		!Array.isArray(s.answers) ||
 		typeof s.reviewing !== 'boolean' ||
-		s.answers.some((a: Answer, i: number) => a?.index !== i)
+		s.answers.some((a: Answer, i: number) => a?.index !== i) ||
+		(s.plan !== undefined &&
+			(!Array.isArray(s.plan) ||
+				s.plan.length !== s.length ||
+				s.mode === 'both' ||
+				!s.plan.every(
+					(h) =>
+						h === null ||
+						(Array.isArray(h) && h.length === 2 && isCard(h[0]) && isCard(h[1]) && h[0] !== h[1])
+				))) ||
+		(s.from !== undefined && s.from !== 'practice')
 	) {
 		return null;
 	}
