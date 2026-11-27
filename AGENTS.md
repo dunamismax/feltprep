@@ -81,13 +81,13 @@ Four rules settle most design questions:
 
 **Owner gates.** Get the owner’s explicit word in the current conversation for each of:
 
-- a hand deploy, or changing anything on the server, DNS or Cloudflare. Pushing to `main` is not a hand deploy: by the owner’s decision D-10 every push that passes CI deploys itself to `feltprep.com`. A commit that changes `deploy/` waits for a hand deploy ([`deploy/README.md`](deploy/README.md)), and that needs the owner’s word;
+- changing anything the host’s sites share (the web platform contract’s scripts, the main Caddy configuration, other repositories such as `ubuntu-vm-backup`), another site, DNS or Cloudflare. What FeltPrep itself owns on the host is not an owner gate: by the owner’s decision D-13 an agent may run hand deploys (including a `deploy/` commit that `feltprep-autodeploy` held, [`deploy/README.md`](deploy/README.md)) and change FeltPrep’s account, database, roles, credentials, units, timer and Caddy fragment, recording each change in the evidence line. Pushing to `main` deploys itself once CI passes (D-10);
 - creating accounts, OAuth apps or anything that costs money, and adding or changing a git remote;
-- changing the project’s license (D-9), importing anything whose terms `docs/provenance.md` does not clear, and committing lesson text or artwork before Q-12 is answered;
+- changing the project’s license (D-9), importing anything whose terms `docs/provenance.md` does not clear, and publishing lesson text or artwork under terms other than D-12’s (lessons CC BY-SA 4.0; the name and artwork reserved);
 - changing a settled decision, deleting an unfinished step, lowering an acceptance criterion or a threshold in a verification gate, or reordering phases. Raise these as an open decision instead;
 - telling players something about accuracy or strength that no benchmark in BUILD.md supports.
 
-Approval for one hand deploy does not carry over to the next. An item that needs a person never blocks other work: do everything up to that point, write the exact remaining instruction under **Waiting on the owner** in **Now**, and move on.
+Approval for one gated action does not carry over to the next. An item that needs a person never blocks other work: do everything up to that point, write the exact remaining instruction under **Waiting on the owner** in **Now**, and move on.
 
 ## 4. Git
 
@@ -109,7 +109,7 @@ The owner often runs several sessions in one checkout.
 
 ## 6. Stack and layout
 
-The stack is settled (D-2 in BUILD.md): SvelteKit 3 · Svelte 5 · strict TypeScript · Tailwind CSS 4 · PostgreSQL 18 with Drizzle ORM · Node through `adapter-node` · Caddy, self-hosted on the owner’s server. Do not swap a layer without the owner.
+The stack is settled (D-2 in BUILD.md): SvelteKit 3 · Svelte 5 · strict TypeScript · Tailwind CSS 4 · PostgreSQL 18 with Drizzle ORM · Node through `adapter-node` · Caddy, self-hosted on the owner’s server. Do not swap a layer without the owner. The one pre-approved addition is a Rust core compiled to WebAssembly for the post-flop solver, and only if P5.1 measures that TypeScript cannot meet its budget (D-19).
 
 The host runs several sites under one web platform contract, `docs/web-platform.md` in the owner’s `ubuntu-vm-backup` repository, which both reference projects follow and which wins over this file where they differ. As both references record it on 2026-11-24: pnpm 12.18.0 and Node 26.13.1 at exact versions, every dependency pinned exactly at the host’s baseline, `pg` with `drizzle-orm/node-postgres` as the only database driver, the host PostgreSQL 18 cluster, and fix-forward deploys with a candidate check and no rollback. FeltPrep follows it (P4.1, 2026-11-26): `bin/web-conformance` passes, the release layout, unit, roles and deploy steps are the contract’s, and [`deploy/README.md`](deploy/README.md) maps them to FeltPrep. Read the contract itself (on the server, `/home/sawyer/github/ubuntu-vm-backup/docs/web-platform.md`) before changing `deploy/`; it is not checked out on the development Mac.
 
@@ -207,7 +207,7 @@ Rules for this section:
 | Jam-or-fold chart comparison | `node scripts/jam-or-fold-compare.ts --chart <file>` | B-5’s comparison with the published chart. `<file>` is a hand-made copy of the chart kept outside the repository (Q-13); the script’s header gives the format. |
 | Solver benchmarks | `pnpm run solver:bench` | B-1 (CFR+ on Kuhn poker), B-2 (best responses against hand-derived values) and B-3 (the polarized river game against its closed form); prints each measured number for `docs/benchmarks.md` and exits 1 if one fails. A second or two. The same checks run in the full gate (`src/lib/solver/cfr.spec.ts`). |
 | Build a release on the server | `deploy/prepare.sh [COMMIT]` | **On the server, as sawyer**, from `~/github/feltprep` (repository root, not `web/`). Exports `origin/main` into `~/web-work/feltprep.com-<commit>/`, runs install, check, lint, test and the build, assembles the release and smoke-tests it. Changes nothing live. |
-| Put a release live | `/usr/local/sbin/with-deploy-lock <candidate>/src/deploy/cutover.sh <candidate>` | **On the server, as root.** Stage, migrate, candidate check, switch, verify, Caddy, public check. A hand deploy is an owner gate (section 3). |
+| Put a release live | `/usr/local/sbin/with-deploy-lock <candidate>/src/deploy/cutover.sh <candidate>` | **On the server, as root.** Stage, migrate, candidate check, switch, verify, Caddy, public check. An agent may run it for FeltPrep (D-13, section 3). |
 | Provision the host | `/usr/local/sbin/with-deploy-lock ~sawyer/github/feltprep/deploy/provision.sh` | **On the server, as root.** Account, database, roles and credentials; idempotent. Done 2026-11-26. |
 | Continuous deploy | `systemctl status feltprep-autodeploy.timer` | **On the server.** Every push to `main` whose CI passed deploys itself (D-10); `journalctl -u feltprep-autodeploy` shows each decision. |
 
@@ -234,7 +234,7 @@ Telling a player that a decision was a mistake is the product’s central claim,
 - **“Not graded” is a correct answer.** When no qualified reference covers a decision, say so plainly. Do not fall back to a heuristic dressed as a verdict.
 - **Show the assumptions.** A solved spot always displays its stacks, positions, bet sizes and ranges. A grade is a statement about that game, not about poker in general.
 - **A good strategy does not vouch for every hand.** Exploitability is an average over the whole strategy, so it can be low while a rarely held hand’s action values are wrong. A grade uses values computed exactly from the finished strategies, checked hand by hand (B-11), with each hand’s margin recorded (B-12). A hand outside the spot’s ranges is not graded.
-- **Mixed strategies are not mistakes.** An action the reference plays some of the time, or one that costs less than the tolerance, is acceptable. The thresholds are in BUILD.md (Q-7).
+- **Mixed strategies are not mistakes.** An action the reference plays some of the time, or one that costs less than the tolerance, is acceptable. The thresholds are in BUILD.md (D-20).
 - **Every accuracy claim names its benchmark.** A sentence in the app, the README or a lesson that says how accurate FeltPrep is must point at a row in [BUILD.md’s benchmark table](BUILD.md#gate-b--trustworthy-feedback-on-reference-spots). No row, no claim.
 - **The verifier is verified first.** Exploitability numbers come from FeltPrep’s own best-response code, which must first reproduce hand-derived answers on games small enough to solve on paper.
 - **Expected answers come from outside the code under test:** a closed-form result, a published value with its source cited in the test, or an independent solver’s output. Never the solver’s own earlier output, except in a regression test that is labelled as one.
@@ -258,7 +258,7 @@ Further rules:
 - **Imported is not trusted.** A passing license check says nothing about correctness. Imported engine code meets [section 8](#8-poker-correctness) in this repository, and imported strategies meet [section 9](#9-feedback-and-solver-claims) before they grade anything.
 - **A dependency is an import.** Before `pnpm add`, check the package’s license and that the version is the host baseline’s.
 - **An external solver used for cross-checks is a tool, not a dependency.** Check its license before running it, record the version used, and import none of its code.
-- **The license covers the code.** The terms for lesson text and for the FeltPrep name and artwork are an open decision (Q-12). Do not commit a lesson or brand artwork until the owner answers it.
+- **The license covers the code.** Lesson text is CC BY-SA 4.0 and the FeltPrep name and artwork are reserved (D-12). A lesson states its license; brand artwork is marked as reserved and is never put under the AGPL or a CC license.
 - **Lesson content is original.** Do not copy charts, ranges, hand examples or wording from books, training sites or solver products. Where a published number is used as a benchmark, cite it in the test.
 - **Load only trusted artifacts.** Never unpickle or execute a file from outside the project.
 

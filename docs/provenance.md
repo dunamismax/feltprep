@@ -6,7 +6,7 @@ The record of everything in this repository that came from somewhere else: code,
 
 FeltPrep’s code is licensed under the GNU Affero General Public License, version 3 or later (`AGPL-3.0-or-later`; D-9 in [BUILD.md](../BUILD.md#settled-decisions)). [`LICENSE`](../LICENSE) is the license’s unmodified text.
 
-The license covers the code. The terms for lesson text and for the FeltPrep name and artwork are a separate, open decision (Q-12 in BUILD.md); none of either exists yet.
+The license covers the code. Lesson text is licensed separately under Creative Commons Attribution-ShareAlike 4.0 International (`CC-BY-SA-4.0`), and the FeltPrep name, logo and artwork are reserved, under neither license (D-12 in BUILD.md, 2026-11-26). No lesson or brand artwork exists yet.
 
 ## What may be imported
 

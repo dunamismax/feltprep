@@ -2,6 +2,14 @@
 
 Handoff entries moved out of [BUILD.md](../BUILD.md#handoff-log), which keeps the newest eight. Oldest last.
 
+### 2026-11-24 · Planning · Changes from a review of the plan
+
+- **Completed:** four plan corrections from a review the owner passed on; no code and no step ticked.
+- **Verified:** the odd-chip point against RiverMind’s rules 9.1 and 11.2 and its fixtures, which cover odd chips only with three or more seats. Links rechecked by script. No suite exists to run.
+- **Open decisions:** none raised. Q-7’s default gained a per-hand margin.
+- **Next ready task:** P1.1, unchanged.
+- **Plan changes:** (1) Gate C’s on-demand item moved to P5.4, since M1 has no on-demand solving; P4.3 now waits for P3.7. (2) P1.5 tests an ordinary heads-up tie: two players cannot produce an odd chip. (3) Grading-gate item 9 with B-11 and B-12: exploitability qualifies a strategy, not each hand’s values. (4) P4.5, a pilot of M1 with a few players, feeding P5.5 and P6.4.
+
 ### 2026-11-24 · P1.3 · License and provenance record
 
 - **Completed:** the owner chose AGPL-3.0-or-later (D-9, closing Q-1). Added `LICENSE`, `docs/provenance.md` with the record format and a table of which source licenses may be imported, and `licenses/`. The README and AGENTS.md name the license.

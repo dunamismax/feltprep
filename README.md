@@ -75,4 +75,4 @@ The full gate that every commit passes, and every other command, are in [AGENTS.
 
 FeltPrep’s code is free software under the [GNU Affero General Public License](LICENSE), version 3 or later. Anyone may use, study, change and share it, and anyone who runs a changed version as a service must offer its source to the people who use it.
 
-The license covers the code. The terms for lesson text and for the FeltPrep name and artwork are not yet decided, and none of either exists yet. [docs/provenance.md](docs/provenance.md) records everything that came from another project, with its license.
+The license covers the code. Lesson text, once published, is under [Creative Commons Attribution-ShareAlike 4.0](https://creativecommons.org/licenses/by-sa/4.0/): anyone may share and adapt it, with credit, under the same terms. The FeltPrep name, logo and artwork are reserved and are not covered by either license. [docs/provenance.md](docs/provenance.md) records everything that came from another project, with its license.
