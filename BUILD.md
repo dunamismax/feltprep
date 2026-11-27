@@ -14,10 +14,10 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 | **Next step** | **P2.1 · Spot, solution and grading contract.** It needs no decision from the owner; P2.2 (exact equities) is also ready. |
 | **In progress** | Nothing. |
 | **Background run** | None. |
-| **Waiting on the owner** | Nothing blocks the next step. Q-12 (terms for lesson text and artwork) is needed by P3.1 and P3.2. |
-| **Live** | Nothing is deployed. `feltprep.com` and `feltprep.app` point at the host through Cloudflare DNS. |
-| **`main`** | Phase 1: the app in `web/`, the engine verified against Gate A’s engine items, its gate and CI, on 2026-11-24. `origin` pushes to GitHub and Codeberg. |
-| **Last updated** | 2026-11-24 |
+| **Waiting on the owner** | Nothing blocks the next step. Q-12 is needed by P3.1 and P3.2; Q-2 (`feltprep.app` DNS records) and adding `feltprep.com` to the host’s DDNS job (P4.2 **Remaining**) need the owner’s word. |
+| **Live** | <https://feltprep.com> serves `main` as a preview, redeployed by every push whose CI passes (D-10); `/healthz` names the live commit. `feltprep.app` has no DNS records yet. |
+| **`main`** | Phase 1, plus the host deploy in `deploy/` and a strict Content Security Policy (P4.1, most of P4.2). `origin` pushes to GitHub and Codeberg. |
+| **Last updated** | 2026-11-26 |
 
 ## How to work this file
 
@@ -100,6 +100,7 @@ These come from the owner’s brief of 2026-11-24 and the owner’s standing rul
 | D-6 | **Individual preparation.** RiverMind is for recreational play with friends or bots. FeltPrep is for one player’s preparation and improvement. |
 | D-7 | **This file is the authority** on the plan and its progress. An implementation item is ticked only when the work and its verification exist in FeltPrep. |
 | D-8 | **Git.** `main` only, no branches or pull requests, and no AI attribution anywhere. |
+| D-10 | **Live through the build** (owner, 2026-11-26). `feltprep.com` serves `main` from the start of the build, so the owner can review each change in a browser. Every push to `main` whose GitHub Actions run passes deploys itself through `feltprep-autodeploy` on the host, by the contract’s fix-forward flow with a candidate check ([`deploy/README.md`](deploy/README.md)). A commit that changes `deploy/` is held for a hand deploy, which stays an owner gate (Q-10). The preview is not the first public release: P4.3 still waits for M1, and the site sends `noindex` until then. |
 | D-9 | **License** (owner, 2026-11-24, answering Q-1). FeltPrep’s code is licensed under the GNU Affero General Public License, version 3 or later (`AGPL-3.0-or-later`), so that anyone who runs a modified FeltPrep as a service must offer its source. GPL-3.0 code, RiverMind’s included, may be combined with it under section 13 of both licenses and stays under the GPL. The terms for lesson text and for the name and artwork are Q-12. |
 
 ## Open decisions
@@ -117,7 +118,7 @@ Use each default until the owner decides otherwise. **Needed by** names the firs
 | Q-7 | **Grading thresholds.** How close to equilibrium must a reference be, and how large a loss counts as a mistake? | Exploitability at most 0.5% of the starting pot for a precomputed post-flop spot, 1% for an on-demand river solve, and 0.001 big blinds per hand for jam-or-fold. An action is **acceptable** if the reference plays it at least 5% of the time with that hand or it loses at most 1% of the pot; an **inaccuracy** up to 5%; a **mistake** above that. A loss smaller than the reference’s own exploitability is never shown as a mistake, and a loss within that hand’s recorded margin of a band’s boundary (B-12) gets the kinder band. | P2.5 |
 | Q-8 | **Range assumptions for post-flop spots.** A post-flop solve needs both players’ starting ranges, and the first release does not solve pre-flop at 100 big blinds. Where do they come from? | Ranges written for FeltPrep and shown to the player as assumptions. The alternative is the pre-flop frequencies of RiverMind’s heads-up champion (lossless before the flop), recorded with the model’s hash. Either way a grade is conditional on the ranges shown. | P5.5 |
 | Q-9 | **RiverMind’s trained champions as practice opponents.** Serve them from FeltPrep? | The heads-up champion `hu-m1-s0-1024m` at P6.1, after measuring memory on the host (its bundle is about 450 MB in memory). The six-seat champion only if that measurement leaves room. Never for grading. | P6.1 |
-| Q-10 | **Server setup.** May agents provision the host (database, roles, units, Caddy fragment) without asking each time, as RiverMind’s D-10 allows there? | No. Every server change needs the owner’s word until they say otherwise. | P4.1 |
+| Q-10 | **Server setup.** May agents provision the host (database, roles, units, Caddy fragment) without asking each time, as RiverMind’s D-10 allows there? | No. Every server change and hand deploy needs the owner’s word until they say otherwise. Pushes to `main` deploy themselves (D-10); that is not a server change. | P4.1 |
 | Q-11 | **Independent solver for cross-checks.** Which tool, under which license? | Chosen at P5.3 after reading the tool’s own license file. It runs as an external program on reference spots; none of its code enters the repository. | P5.3 |
 | Q-12 | **Terms for lesson text, and for the FeltPrep name and artwork.** D-9 covers the code. Are lessons and brand assets under the same license, a content license, or reserved? | Undecided, and nothing of either kind exists yet. A lesson may be drafted, but none is committed to this public repository until the owner answers, because publishing under a free license cannot be taken back. | P3.1 (artwork), P3.2 (lessons) |
 
@@ -461,11 +462,16 @@ A player can complete the loop on a phone. M1 (P3.7) passes every item except th
 - [ ] `/healthz` reports the deployed commit, a database backup exists, and a redeploy is one documented command sequence.
 - [ ] A live smoke test passes against the public site.
 
-- [ ] **P4.1 · Host facts** · Depends on: P1.1 · **Owner gate:** server access
-  - [ ] The host’s web platform contract (`docs/web-platform.md` in `ubuntu-vm-backup`) has been read, and anything in AGENTS.md or A-1 that differs from it is corrected.
-  - [ ] Recorded here: the app’s directory, service name, database and role names, and a loopback port confirmed free on the server itself (RiverMind uses 4320 and 4323, C From The Ground Up 4317, and others are taken).
-  - [ ] The Cloudflare records for both domains are confirmed DNS-only, so Caddy’s automatic HTTPS applies, as C From The Ground Up’s D10 found for its domain; or the difference is recorded with what it changes.
+- [x] **P4.1 · Host facts** · Depends on: P1.1 · **Owner gate:** server access (given 2026-11-26)
+  - [x] The host’s web platform contract (`docs/web-platform.md` in `ubuntu-vm-backup`) has been read, and anything in AGENTS.md or A-1 that differs from it is corrected.
+  - [x] Recorded here: the app’s directory, service name, database and role names, and a loopback port confirmed free on the server itself (RiverMind uses 4320 and 4323, C From The Ground Up 4317, and others are taken).
+  - [x] The Cloudflare records for both domains are confirmed DNS-only, so Caddy’s automatic HTTPS applies, as C From The Ground Up’s D10 found for its domain; or the difference is recorded with what it changes.
+
+  Evidence: read on the server at `ubuntu-vm-backup` `3a4610f`; nothing in AGENTS.md or A-1 contradicted it, and AGENTS.md section 6 now points at it. Releases `/srv/www/feltprep.com`, `feltprep.service` as `feltprep-web` on `127.0.0.1:4316` (free in `ss -ltn` and every Caddy fragment on 2026-11-26; now in the contract’s port table), database `feltprep` with `feltprep_owner`, `feltprep_migration`, `feltprep_web`, credentials in `/etc/web-apps/feltprep/`. Cloudflare API: `feltprep.com` and `www` are A records, not proxied; `feltprep.app` has no records at all, so it is not served until Q-2’s redirect gets records.
 - [ ] **P4.2 · Deploy files and runbook** · Depends on: P4.1, Q-2 — a Caddy fragment for the canonical name and the redirects, a sandboxed systemd unit, database provisioning with separate owner, migration and web roles, a fix-forward deploy with a candidate check, a strict Content Security Policy, and `deploy/README.md`.
+
+  Evidence: `b61c1dc` deployed by hand on 2026-11-26 through every step (dump, 0 of 0 migrations, candidate on 4400, switch, `web-live` on Node 26.13.1, `caddy-apply`, public check); `bin/web-conformance` passes. From outside: `/healthz` names the commit with database `ok`, Let’s Encrypt certificate, `www` answers 301, HTTP 308, unknown path 404, the CSP and security headers present; checked at 375 × 812 in light and dark with no console errors. The e2e CSP test passes in all six projects. The backup registry gained the site (`ubuntu-vm-backup` `9766f4c`), its drill rehearsed against the live release. Continuous deploy (D-10): `feltprep-autodeploy.timer`.
+  Remaining: the `feltprep.app` redirect (needs its A records, Q-2, owner), and adding `feltprep.com` and `www` to the host’s Cloudflare DDNS job in the `xrayservice` repository (`cloudflare-ddns/README.md`), without which the site goes dark if the home address changes.
 - [ ] **P4.3 · First deploy** · Depends on: P4.2, P3.7 · **Owner gate:** the deploy — the M1 release serves on the domain; the live smoke test and the redirect checks pass. A rehearsal deploy before M1 is the owner’s call and does not tick this step.
 - [ ] **P4.4 · Backups and upkeep** · Depends on: P4.3 — a nightly database dump with rotation, and the deploy recorded in **Now**.
 - [ ] **P4.5 · M1 pilot** · Depends on: P4.3 · **Needs the owner:** a few players (proposal: three to five) and their agreement to be observed
@@ -571,6 +577,14 @@ Every session ends by prepending one entry to the log below, in this shape and i
 ```
 
 ## Handoff log
+
+### 2026-11-26 · P4.1, P4.2 · feltprep.com live through the build
+
+- **Completed:** `deploy/` on the host contract with continuous deploy of `main` (D-10), a strict CSP, the contract’s migrator (`b61c1dc`); account, database and roles provisioned; site registered in `ubuntu-vm-backup` (`9766f4c`).
+- **Verified:** full gate locally and in CI; prepare and cutover on the server; public checks from outside; phone width in both themes; backup drill rehearsed; autodeploy shipped this entry’s commit by itself.
+- **Open decisions:** Q-2 default (`.com` canonical; `.app` not served yet); Q-10 kept for hand deploys and server changes.
+- **Next ready task:** P2.1: write `docs/grading.md`.
+- **Plan changes:** D-10 added at the owner’s request; P4.2 partial with **Remaining**.
 
 ### 2026-11-24 · P1.5 · Heads-up fixtures and the rules trace; Phase 1 complete
 

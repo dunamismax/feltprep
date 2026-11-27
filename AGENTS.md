@@ -56,6 +56,7 @@ Four rules settle most design questions:
 ### Verify
 
 - Check every criterion through its real entry point as well as through tests: the page in a browser against the production build, the command as a user would run it, the live URL after a deploy.
+- **Every push to `main` goes live** at <https://feltprep.com> once its GitHub Actions run passes (D-10). Push only what passed the full gate, and after pushing confirm that `https://feltprep.com/healthz` reports your commit, normally within six minutes. If it does not, read `journalctl -u feltprep-autodeploy` on the server ([`deploy/README.md`](deploy/README.md)).
 - For anything a player touches, check it at phone width (375 × 812) and in both colour themes.
 - For engine, solver or grading changes, follow sections [8](#8-poker-correctness) and [9](#9-feedback-and-solver-claims).
 - Run the full suite before committing ([section 7](#7-commands)).
@@ -80,13 +81,13 @@ Four rules settle most design questions:
 
 **Owner gates.** Get the owner’s explicit word in the current conversation for each of:
 
-- deploying, or changing anything on the server, DNS or Cloudflare;
+- a hand deploy, or changing anything on the server, DNS or Cloudflare. Pushing to `main` is not a hand deploy: by the owner’s decision D-10 every push that passes CI deploys itself to `feltprep.com`. A commit that changes `deploy/` waits for a hand deploy ([`deploy/README.md`](deploy/README.md)), and that needs the owner’s word;
 - creating accounts, OAuth apps or anything that costs money, and adding or changing a git remote;
 - changing the project’s license (D-9), importing anything whose terms `docs/provenance.md` does not clear, and committing lesson text or artwork before Q-12 is answered;
 - changing a settled decision, deleting an unfinished step, lowering an acceptance criterion or a threshold in a verification gate, or reordering phases. Raise these as an open decision instead;
 - telling players something about accuracy or strength that no benchmark in BUILD.md supports.
 
-Approval for one deploy does not carry over to the next. An item that needs a person never blocks other work: do everything up to that point, write the exact remaining instruction under **Waiting on the owner** in **Now**, and move on.
+Approval for one hand deploy does not carry over to the next. An item that needs a person never blocks other work: do everything up to that point, write the exact remaining instruction under **Waiting on the owner** in **Now**, and move on.
 
 ## 4. Git
 
@@ -110,7 +111,7 @@ The owner often runs several sessions in one checkout.
 
 The stack is settled (D-2 in BUILD.md): SvelteKit 3 · Svelte 5 · strict TypeScript · Tailwind CSS 4 · PostgreSQL 18 with Drizzle ORM · Node through `adapter-node` · Caddy, self-hosted on the owner’s server. Do not swap a layer without the owner.
 
-The host runs several sites under one web platform contract, `docs/web-platform.md` in the owner’s `ubuntu-vm-backup` repository, which both reference projects follow and which wins over this file where they differ. As both references record it on 2026-11-24: pnpm 12.18.0 and Node 26.13.1 at exact versions, every dependency pinned exactly at the host’s baseline, `pg` with `drizzle-orm/node-postgres` as the only database driver, the host PostgreSQL 18 cluster, and fix-forward deploys with a candidate check and no rollback. Read the contract itself before the first deploy work (P4.1); it is not checked out on the development Mac.
+The host runs several sites under one web platform contract, `docs/web-platform.md` in the owner’s `ubuntu-vm-backup` repository, which both reference projects follow and which wins over this file where they differ. As both references record it on 2026-11-24: pnpm 12.18.0 and Node 26.13.1 at exact versions, every dependency pinned exactly at the host’s baseline, `pg` with `drizzle-orm/node-postgres` as the only database driver, the host PostgreSQL 18 cluster, and fix-forward deploys with a candidate check and no rollback. FeltPrep follows it (P4.1, 2026-11-26): `bin/web-conformance` passes, the release layout, unit, roles and deploy steps are the contract’s, and [`deploy/README.md`](deploy/README.md) maps them to FeltPrep. Read the contract itself (on the server, `/home/sawyer/github/ubuntu-vm-backup/docs/web-platform.md`) before changing `deploy/`; it is not checked out on the development Mac.
 
 **Layout.** Entries marked “exists” are there now. The rest is the proposal in [BUILD.md](BUILD.md#architecture-proposals); the session that creates a directory updates this section to match what it built.
 
@@ -133,7 +134,8 @@ web/                       the SvelteKit app (exists; the same place RiverMind k
   e2e/                     Playwright tests, desktop and phone (exists)
 content/lessons/           lessons as Markdown, kept in Git, prerendered
 solutions/                 small solution artifacts kept in Git, each with a manifest
-deploy/                    Caddy site, systemd unit, provisioning and deploy scripts, runbook
+deploy/                    the contract's deploy: prepare, cutover, provision and continuous-deploy scripts, the systemd
+                           units, the Caddy fragment and the runbook, README.md (exists)
 docs/                      rules, grading, solver design, build history; rules.md and provenance.md exist
 licenses/                  upstream notices for imported code (exists; its README lists them)
 LICENSE                    the GNU AGPL, version 3: FeltPrep's code is AGPL-3.0-or-later (exists)
@@ -159,7 +161,7 @@ Every command runs from `web/` with the pinned Node 26.13.1 and pnpm 12.18.0. A 
 pnpm install --frozen-lockfile && pnpm run check && pnpm run lint && pnpm run test && pnpm run build && pnpm run e2e
 ```
 
-GitHub Actions runs the same gate on every push (`.github/workflows/test.yml`); check that the run for your commit is green. It needs no database and no `.env`. It does not cover: the database commands (no table exists yet), the deployed site, real phones, or anything in `docs/`.
+GitHub Actions runs the same gate on every push (`.github/workflows/test.yml`); check that the run for your commit is green: a green run is what lets the server deploy it (D-10). It needs no database and no `.env`. It does not cover: the database commands (no table exists yet), the deployed site, real phones, or anything in `docs/`.
 
 Rules for this section:
 
@@ -184,6 +186,10 @@ Rules for this section:
 | Engine benchmark | `pnpm run engine:bench` | Random self-play speed on one core at 2, 6 and 9 seats (`-- --hands 20000 --repeats 5`). Needs a quiet machine. |
 | Engine parity with RiverMind | `pnpm run engine:parity -- --reference <dir>` | Replays hands from RiverMind's Python reference and compares every state byte for byte, plus evaluator digests (`--all-five` for every five-card hand). `<dir>` is a scratch export of RiverMind at the pinned commit (`git -C <rivermind> archive 233b9c6 \| tar -x -C <dir>`), never a live checkout, since `uv` writes a virtual environment there. Needs `uv`. Run once at import (done, `docs/provenance.md`) and again only if RiverMind's engine is re-imported. |
 | Solver benchmarks | *not yet defined (P2.3)* | |
+| Build a release on the server | `deploy/prepare.sh [COMMIT]` | **On the server, as sawyer**, from `~/github/feltprep` (repository root, not `web/`). Exports `origin/main` into `~/web-work/feltprep.com-<commit>/`, runs install, check, lint, test and the build, assembles the release and smoke-tests it. Changes nothing live. |
+| Put a release live | `/usr/local/sbin/with-deploy-lock <candidate>/src/deploy/cutover.sh <candidate>` | **On the server, as root.** Stage, migrate, candidate check, switch, verify, Caddy, public check. A hand deploy is an owner gate (section 3). |
+| Provision the host | `/usr/local/sbin/with-deploy-lock ~sawyer/github/feltprep/deploy/provision.sh` | **On the server, as root.** Account, database, roles and credentials; idempotent. Done 2026-11-26. |
+| Continuous deploy | `systemctl status feltprep-autodeploy.timer` | **On the server.** Every push to `main` whose CI passed deploys itself (D-10); `journalctl -u feltprep-autodeploy` shows each decision. |
 
 ## 8. Poker correctness
 
