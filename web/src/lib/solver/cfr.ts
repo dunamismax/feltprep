@@ -42,16 +42,17 @@ function terminalValues(game: Game, node: Terminal, r0: Float64Array, r1: Float6
 			v0[t0] = sum * payoff;
 		}
 	} else {
+		const scale = node.scale ?? 1;
 		for (let t0 = 0; t0 < n0; t0++) {
 			const row = t0 * n1;
 			let sum = 0;
-			const own = r0[t0];
+			const own = r0[t0] * scale;
 			for (let t1 = 0; t1 < n1; t1++) {
 				const x = prior[row + t1] * payoff[row + t1];
 				sum += x * r1[t1];
 				v1[t1] -= x * own;
 			}
-			v0[t0] = sum;
+			v0[t0] = sum * scale;
 		}
 	}
 	return [v0, v1];

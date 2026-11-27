@@ -18,6 +18,11 @@ export interface Terminal {
 	 * row-major order, payoff[t0 * types1 + t1].
 	 */
 	readonly payoff: number | Float64Array;
+	/**
+	 * A factor the payoff is multiplied by, so showdowns of different sizes can
+	 * share one matrix of who wins (+1), ties (0) and loses (−1). Default 1.
+	 */
+	readonly scale?: number;
 }
 
 export interface Decision {
@@ -44,8 +49,8 @@ export interface Game {
 /** A behaviour strategy: for each decision node, a row per type of its actor. */
 export type Strategy = Map<string, Float64Array>;
 
-export function terminal(payoff: number | Float64Array): Terminal {
-	return { kind: 'terminal', payoff };
+export function terminal(payoff: number | Float64Array, scale = 1): Terminal {
+	return scale === 1 ? { kind: 'terminal', payoff } : { kind: 'terminal', payoff, scale };
 }
 
 export function decision(
