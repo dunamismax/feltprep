@@ -11,12 +11,12 @@ Keep every cell to the current state, in at most two sentences. History goes in 
 | | |
 | --- | --- |
 | **Current phase** | [Phase 5 · Post-flop solver](#phase-5--post-flop-solver). Phase 3 (M1) is complete: Gate C passes, accessibility and the owner’s iPhone pass included. |
-| **Next step** | **P5.1 · Solver design and measurements**: write `docs/solver.md` and time reference river, turn and flop solves on this Mac (D-27 allows every core). P4.3 is not wanted (D-28); P4.4 (nightly dump) can run beside it. |
-| **In progress** | P5.1 · linear terminals and chance cards done, river and turn measured; the flop run and the decisions remain (2026-11-27). |
-| **Background run** | P5.1’s flop measurement, about an hour on one core: `node scripts/postflop-measure.ts --street flop --bets 0.5 --raises= --max-bets 2 --iterations 400 --every 50` from `web/`. |
-| **Waiting on the owner** | SSH to the host asks for a Tailscale sign-in check (`ssh ubuntu-vm` prints the link); once passed, P5.1’s river is measured there. P7.6 (the release) needs their word. |
+| **Next step** | **P5.2 · River solver**: B-3 through the post-flop builder, then at least 20 reference river spots for B-6, with B-11 and B-12 on them. P5.1b waits on the owner. |
+| **In progress** | None. |
+| **Background run** | None. |
+| **Waiting on the owner** | SSH to the host asks for a Tailscale sign-in check (`ssh ubuntu-vm` prints the link); once passed, P5.1b measures the river there. P7.6 (the release) needs their word. |
 | **Live** | <https://feltprep.com> serves `main` as a preview, redeployed by every push whose CI passes (D-10); `/healthz` names the live commit. `feltprep.app` redirects to it in Cloudflare (D-11). |
-| **`main`** | Phases 1 and 2; theme, study view, drill, practice table with stored hands, D-20’s bands, the mistake-to-drill path, the first lesson and hand review. `origin` pushes to GitHub and Codeberg. |
+| **`main`** | Phases 1 to 3 (M1), and the post-flop solver core: spots through the engine, chance cards, linear-time showdowns, measured to the flop (P5.1). `origin` pushes to GitHub and Codeberg. |
 | **Last updated** | 2026-11-27 |
 
 ## How to work this file
@@ -552,16 +552,17 @@ Results at P3.7 (`web/e2e/journey.e2e.ts`, with `mistake.e2e.ts`, `review.e2e.ts
 - [ ] The spot library is in the registry, and every spot meets the grading gate.
 - [ ] Study and drill work for a post-flop spot on a phone: Gate C on an extended journey, now including its on-demand item.
 
-- [ ] **P5.1 · Solver design and measurements** · Depends on: P2.3 — `docs/solver.md`: trees built by playing bet sizes through the engine, per-hand strategies with exact card removal, the CFR variant, and measured time and memory for a reference river, turn and flop solve on this Mac and on the host. Sets the library’s size and B-10’s budget, and whether D-19’s Rust/WebAssembly core is needed. Criteria written 2026-11-27, when Phase 5 opened:
+- [x] **P5.1 · Solver design and measurements** · Depends on: P2.3 — `docs/solver.md`: trees built by playing bet sizes through the engine, per-hand strategies with exact card removal, the CFR variant, and measured time and memory for a reference river, turn and flop solve on this Mac and on the host. Sets the library’s size and B-10’s budget, and whether D-19’s Rust/WebAssembly core is needed. Criteria written 2026-11-27, when Phase 5 opened:
   - [x] `docs/solver.md` states the design: a post-flop spot (board, pot, stacks, both ranges as weighted two-card combinations, the bet and raise sizes per street, as fractions of the pot), the tree, the card removal, the showdown evaluation, the CFR variant and its stopping rule, and how values for grading are computed (B-11).
   - [x] **Trees through the engine.** A builder turns a spot into a game whose every action and amount is one the engine offers at that point (a size the engine would refuse is clamped to its minimum or all-in, and duplicates merged), checked by replaying every path of a reference tree on the engine.
   - [x] **Exact card removal.** Each player’s types are the combinations of their range that do not touch the board; a pair of combinations sharing a card has zero weight, and a test checks the prior against a separate enumeration.
-  - [ ] **A reference river spot** is stated in `docs/solver.md` (100 big blinds effective, a single-raised pot, ranges written for FeltPrep, two bet sizes and one raise) and solved with the CFR+ core; time and peak memory to reach 1% and 0.5% of the pot in exploitability are recorded on this Mac and on the host.
-  - [ ] **Turn and flop.** Public chance cards are added to the game model, checked against a small game solved by hand, and a reference turn and a reference flop spot are solved, or their cost measured on enough of the tree to extrapolate, with the method stated.
-  - [ ] **Decisions recorded** from the measurements: B-10’s budget, the library’s size and flops (P5.5), and whether the Rust/WebAssembly core of D-19 is needed.
+  - [x] **A reference river spot** is stated in `docs/solver.md` (100 big blinds effective, a single-raised pot, ranges written for FeltPrep, two bet sizes and one raise) and solved with the CFR+ core; time and peak memory to reach 1% and 0.5% of the pot in exploitability are recorded on this Mac. The host’s measurement moved to P5.1b (2026-11-27), since it waits on the owner.
+  - [x] **Turn and flop.** Public chance cards are added to the game model, checked against a small game solved by hand, and a reference turn and a reference flop spot are solved, or their cost measured on enough of the tree to extrapolate, with the method stated.
+  - [x] **Decisions recorded** from the measurements: B-10’s budget, the library’s size and flops (P5.5), and whether the Rust/WebAssembly core of D-19 is needed.
   - Evidence (first part): the commit that adds `docs/solver.md`. `buildRiver` (`web/src/lib/solver/postflop.ts`) sets up the spot on the engine and offers only the engine’s actions at the stated sizes; `postflop.spec.ts` replays every path of a reference tree on the engine, checks clamping and merging, the prior against a separate count with card removal and weights, and fold and showdown payoffs against the engine’s chips. Showdowns share one win matrix scaled per terminal (`Terminal.scale` in `game.ts`); `jof:build -- --check` still gives identical bytes. The reference river (693 × 503 combinations, 24 decisions) reached 1% of the pot in 6.1 s and 0.5% in 9.7 s on one core of this Mac, peak 182 MB (`node scripts/postflop-measure.ts`). Full gate: 572 Vitest tests, 228 Playwright tests.
-  - Evidence (second part): the commit that adds `removal.ts`. Folds and showdowns now cost one pass over each range with a per-card correction for card removal, checked against the plain sum over pairs (`removal.spec.ts`) and against the whole river game written with a matrix of who wins (`postflop.spec.ts`); chance nodes deal the turn and river, checked against a turn counted by hand (34 rivers to 10), separate enumerations of every runout on a turn and a flop, and an all-in on the turn. The reference river now reaches 1% in 0.3 s and 0.5% in 0.4 s at the same iteration counts as before; the reference turn 1% in 196 s and 0.5% in 308 s, peak 1.06 GB; the reference flop needs 111 GB of solver state, and a flop with one bet size and all-in (6.2 GB) costs 12 s an iteration. `jof:build -- --check` gives identical bytes. Full gate: 589 Vitest tests, 228 Playwright tests.
-  - Remaining: the river on the host (SSH now asks for a Tailscale check only the owner can pass); the flop run’s times to 1% and 0.5%, then the library’s size and flops. B-10’s budget (5 s, kept) and D-19 (no Rust core now) are recorded in `docs/solver.md`.
+  - Evidence (second part): `7c92f0c`. Folds and showdowns now cost one pass over each range with a per-card correction for card removal, checked against the plain sum over pairs (`removal.spec.ts`) and against the whole river game written with a matrix of who wins (`postflop.spec.ts`); chance nodes deal the turn and river, checked against a turn counted by hand (34 rivers to 10), separate enumerations of every runout on a turn and a flop, and an all-in on the turn. The reference river now reaches 1% in 0.3 s and 0.5% in 0.4 s at the same iteration counts as before; the reference turn 1% in 196 s and 0.5% in 308 s, peak 1.06 GB; the reference flop needs 111 GB of solver state, and a flop with one bet size and all-in (6.2 GB) costs 12 s an iteration. `jof:build -- --check` gives identical bytes. Full gate: 589 Vitest tests, 228 Playwright tests.
+  - Evidence (third part): the commit that ticks P5.1. The reference flop as stated was counted, not solved: 2.9 million decisions, 111 GB of solver state. The flop solved instead has one bet size and all-in, at most two a street (170,528 decisions, 6.2 GB): 1% of the pot after 400 iterations, 72 minutes on one core, 10 to 12 GB; 0.5% extrapolated from its own curve to about 710 iterations, 2.1 hours. Decisions in `docs/solver.md`: B-10’s budget stays at 5 s; no Rust core now (the flop is bound by memory, not by the language); a library of 12 flops of that shape, solved from the flop to the river. Full gate as in the second part; only documents changed.
+- [ ] **P5.1b · The river on the host** · Depends on: P5.1, the owner’s Tailscale sign-in check for SSH — `node scripts/postflop-measure.ts` run on the host from a scratch export of `main`, with `nice -n 19`, and its times to 1% and 0.5% and peak memory recorded in `docs/solver.md` beside this Mac’s. Split from P5.1 on 2026-11-27 because SSH now asks for a check only the owner can pass; P5.4 measures B-10 on the host as well.
 - [ ] **P5.2 · River solver** · Depends on: P5.1 — B-3 on the full solver, B-6, and B-11 and B-12 on the reference river spots.
 - [ ] **P5.3 · Independent cross-check** · Depends on: P5.2, D-21 — the tool’s license read and recorded, a harness that converts a spot both ways, and B-7.
 - [ ] **P5.4 · On-demand river solving** · Depends on: P5.2 — a server endpoint with limits, cancellation and a cache keyed by the spot’s hash; B-10; and Gate C’s on-demand item, in a browser test at phone size.
@@ -645,6 +646,14 @@ Every session ends by prepending one entry to the log below, in this shape and i
 
 ## Handoff log
 
+### 2026-11-27 · P5.1 · Chance cards, linear showdowns, river to flop measured
+
+- **Completed:** linear-time folds and showdowns (`removal.ts`), chance cards for turn and flop, a one-player CFR+ pass (`7c92f0c`); flop measured, decisions recorded, P5.1 ticked and P5.1b split off (the commit that ticks P5.1).
+- **Verified:** full gate (589 Vitest, 228 Playwright); `jof:build -- --check` identical; river 1% in 0.3 s (was 6.1 s), turn 196 s, small flop 72 min; `7c92f0c` live on `/healthz`. Not verified: anything on the host (Tailscale check).
+- **Open decisions:** none. D-19: no Rust core now; the owner asked about rewriting the server in Rust, answered in chat (no gain; the flop is memory-bound).
+- **Next ready task:** P5.2: build B-3’s polarized river game through `buildRiver` and compare with the closed form.
+- **Plan changes:** P5.1b split from P5.1 (the host measurement waits on the owner).
+
 ### 2026-11-27 · Decisions, P3.7, P7.2 · M1 complete
 
 - **Completed:** D-26 (agents choose imports), D-27 (heavy compute allowed), D-28 (the owner’s iPhone pass; stay unshared); axe-core added and `a11y.e2e.ts`, which found and led to fixes for three accessibility faults; Gate C, P3.7, P7.2 and Phase 3 ticked (the commit that adds `a11y.e2e.ts`).
@@ -695,11 +704,3 @@ Every session ends by prepending one entry to the log below, in this shape and i
 - **Verified:** full gate before each commit (455 Vitest and 24 Playwright tests at P2.5); B-1 to B-5, B-9, B-11, B-12 in `docs/benchmarks.md`; both builds rebuilt byte-identical. Not verified: CI on the last commit at the time of writing; nothing is visible in the app yet. `ced11f4`’s message miscounts B-5 (“4,712 of 4,718”); the record is 4,706 of 4,712.
 - **Open decisions:** Q-13 raised (the published chart’s terms; default: keep it out of Git). Q-7’s bands and `minReach` 0.01 used as defaults.
 - **Next ready task:** P3.1: theme tokens and code-drawn cards on a `/style` page.
-
-### 2026-11-26 · P4.1, P4.2 · feltprep.com live through the build
-
-- **Completed:** `deploy/` on the host contract with continuous deploy of `main` (D-10), a strict CSP, the contract’s migrator (`b61c1dc`); account, database and roles provisioned; site registered in `ubuntu-vm-backup` (`9766f4c`); DDNS covers both names (`xrayservice` `8bc2e05`); `feltprep.app` redirects in Cloudflare (D-11).
-- **Verified:** full gate locally and in CI; prepare and cutover on the server; public checks from outside; phone width in both themes; backup drill rehearsed; autodeploy shipped, waited on CI and held a `deploy/` change as designed; one more hand deploy (`1b09b36`).
-- **Open decisions:** Q-2 settled as D-11; Q-10 kept for hand deploys and server changes.
-- **Next ready task:** P2.1: write `docs/grading.md`.
-- **Plan changes:** D-10 and D-11 added at the owner’s request.

@@ -52,7 +52,7 @@ All three reference spots are for measuring only; none is a library spot. They s
 - **Ranges,** with classes ranked by their all-in equity against a random hand from the exact pre-flop table: the button holds the strongest 45% of combinations, the big blind the band from 6% to 70%. That is 523 and 740 combinations on the flop, 518 and 721 on the turn, 503 and 693 on the river.
 - **Sizes,** on every street: bets of a third and three quarters of the pot, raises of the pot, all-in, at most three bets and raises a street.
 
-**Machine:** the development Mac (Apple M5, 10 cores, 32 GB; Node 26.13.1), one core per solve, with a load average of 5 to 9 from other work. **Not yet measured on the host:** SSH to it now asks for a Tailscale sign-in check that only the owner can complete.
+**Machine:** the development Mac (Apple M5, 10 cores, 32 GB; Node 26.13.1), one core per solve, with a load average of 5 to 9 from other work. **Not yet measured on the host** (P5.1b): SSH to it now asks for a Tailscale sign-in check that only the owner can complete.
 
 ### The river
 
@@ -100,8 +100,14 @@ Trees with fewer sizes, counted the same way (all-in is always offered as well):
 | Exploitability, % of the pot | Iterations | Time solving |
 | --- | --- | --- |
 | 9.4 | 50 | 594 s |
+| 3.8 | 100 | 1,236 s |
+| 1.8 | 200 | 2,313 s |
+| 1.2 | 300 | 3,338 s |
+| 0.89 (under D-20’s 1%) | 400 | 4,329 s |
 
-The run continues to 400 iterations (BUILD.md, **Background run**); its times to 1% and 0.5% are recorded here when it ends. The turn needed 7 times as many iterations to reach 0.5% as to fall below 10%, which on this flop would be about 350 iterations, or a little over an hour.
+The run stopped at 400 iterations, reaching 1% between the checks at 350 (1.04%) and 400 (0.89%); peak memory 10.2 GB by the script’s own sampling, 12.1 GB maximum resident by `/usr/bin/time`. It ran beside other work, including one full gate, at a load average of 5 to 9.
+
+**To 0.5%, extrapolated:** from 250 to 400 iterations the exploitability fell almost exactly as one over the iteration count (1.445% to 0.892% over a ratio of 1.6), so 0.5% needs about 400 × 0.892 / 0.5 ≈ 710 iterations, about 2.1 hours on one core at the measured 10.8 s an iteration. The turn fell faster than that between 1% and 0.5%, so the estimate is on the safe side.
 
 An iteration takes about 12 s, 45 ns a cell, against 26 ns on the turn; taking the solver’s scratch arrays from a reusable arena instead of allocating them cut the turn’s time by 10% and left the flop’s unchanged. At 6 GB the flop streams its whole state through memory twice an iteration, so memory traffic, not arithmetic or garbage collection, sets its speed.
 
@@ -109,4 +115,4 @@ An iteration takes about 12 s, 45 ns a cell, against 26 ns on the turn; taking t
 
 - **B-10’s budget stays at the proposed 5 seconds** for the 95th percentile of an on-demand river solve to 1% of the pot on the host. The reference river takes 0.3 s on one core of this Mac, so the budget leaves room for a slower host and for ranges about twice as large on each side. P5.4 measures it on the host.
 - **The Rust/WebAssembly core of D-19 is not needed now.** On-demand river solves are 15 times inside the budget in TypeScript, and turn and flop solves are offline (D-27). The flop is bound by memory, which a faster language does not reduce; what does is storing regrets and sums as 32-bit floats, dropping the stored current strategy, and suit isomorphism on boards that allow it, all of which TypeScript can do. Revisit if P5.5’s library, built with those, cannot be solved overnight on this Mac.
-- **The library’s size and flops** wait for the flop run’s times to 1% and 0.5%. What is already clear: the reference sizes do not fit (111 GB), and a library flop has one bet size a street plus all-in, at most two bets a street, so that each flop needs about 6 GB (3 GB at 32 bits) and several solve at once on this Mac.
+- **The library: 12 flops, each solved as one tree from the flop to the river,** with one bet size a street plus all-in and at most two bets a street, the shape measured above. Each flop takes about two hours to 0.5% on one core and 10 to 12 GB, so two solve at once on this Mac at 64 bits, and about four once regrets and sums are stored as 32-bit floats: the whole library in one night (D-27). Twelve is the floor the first-release scope proposes; more flops wait until the library’s build time is measured at P5.5. The turn and river of each line are subtrees of its flop solve, so they need no solves of their own. Which 12 flops, chosen to cover distinct textures, and which bet size on each street, are set at P5.5 and cite these numbers.

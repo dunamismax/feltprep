@@ -2,6 +2,14 @@
 
 Handoff entries moved out of [BUILD.md](../BUILD.md#handoff-log), which keeps the newest eight. Oldest last.
 
+### 2026-11-26 · P4.1, P4.2 · feltprep.com live through the build
+
+- **Completed:** `deploy/` on the host contract with continuous deploy of `main` (D-10), a strict CSP, the contract’s migrator (`b61c1dc`); account, database and roles provisioned; site registered in `ubuntu-vm-backup` (`9766f4c`); DDNS covers both names (`xrayservice` `8bc2e05`); `feltprep.app` redirects in Cloudflare (D-11).
+- **Verified:** full gate locally and in CI; prepare and cutover on the server; public checks from outside; phone width in both themes; backup drill rehearsed; autodeploy shipped, waited on CI and held a `deploy/` change as designed; one more hand deploy (`1b09b36`).
+- **Open decisions:** Q-2 settled as D-11; Q-10 kept for hand deploys and server changes.
+- **Next ready task:** P2.1: write `docs/grading.md`.
+- **Plan changes:** D-10 and D-11 added at the owner’s request.
+
 ### 2026-11-24 · P1.5 · Heads-up fixtures and the rules trace; Phase 1 complete
 
 - **Completed:** 15 hand-worked fixtures in `web/src/lib/engine/fixtures.ts`, with a runner that also asserts legal actions; the odd-chip checks; `rules-trace.spec.ts`. Phase 1’s exit criteria are ticked.
